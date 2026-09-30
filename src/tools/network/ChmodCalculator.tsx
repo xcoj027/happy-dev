@@ -42,22 +42,22 @@ export const ChmodCalculator: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* Result Card */}
-      <div className="p-4 bg-gray-900/60 rounded-xl border border-gray-800 space-y-3">
+      <div className="p-4 card-3d rounded-xl space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="space-y-1">
-            <span className="text-xs text-gray-400">Octal Permission</span>
-            <div className="text-2xl font-mono font-bold text-emerald-400">{octal}</div>
+            <span className="text-xs text-[var(--text-secondary)]">Octal Permission</span>
+            <div className="text-2xl font-mono font-bold text-emerald-600 dark:text-emerald-400">{octal}</div>
           </div>
 
           <div className="space-y-1">
-            <span className="text-xs text-gray-400">Symbolic Notation</span>
-            <div className="text-2xl font-mono font-bold text-cyan-400">{symbolic}</div>
+            <span className="text-xs text-[var(--text-secondary)]">Symbolic Notation</span>
+            <div className="text-2xl font-mono font-bold text-cyan-600 dark:text-cyan-400">{symbolic}</div>
           </div>
 
           <div className="space-y-1">
-            <span className="text-xs text-gray-400">Shell Command</span>
+            <span className="text-xs text-[var(--text-secondary)]">Shell Command</span>
             <div className="flex items-center gap-2">
-              <span className="font-mono text-sm bg-gray-950 px-3 py-1.5 rounded-lg border border-gray-800 text-gray-200">
+              <span className="font-mono text-sm well-3d px-3 py-1.5 rounded-lg text-[var(--text-primary)]">
                 {command}
               </span>
               <CopyButton text={command} />
@@ -69,38 +69,38 @@ export const ChmodCalculator: React.FC = () => {
       {/* Permissions Matrix */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {(['owner', 'group', 'others'] as const).map((role) => (
-          <div key={role} className="p-4 bg-gray-900/60 border border-gray-800 rounded-xl space-y-3">
-            <div className="flex items-center justify-between border-b border-gray-800 pb-2">
-              <span className="font-semibold text-gray-200 text-sm capitalize">{role}</span>
-              <span className="font-mono text-sm text-emerald-400 font-bold">{calcVal(perms[role])}</span>
+          <div key={role} className="p-4 card-3d rounded-xl space-y-3">
+            <div className="flex items-center justify-between border-b border-[var(--control-border)] pb-2">
+              <span className="font-semibold text-[var(--text-primary)] text-sm capitalize">{role}</span>
+              <span className="font-mono text-sm text-emerald-600 dark:text-emerald-400 font-bold">{calcVal(perms[role])}</span>
             </div>
 
-            <div className="space-y-2 text-xs text-gray-300">
-              <label className="flex items-center justify-between cursor-pointer p-1.5 hover:bg-gray-800/50 rounded">
+            <div className="space-y-2 text-xs text-[var(--text-secondary)]">
+              <label className="flex items-center justify-between cursor-pointer p-1.5 hover:bg-[var(--hover-bg)] rounded transition">
                 <span>Read (4)</span>
                 <input
                   type="checkbox"
                   checked={perms[role].read}
                   onChange={(e) => setPerms({ ...perms, [role]: { ...perms[role], read: e.target.checked } })}
-                  className="rounded bg-gray-800 border-gray-700 text-emerald-500"
+                  className="rounded text-emerald-500"
                 />
               </label>
-              <label className="flex items-center justify-between cursor-pointer p-1.5 hover:bg-gray-800/50 rounded">
+              <label className="flex items-center justify-between cursor-pointer p-1.5 hover:bg-[var(--hover-bg)] rounded transition">
                 <span>Write (2)</span>
                 <input
                   type="checkbox"
                   checked={perms[role].write}
                   onChange={(e) => setPerms({ ...perms, [role]: { ...perms[role], write: e.target.checked } })}
-                  className="rounded bg-gray-800 border-gray-700 text-emerald-500"
+                  className="rounded text-emerald-500"
                 />
               </label>
-              <label className="flex items-center justify-between cursor-pointer p-1.5 hover:bg-gray-800/50 rounded">
+              <label className="flex items-center justify-between cursor-pointer p-1.5 hover:bg-[var(--hover-bg)] rounded transition">
                 <span>Execute (1)</span>
                 <input
                   type="checkbox"
                   checked={perms[role].exec}
                   onChange={(e) => setPerms({ ...perms, [role]: { ...perms[role], exec: e.target.checked } })}
-                  className="rounded bg-gray-800 border-gray-700 text-emerald-500"
+                  className="rounded text-emerald-500"
                 />
               </label>
             </div>

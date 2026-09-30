@@ -136,6 +136,8 @@ npm run pack
 ```
 
 ### Generating Distributable Installers
+The app displays the last six characters of Git `HEAD` as its version (for example, `2ce532`). Installer filenames and GitHub release titles use the same value. Numeric package metadata is retained for platform compatibility; rebuilding the same commit keeps the same displayed version. Build from a Git checkout so the commit can be resolved.
+
 ```bash
 # Build macOS installers (.dmg)
 npm run dist:mac
@@ -143,7 +145,7 @@ npm run dist:mac
 # Build Windows installers (.exe, portable)
 npm run dist:win
 
-# Build Linux packages (.AppImage, .deb)
+# Build Linux package (.AppImage)
 npm run dist:linux
 ```
 
@@ -154,7 +156,7 @@ npm run dist:linux
 The repository includes an automated GitHub Actions workflow defined in [`.github/workflows/build.yml`](.github/workflows/build.yml):
 - The workflow automatically runs on every push to the `main` branch, on version tags (`v*`), and on manual workflow dispatch triggers.
 - It builds binaries concurrently across three operating system runners: `macos-latest`, `windows-latest`, and `ubuntu-latest`.
-- It generates `.dmg`, `.exe`, `.AppImage`, and `.deb` release artifacts.
+- Each release contains one universal macOS `.dmg` (Intel and Apple Silicon), one Windows x64 setup `.exe`, and one Linux x64 `.AppImage`, plus a checksum file. ZIP archives, portable Windows builds, and Debian packages are not generated.
 - When commits are pushed to the `main` branch, the release step publishes the `latest` assets to the public [`happy-dev-releases`](https://github.com/xcoj027/happy-dev-releases/releases/latest) repository.
 - Version tags (`v*`) publish matching versioned releases to the same public repository.
 
@@ -163,6 +165,18 @@ The repository includes an automated GitHub Actions workflow defined in [`.githu
 The private source repository requires a `RELEASE_TOKEN` Actions secret containing a fine-grained GitHub personal access token. Grant that token **Contents: read and write** access to `xcoj027/happy-dev-releases`.
 
 The workflow uses `xcoj027/happy-dev-releases` by default. To publish elsewhere, set the `RELEASE_REPOSITORY` Actions variable to the target repository in `owner/name` format.
+
+### macOS Signing and Notarization
+
+Public macOS distribution requires a **Developer ID Application** certificate and Apple notarization to pass Gatekeeper with normal security settings. Signing is opt-in; builds remain unsigned until the setup below is complete.
+
+1. Enroll in the [Apple Developer Program](https://developer.apple.com/programs/enroll/).
+2. Follow Apple's [Developer ID certificate instructions](https://developer.apple.com/help/account/certificates/create-developer-id-certificates/) to create a **Developer ID Application** certificate. Install it on your Mac with its private key. In Keychain Access, export the certificate and private key together as a password-protected `.p12` file.
+3. Base64-encode the `.p12` file (`base64 -i /path/to/certificate.p12 | pbcopy`) and save it as the source repository's `MAC_CSC_LINK` GitHub Actions secret. Save its export password as `MAC_CSC_KEY_PASSWORD`. Keep the certificate, private key, and passwords out of source control and chat.
+4. Add `APPLE_ID` (your Apple account email), `APPLE_TEAM_ID` (your Developer Program membership Team ID), and `APPLE_APP_SPECIFIC_PASSWORD` (an [app-specific password](https://support.apple.com/en-us/102654) generated for your Apple account) as Actions secrets.
+5. Set the Actions variable `MACOS_SIGNING_ENABLED` to `true`, then run **Build and Release**.
+
+The macOS release build requires signing, enables Hardened Runtime, and uses electron-builder's built-in notarization and ticket stapling. It verifies the app signature, stapled ticket, and Gatekeeper assessment before uploading artifacts. Pull requests continue to build without signing credentials. An enabled signing build fails if credentials or verification are missing; it does not silently publish an unsigned app.
 
 ---
 

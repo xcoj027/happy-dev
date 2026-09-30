@@ -54,15 +54,15 @@ export const HttpStatusLookup: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* Search and Filters */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-gray-900/60 rounded-xl border border-gray-800">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3 card-3d rounded-xl">
         <div className="relative flex-1 max-w-sm">
-          <Search className="w-4 h-4 absolute left-3 top-2.5 text-gray-500" />
+          <Search className="w-4 h-4 absolute left-3 top-2.5 text-[var(--text-secondary)]" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search code, name, or description..."
-            className="w-full bg-gray-950 border border-gray-800 rounded-lg pl-9 pr-3 py-1.5 text-xs text-gray-200 outline-none focus:border-emerald-500"
+            className="w-full input-3d rounded-lg pl-9 pr-3 py-1.5 text-xs text-[var(--text-primary)] outline-none"
           />
         </div>
 
@@ -72,7 +72,7 @@ export const HttpStatusLookup: React.FC = () => {
               key={cat}
               onClick={() => setCategoryFilter(cat)}
               className={`px-2.5 py-1 rounded-lg font-medium transition ${
-                categoryFilter === cat ? 'bg-emerald-500 text-gray-950 font-bold' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                categoryFilter === cat ? 'bg-emerald-600 text-white font-bold shadow-md' : 'btn-3d text-[var(--text-secondary)]'
               }`}
             >
               {cat}
@@ -85,28 +85,28 @@ export const HttpStatusLookup: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {filtered.map((item) => {
           const color = item.code < 300
-            ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+            ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/30'
             : item.code < 400
-            ? 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20'
+            ? 'text-cyan-700 dark:text-cyan-400 bg-cyan-500/10 border-cyan-500/30'
             : item.code < 500
-            ? 'text-amber-400 bg-amber-500/10 border-amber-500/20'
-            : 'text-rose-400 bg-rose-500/10 border-rose-500/20';
+            ? 'text-amber-700 dark:text-amber-400 bg-amber-500/10 border-amber-500/30'
+            : 'text-rose-700 dark:text-rose-400 bg-rose-500/10 border-rose-500/30';
 
           return (
             <div
               key={item.code}
-              className="p-3.5 bg-gray-900/60 border border-gray-800 rounded-xl space-y-1.5 hover:border-gray-700 transition"
+              className="p-3.5 card-3d rounded-xl space-y-1.5 transition"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className={`px-2 py-0.5 rounded font-mono font-bold text-xs border ${color}`}>
                     {item.code}
                   </span>
-                  <span className="font-semibold text-gray-200 text-sm">{item.name}</span>
+                  <span className="font-semibold text-[var(--text-primary)] text-sm">{item.name}</span>
                 </div>
-                <span className="text-[10px] text-gray-500 font-mono">{item.category}</span>
+                <span className="text-[10px] text-[var(--text-secondary)] font-mono">{item.category}</span>
               </div>
-              <p className="text-xs text-gray-400 leading-relaxed">{item.desc}</p>
+              <p className="text-xs text-[var(--text-secondary)] leading-relaxed">{item.desc}</p>
             </div>
           );
         })}

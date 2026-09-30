@@ -14,7 +14,7 @@
 
 import React, { useState } from 'react';
 import { CodeEditor } from '../../components/common/CodeEditor';
-import { ArrowLeftRight, Table, AlertCircle } from 'lucide-react';
+import { Table, AlertCircle } from 'lucide-react';
 
 export const JsonCsvConverter: React.FC = () => {
   const [direction, setDirection] = useState<'json2csv' | 'csv2json'>('json2csv');
@@ -119,15 +119,6 @@ export const JsonCsvConverter: React.FC = () => {
     }
   }
 
-  const handleSwap = () => {
-    if (output) {
-      setInput(output);
-      setDirection(direction === 'json2csv' ? 'csv2json' : 'json2csv');
-      setError(null);
-    } else {
-      setDirection(direction === 'json2csv' ? 'csv2json' : 'json2csv');
-    }
-  };
 
   return (
     <div className="flex-1 flex flex-col h-full space-y-3 min-h-[540px]">
@@ -151,14 +142,6 @@ export const JsonCsvConverter: React.FC = () => {
             }`}
           >
             CSV → JSON
-          </button>
-          <button
-            type="button"
-            onClick={handleSwap}
-            className="btn-3d p-1.5 rounded-lg text-[var(--text-secondary)] transition cursor-pointer"
-            title="Swap and convert"
-          >
-            <ArrowLeftRight className="w-4 h-4" />
           </button>
         </div>
 

@@ -77,9 +77,41 @@ jobs:
         run: npm run build
 
       - name: Package application
+        if: runner.os != 'macOS' || github.event_name == 'pull_request' || vars.MACOS_SIGNING_ENABLED != 'true'
         run: npx electron-builder ${{ matrix.build_flag }}
         env:
           GH_TOKEN: ${{ github.token }}
+
+      - name: Sign and notarize macOS application
+        if: runner.os == 'macOS' && github.event_name != 'pull_request' && vars.MACOS_SIGNING_ENABLED == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CSC_LINK: ${{ secrets.MAC_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          for credential in CSC_LINK CSC_KEY_PASSWORD APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID; do
+            if [[ -z "${!credential}" ]]; then
+              echo "::error::Missing macOS signing credential: $credential. See README.md for setup."
+              exit 1
+            fi
+          done
+          npx electron-builder --mac -c.mac.forceCodeSigning=true -c.mac.hardenedRuntime=true -c.mac.notarize=true
+
+          found_app=false
+          while IFS= read -r -d '' app; do
+            found_app=true
+            codesign --verify --deep --strict --verbose=2 "$app"
+            xcrun stapler validate "$app"
+            spctl --assess --type execute --verbose=2 "$app"
+          done < <(find release -maxdepth 3 -type d -name '*.app' -print0)
+          if [[ "$found_app" != true ]]; then
+            echo "::error::No macOS application found for signing verification."
+            exit 1
+          fi
 
       - name: Upload platform artifacts
         uses: actions/upload-artifact@v4
@@ -87,10 +119,8 @@ jobs:
           name: happydev-${{ matrix.platform }}
           path: |
             release/**/*.dmg
-            release/**/*.zip
             release/**/*.exe
             release/**/*.AppImage
-            release/**/*.deb
           if-no-files-found: error
           retention-days: 1
 
@@ -112,16 +142,17 @@ jobs:
           mkdir -p release-assets
           find downloaded-artifacts -type f \( \
             -name '*.dmg' -o \
-            -name '*.zip' -o \
             -name '*.exe' -o \
-            -name '*.AppImage' -o \
-            -name '*.deb' \
+            -name '*.AppImage' \
           \) -exec cp {} release-assets/ \;
 
-          if [[ -z "$(find release-assets -maxdepth 1 -type f -print -quit)" ]]; then
-            echo "::error::No release assets were downloaded."
-            exit 1
-          fi
+          for extension in dmg exe AppImage; do
+            count=$(find release-assets -maxdepth 1 -type f -name "*.$extension" | wc -l)
+            if [[ "$count" -ne 1 ]]; then
+              echo "::error::Expected exactly one .$extension installer, found $count."
+              exit 1
+            fi
+          done
 
           cd release-assets
           sha256sum * > SHA256SUMS.txt
@@ -130,13 +161,13 @@ jobs:
         id: release_info
         shell: bash
         run: |
+          version="${GITHUB_SHA: -6}"
+          echo "title=HappyDev ${version}" >> "$GITHUB_OUTPUT"
           if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
             tag="${GITHUB_REF#refs/tags/}"
             echo "tag=${tag}" >> "$GITHUB_OUTPUT"
-            echo "title=HappyDev ${tag}" >> "$GITHUB_OUTPUT"
           else
             echo "tag=latest" >> "$GITHUB_OUTPUT"
-            echo "title=HappyDev (Latest Build)" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Validate release token for public repository
@@ -186,7 +217,7 @@ jobs:
           tag_name: ${{ steps.release_info.outputs.tag }}
           target_commitish: ${{ steps.release_target.outputs.commit }}
           name: ${{ steps.release_info.outputs.title }}
-          body: Automated HappyDev packages for ${{ steps.release_info.outputs.title }}.
+          body: Automated HappyDev packages for ${{ steps.release_info.outputs.title }}. Source commit ${{ github.sha }}.
           prerelease: false
           files: release-assets/*
           generate_release_notes: true

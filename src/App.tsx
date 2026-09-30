@@ -21,13 +21,11 @@ import { Sidebar } from './components/layout/Sidebar';
 import { Header } from './components/layout/Header';
 import { CommandPalette } from './components/layout/CommandPalette';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
-import { HomePage } from './components/home/HomePage';
 import { DashboardPage } from './components/dashboard/DashboardPage';
 
 export const App: React.FC = () => {
   const [showSplash, setShowSplash] = useState(true);
   const [activeToolId, setActiveToolId] = useState<string>('dashboard');
-  const [selectedCategory, setSelectedCategory] = useState<ToolCategory | 'all'>('all');
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isDark, setIsDark] = useState(() => {
     try {
@@ -40,9 +38,9 @@ export const App: React.FC = () => {
   const [favorites, setFavorites] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem('happydev_favorites');
-      return saved ? JSON.parse(saved) : ['json-yaml-converter', 'jwt-debugger', 'hash-generator', 'sql-formatter'];
+      return saved ? JSON.parse(saved) : ['base64-converter', 'json-yaml-converter', 'jwt-debugger', 'hash-generator'];
     } catch {
-      return ['json-yaml-converter', 'jwt-debugger', 'hash-generator', 'sql-formatter'];
+      return ['base64-converter', 'json-yaml-converter', 'jwt-debugger', 'hash-generator'];
     }
   });
 
@@ -89,7 +87,6 @@ export const App: React.FC = () => {
   };
 
   const isDashboard = activeToolId === 'dashboard';
-  const isHome = activeToolId === 'home';
 
   const dashboardTool = {
     id: 'dashboard',
@@ -102,21 +99,8 @@ export const App: React.FC = () => {
     component: DashboardPage as any,
   };
 
-  const homeTool = {
-    id: 'home',
-    name: 'Utilities Catalog & Hub',
-    description: `Browse ${toolsRegistry.length}+ offline developer utilities grouped by popularity and category.`,
-    category: 'converters' as ToolCategory,
-    roles: ['All' as any],
-    icon: 'LayoutGrid',
-    tags: ['home', 'catalog', 'hub'],
-    component: HomePage as any,
-  };
-
   const activeTool = isDashboard
     ? dashboardTool
-    : isHome
-    ? homeTool
     : (toolsRegistry.find((t) => t.id === activeToolId) || toolsRegistry[0]);
   const ActiveComponent = activeTool.component;
 
@@ -128,7 +112,7 @@ export const App: React.FC = () => {
       {/* Top TitleBar */}
       <TitleBar
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
-        onGoHome={() => setActiveToolId('home')}
+        onGoHome={() => setActiveToolId('dashboard')}
       />
 
       {/* Main Workspace */}
@@ -137,10 +121,6 @@ export const App: React.FC = () => {
         <Sidebar
           activeToolId={activeToolId}
           onSelectTool={(id) => setActiveToolId(id)}
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-          favorites={favorites}
-          onToggleFavorite={toggleFavorite}
           isDark={isDark}
           onToggleTheme={toggleTheme}
         />
@@ -154,27 +134,17 @@ export const App: React.FC = () => {
             </div>
           ) : (
             <div className="flex-1 flex flex-col overflow-hidden min-h-0 bg-transparent">
-              {!isHome && (
-                <Header
-                  tool={activeTool}
-                  isFavorite={favorites.includes(activeTool.id)}
-                  onToggleFavorite={toggleFavorite}
-                />
-              )}
+              <Header
+                tool={activeTool}
+                isFavorite={favorites.includes(activeTool.id)}
+                onToggleFavorite={toggleFavorite}
+              />
 
               {/* Active Tool View */}
               <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 bg-transparent">
-                {isHome ? (
-                  <HomePage
-                    onSelectTool={(id) => setActiveToolId(id)}
-                    favorites={favorites}
-                    onToggleFavorite={toggleFavorite}
-                  />
-                ) : (
-                  <ErrorBoundary key={activeToolId} fallbackToolName={activeTool.name}>
-                    <ActiveComponent />
-                  </ErrorBoundary>
-                )}
+                <ErrorBoundary key={activeToolId} fallbackToolName={activeTool.name}>
+                  <ActiveComponent />
+                </ErrorBoundary>
               </div>
             </div>
           )}

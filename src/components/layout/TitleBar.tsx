@@ -40,7 +40,7 @@ export const TitleBar: React.FC<TitleBarProps> = ({ onOpenCommandPalette, onGoHo
             HappyDev
           </span>
           <span className="text-[10px] text-[var(--text-muted)] font-mono px-1.5 py-0.5 rounded bg-[var(--control-panel-bg)]">
-            v1.0.0
+            {__APP_VERSION__}
           </span>
         </div>
       </div>

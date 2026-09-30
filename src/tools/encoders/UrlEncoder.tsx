@@ -14,7 +14,7 @@
 
 import React, { useState } from 'react';
 import { CodeEditor } from '../../components/common/CodeEditor';
-import { Globe, Plus, Trash2, ArrowLeftRight, AlertCircle } from 'lucide-react';
+import { Globe, Plus, Trash2, AlertCircle } from 'lucide-react';
 
 export const UrlEncoder: React.FC = () => {
   const [input, setInput] = useState('');
@@ -111,25 +111,19 @@ export const UrlEncoder: React.FC = () => {
     }
   };
 
-  const handleSwap = () => {
-    if (output) {
-      setInput(output);
-      setMode(mode === 'encode' ? 'decode' : 'encode');
-    }
-  };
 
   return (
     <div className="space-y-4">
       {/* Mode Control Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-gray-900/60 rounded-xl border border-gray-800">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3 card-3d rounded-xl">
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setMode('encode')}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
               mode === 'encode'
-                ? 'bg-emerald-500 text-gray-950 font-semibold'
-                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                ? 'bg-emerald-600 text-white font-semibold shadow-md'
+                : 'btn-3d text-[var(--text-secondary)]'
             }`}
           >
             URL / Text → Encoded (Encode)
@@ -139,36 +133,27 @@ export const UrlEncoder: React.FC = () => {
             onClick={() => setMode('decode')}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
               mode === 'decode'
-                ? 'bg-emerald-500 text-gray-950 font-semibold'
-                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                ? 'bg-emerald-600 text-white font-semibold shadow-md'
+                : 'btn-3d text-[var(--text-secondary)]'
             }`}
           >
             Encoded → URL / Text (Decode)
           </button>
-          <button
-            type="button"
-            onClick={handleSwap}
-            disabled={!output}
-            className="p-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 disabled:opacity-50 transition cursor-pointer"
-            title="Swap input and output"
-          >
-            <ArrowLeftRight className="w-4 h-4" />
-          </button>
         </div>
 
-        <label className="flex items-center gap-1.5 text-xs text-gray-300 cursor-pointer">
+        <label className="flex items-center gap-1.5 text-xs text-[var(--text-secondary)] cursor-pointer">
           <input
             type="checkbox"
             checked={encodeFullUri}
             onChange={(e) => setEncodeFullUri(e.target.checked)}
-            className="rounded bg-gray-800 border-gray-700 text-emerald-500 focus:ring-0"
+            className="rounded text-emerald-500 focus:ring-0"
           />
           <span>Full URI Mode ({encodeFullUri ? 'encodeURI' : 'encodeURIComponent'})</span>
         </label>
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-400 text-xs font-mono">
+        <div className="flex items-center gap-2 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-600 dark:text-rose-400 text-xs font-mono">
           <AlertCircle className="w-4 h-4 flex-shrink-0" />
           <span>{error}</span>
         </div>
@@ -193,23 +178,23 @@ export const UrlEncoder: React.FC = () => {
       </div>
 
       {/* Query Parameters Inspector & Builder */}
-      <div className="p-4 bg-gray-900/60 rounded-xl border border-gray-800 space-y-3">
+      <div className="p-4 card-3d rounded-xl space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold text-gray-300 flex items-center gap-1.5">
-            <Globe className="w-3.5 h-3.5 text-cyan-400" />
+          <span className="text-xs font-semibold text-[var(--text-secondary)] flex items-center gap-1.5">
+            <Globe className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
             Query Parameters Inspector ({queryParams.length})
           </span>
           <button
             type="button"
             onClick={addParam}
-            className="inline-flex items-center gap-1 px-2.5 py-1 text-xs rounded bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30 transition cursor-pointer"
+            className="btn-3d inline-flex items-center gap-1 px-2.5 py-1 text-xs rounded text-emerald-600 dark:text-emerald-400 transition cursor-pointer"
           >
             <Plus className="w-3 h-3" /> Add Param
           </button>
         </div>
 
         {queryParams.length === 0 ? (
-          <div className="text-xs text-gray-500 py-3 text-center">
+          <div className="text-xs text-[var(--text-secondary)] py-3 text-center">
             No query parameters found in the current URL.
           </div>
         ) : (
@@ -221,20 +206,20 @@ export const UrlEncoder: React.FC = () => {
                   value={param.key}
                   onChange={(e) => updateParam(idx, e.target.value, param.value)}
                   placeholder="Key"
-                  className="w-1/3 bg-gray-950 border border-gray-800 rounded px-2.5 py-1.5 text-xs font-mono text-emerald-400 outline-none focus:border-emerald-500"
+                  className="w-1/3 input-3d rounded px-2.5 py-1.5 text-xs font-mono text-[var(--text-primary)] outline-none"
                 />
-                <span className="text-gray-500">=</span>
+                <span className="text-[var(--text-secondary)]">=</span>
                 <input
                   type="text"
                   value={param.value}
                   onChange={(e) => updateParam(idx, param.key, e.target.value)}
                   placeholder="Value"
-                  className="flex-1 bg-gray-950 border border-gray-800 rounded px-2.5 py-1.5 text-xs font-mono text-gray-200 outline-none focus:border-emerald-500"
+                  className="flex-1 input-3d rounded px-2.5 py-1.5 text-xs font-mono text-[var(--text-primary)] outline-none"
                 />
                 <button
                   type="button"
                   onClick={() => removeParam(idx)}
-                  className="p-1.5 text-gray-500 hover:text-rose-400 rounded transition cursor-pointer"
+                  className="p-1.5 text-[var(--text-secondary)] hover:text-rose-600 dark:hover:text-rose-400 rounded transition cursor-pointer"
                   title="Remove parameter"
                 >
                   <Trash2 className="w-3.5 h-3.5" />

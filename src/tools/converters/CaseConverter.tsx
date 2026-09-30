@@ -20,7 +20,8 @@ import { Type } from 'lucide-react';
 export const CaseConverter: React.FC = () => {
   const [input, setInput] = useState('');
 
-  const words = input
+  const safeInput = input.slice(0, 100000);
+  const words = safeInput
     .replace(/([a-z])([A-Z])/g, '$1 $2')
     .replace(/[_\-.]+/g, ' ')
     .trim()
@@ -34,9 +35,9 @@ export const CaseConverter: React.FC = () => {
   const constantCase = words.map(w => w.toUpperCase()).join('_');
   const dotCase = words.map(w => w.toLowerCase()).join('.');
   const titleCase = words.map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
-  const sentenceCase = input ? input.charAt(0).toUpperCase() + input.slice(1).toLowerCase() : '';
-  const lowerCase = input.toLowerCase();
-  const upperCase = input.toUpperCase();
+  const sentenceCase = safeInput ? safeInput.charAt(0).toUpperCase() + safeInput.slice(1).toLowerCase() : '';
+  const lowerCase = safeInput.toLowerCase();
+  const upperCase = safeInput.toUpperCase();
 
   const cases = [
     { label: 'camelCase', value: camelCase },
@@ -65,11 +66,11 @@ export const CaseConverter: React.FC = () => {
         {cases.map((item) => (
           <div
             key={item.label}
-            className="p-3 bg-gray-900/60 border border-gray-800 rounded-xl flex items-center justify-between hover:border-gray-700 transition"
+            className="p-3 card-3d rounded-xl flex items-center justify-between transition"
           >
             <div className="space-y-0.5 overflow-hidden pr-2">
-              <div className="text-[11px] font-semibold text-gray-400">{item.label}</div>
-              <div className="font-mono text-xs text-emerald-400 truncate">{item.value || '—'}</div>
+              <div className="text-[11px] font-semibold text-[var(--text-secondary)]">{item.label}</div>
+              <div className="font-mono text-xs text-emerald-600 dark:text-emerald-400 truncate">{item.value || '—'}</div>
             </div>
             <CopyButton text={item.value} />
           </div>

@@ -21,8 +21,13 @@ export const MarkdownEditor: React.FC = () => {
   const [markdown, setMarkdown] = useState('');
   const [viewMode, setViewMode] = useState<'split' | 'edit' | 'preview'>('split');
 
+  const MAX_MD_LENGTH = 500000;
+
   // Simple, offline GFM markdown to HTML converter
   const renderMarkdown = (md: string) => {
+    if (md.length > MAX_MD_LENGTH) {
+      return '<div class="text-rose-500 font-mono text-xs">Error: Markdown document exceeds maximum supported length (500,000 characters)</div>';
+    }
     let html = md
       // Headers
       .replace(/^### (.*$)/gim, '<h3 class="text-base font-bold text-[var(--text-primary)] mt-3 mb-1">$1</h3>')
@@ -46,17 +51,17 @@ export const MarkdownEditor: React.FC = () => {
   return (
     <div className="flex-1 flex flex-col h-full space-y-3 min-h-[540px]">
       {/* View Switcher */}
-      <div className="flex items-center justify-between p-3 bg-gray-900/60 rounded-xl border border-gray-800">
+      <div className="flex items-center justify-between p-3 card-3d rounded-xl">
         <div className="flex items-center gap-2">
-          <FileText className="w-4 h-4 text-emerald-400" />
-          <span className="text-xs text-gray-300 font-medium">Markdown Live Preview</span>
+          <FileText className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
+          <span className="text-xs text-[var(--text-secondary)] font-medium">Markdown Live Preview</span>
         </div>
         <div className="flex items-center gap-1.5">
           <button
             type="button"
             onClick={() => setViewMode('split')}
             className={`px-3 py-1 rounded-lg text-xs font-medium transition ${
-              viewMode === 'split' ? 'bg-emerald-500 text-gray-950 font-bold' : 'bg-gray-800 text-gray-300'
+              viewMode === 'split' ? 'bg-emerald-600 text-white font-bold shadow-md' : 'btn-3d text-[var(--text-secondary)]'
             }`}
           >
             Split View
@@ -65,7 +70,7 @@ export const MarkdownEditor: React.FC = () => {
             type="button"
             onClick={() => setViewMode('edit')}
             className={`px-3 py-1 rounded-lg text-xs font-medium transition ${
-              viewMode === 'edit' ? 'bg-emerald-500 text-gray-950 font-bold' : 'bg-gray-800 text-gray-300'
+              viewMode === 'edit' ? 'bg-emerald-600 text-white font-bold shadow-md' : 'btn-3d text-[var(--text-secondary)]'
             }`}
           >
             Edit Only
@@ -74,7 +79,7 @@ export const MarkdownEditor: React.FC = () => {
             type="button"
             onClick={() => setViewMode('preview')}
             className={`px-3 py-1 rounded-lg text-xs font-medium transition ${
-              viewMode === 'preview' ? 'bg-emerald-500 text-gray-950 font-bold' : 'bg-gray-800 text-gray-300'
+              viewMode === 'preview' ? 'bg-emerald-600 text-white font-bold shadow-md' : 'btn-3d text-[var(--text-secondary)]'
             }`}
           >
             Preview Only

@@ -17,7 +17,10 @@ import { CodeEditor } from '../../components/common/CodeEditor';
 import { Terminal } from 'lucide-react';
 
 export const CurlToCodeConverter: React.FC = () => {
-  const [curl, setCurl] = useState('');
+  const [curl, setCurl] = useState(`curl -X POST https://api.example.com/v1/users \\
+  -H "Content-Type: application/json" \\
+  -H "Authorization: Bearer my-secret-token" \\
+  -d '{"name": "Alice", "role": "developer"}'`);
   const [targetLang, setTargetLang] = useState<'fetch' | 'axios' | 'python' | 'go' | 'php'>('fetch');
 
   // Simple, offline parser for cURL commands
@@ -32,14 +35,17 @@ export const CurlToCodeConverter: React.FC = () => {
     const methodMatch = clean.match(/(?:-X|--request)\s+([A-Z]+)/i);
     if (methodMatch) method = methodMatch[1].toUpperCase();
 
-    // extract headers
+    // extract headers safely
     const headerRegex = /(?:-H|--header)\s+["']([^"']+)["']/gi;
     let hMatch;
+    let headerLoopCount = 0;
     while ((hMatch = headerRegex.exec(clean)) !== null) {
+      if (++headerLoopCount > 100) break;
       const parts = hMatch[1].split(':');
       if (parts.length >= 2) {
         headers[parts[0].trim()] = parts.slice(1).join(':').trim();
       }
+      if (hMatch.index === headerRegex.lastIndex) headerRegex.lastIndex++;
     }
 
     // extract data
@@ -50,32 +56,32 @@ export const CurlToCodeConverter: React.FC = () => {
     }
 
     // extract url
-    const urlMatch = clean.match(/https?:\/\/[^\s'"]+/i);
-    if (urlMatch) url = urlMatch[0];
+    const urlMatch = clean.match(/https?:\/\/[^\s'"]+/i) || clean.match(/(?:curl\s+)?["']?(https?:\/\/[^"'\s]+)["']?/i);
+    if (urlMatch) {
+      url = urlMatch[0].replace(/^curl\s+/, '').replace(/['"]/g, '');
+    }
 
     return { method, url, headers, data };
   };
 
   const generateCode = () => {
     const parsed = parseCurl(curl);
-    if (!parsed.url) return '// Please enter a valid curl command with a URL';
+    if (!parsed.url) return '// Please enter a valid curl command containing a URL';
+
+    const safeDataString = parsed.data
+      ? (() => {
+          try {
+            return JSON.stringify(JSON.parse(parsed.data), null, 2);
+          } catch {
+            return JSON.stringify(parsed.data);
+          }
+        })()
+      : null;
 
     if (targetLang === 'fetch') {
-      const options: any = {
-        method: parsed.method,
-        headers: parsed.headers,
-      };
-      if (parsed.data) {
-        try {
-          options.body = JSON.parse(parsed.data);
-        } catch {
-          options.body = parsed.data;
-        }
-      }
       return `fetch("${parsed.url}", {
   method: "${parsed.method}",
-  headers: ${JSON.stringify(parsed.headers, null, 4)},
-  ${parsed.data ? `body: JSON.stringify(${parsed.data})` : ''}
+  headers: ${JSON.stringify(parsed.headers, null, 4)},${safeDataString ? `\n  body: JSON.stringify(${safeDataString}),` : ''}
 })
   .then(res => res.json())
   .then(data => console.log(data))
@@ -88,8 +94,7 @@ export const CurlToCodeConverter: React.FC = () => {
 axios({
   method: '${parsed.method.toLowerCase()}',
   url: '${parsed.url}',
-  headers: ${JSON.stringify(parsed.headers, null, 4)},
-  ${parsed.data ? `data: ${parsed.data}` : ''}
+  headers: ${JSON.stringify(parsed.headers, null, 4)},${safeDataString ? `\n  data: ${safeDataString},` : ''}
 })
   .then(response => {
     console.log(response.data);
@@ -100,12 +105,21 @@ axios({
     }
 
     if (targetLang === 'python') {
+      const headerLines = Object.entries(parsed.headers)
+        .map(([k, v]) => `    "${k}": "${v}",`)
+        .join('\n');
       return `import requests
 import json
 
 url = "${parsed.url}"
-headers = ${JSON.stringify(parsed.headers, null, 4)}
-${parsed.data ? `payload = ${parsed.data}\nresponse = requests.request("${parsed.method}", url, headers=headers, json=payload)` : `response = requests.request("${parsed.method}", url, headers=headers)`}
+headers = {
+${headerLines}
+}
+${safeDataString ? `payload = ${safeDataString}\n` : ''}
+response = requests.${parsed.method.toLowerCase()}(
+    url,
+    headers=headers,${safeDataString ? '\n    json=payload' : ''}
+)
 
 print(response.status_code)
 print(response.json())`;
@@ -115,44 +129,43 @@ print(response.json())`;
       return `package main
 
 import (
-\t"fmt"
-\t"net/http"
-\t"io"
-\t"strings"
+    "fmt"
+    "net/http"
+    "io"${safeDataString ? '\n    "strings"' : ''}
 )
 
 func main() {
-\turl := "${parsed.url}"
-\tmethod := "${parsed.method}"
+    url := "${parsed.url}"
+    ${safeDataString ? `payload := strings.NewReader(\`${parsed.data}\`)\n    req, err := http.NewRequest("${parsed.method}", url, payload)` : `req, err := http.NewRequest("${parsed.method}", url, nil)`}
+    if err != nil {
+        panic(err)
+    }
 
-\t${parsed.data ? `payload := strings.NewReader(\`${parsed.data}\`)\n\tclient := &http.Client{}\n\treq, err := http.NewRequest(method, url, payload)` : `client := &http.Client{}\n\treq, err := http.NewRequest(method, url, nil)`}
-\tif err != nil {
-\t\tfmt.Println(err)
-\t\treturn
-\t}
-\t${Object.entries(parsed.headers).map(([k, v]) => `req.Header.Add("${k}", "${v}")`).join('\n\t')}
+    ${Object.entries(parsed.headers)
+      .map(([k, v]) => `req.Header.Add("${k}", "${v}")`)
+      .join('\n    ')}
 
-\tres, err := client.Do(req)
-\tif err != nil {
-\t\tfmt.Println(err)
-\t\treturn
-\t}
-\tdefer res.Body.Close()
+    res, err := http.DefaultClient.Do(req)
+    if err != nil {
+        panic(err)
+    }
+    defer res.Body.Close()
 
-\tbody, _ := io.ReadAll(res.Body)
-\tfmt.Println(string(body))
+    body, _ := io.ReadAll(res.Body)
+    fmt.Println(string(body))
 }`;
     }
 
     if (targetLang === 'php') {
       return `<?php
+
 $curl = curl_init();
 
 curl_setopt_array($curl, array(
   CURLOPT_URL => '${parsed.url}',
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_CUSTOMREQUEST => '${parsed.method}',
-  ${parsed.data ? `CURLOPT_POSTFIELDS => '${parsed.data}',` : ''}
+  ${parsed.data ? `CURLOPT_POSTFIELDS => ${JSON.stringify(parsed.data)},` : ''}
   CURLOPT_HTTPHEADER => array(
     ${Object.entries(parsed.headers).map(([k, v]) => `'${k}: ${v}'`).join(',\n    ')}
   ),
@@ -169,18 +182,18 @@ echo $response;`;
   return (
     <div className="space-y-4">
       {/* Target Language Selector */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-gray-900/60 rounded-xl border border-gray-800">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3 card-3d rounded-xl">
         <div className="flex items-center gap-1.5 text-xs">
-          <Terminal className="w-4 h-4 text-emerald-400 mr-1" />
-          <span className="text-gray-400 mr-2">Target Code:</span>
+          <Terminal className="w-4 h-4 text-emerald-500 mr-1" />
+          <span className="text-[var(--text-secondary)] mr-2 font-medium">Target Code:</span>
           {(['fetch', 'axios', 'python', 'go', 'php'] as const).map((lang) => (
             <button
               key={lang}
               onClick={() => setTargetLang(lang)}
-              className={`px-3 py-1.5 rounded-lg font-medium transition uppercase text-[11px] ${
+              className={`px-3 py-1.5 rounded-lg font-medium transition uppercase text-[11px] cursor-pointer ${
                 targetLang === lang
-                  ? 'bg-emerald-500 text-gray-950 font-bold'
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                  ? 'btn-3d-active'
+                  : 'btn-3d text-[var(--text-secondary)]'
               }`}
             >
               {lang}

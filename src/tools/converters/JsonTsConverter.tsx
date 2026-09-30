@@ -14,7 +14,7 @@
 
 import React, { useState } from 'react';
 import { CodeEditor } from '../../components/common/CodeEditor';
-import { ArrowLeftRight, Settings, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Settings, CheckCircle2, AlertCircle } from 'lucide-react';
 
 interface ConversionOptions {
   rootName: string;
@@ -248,15 +248,6 @@ export const JsonTsConverter: React.FC = () => {
     }
   }
 
-  const handleSwap = () => {
-    if (output) {
-      setInput(output);
-      setDirection(direction === 'json2ts' ? 'ts2json' : 'json2ts');
-      setError(null);
-    } else {
-      setDirection(direction === 'json2ts' ? 'ts2json' : 'json2ts');
-    }
-  };
 
   return (
     <div className="flex-1 flex flex-col h-full space-y-3 min-h-[540px]">
@@ -280,15 +271,6 @@ export const JsonTsConverter: React.FC = () => {
             }`}
           >
             TypeScript → JSON
-          </button>
-          <button
-            type="button"
-            onClick={handleSwap}
-            className="btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition cursor-pointer"
-            title="Swap input and output"
-          >
-            <ArrowLeftRight className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Swap</span>
           </button>
         </div>
 

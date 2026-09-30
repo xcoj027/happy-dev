@@ -47,6 +47,7 @@ import { CodeMinifier } from '../tools/formatters/CodeMinifier';
 import { UnixTimestampConverter } from '../tools/datetime/UnixTimestampConverter';
 import { WorldClockConverter } from '../tools/datetime/WorldClockConverter';
 import { CronParser } from '../tools/datetime/CronParser';
+import { TaskReminder } from '../tools/datetime/TaskReminder';
 
 // Text
 import { TextDiffChecker } from '../tools/text/TextDiffChecker';
@@ -251,7 +252,7 @@ export const toolsRegistry: ToolDefinition[] = [
   {
     id: 'uuid-generator',
     name: 'UUID / NanoID / ULID Generator',
-    description: 'Batch generate UUID v4, time-ordered UUID v7, NanoID, and ULID with format validator.',
+    description: 'Generate cryptographically secure UUID v4, time-ordered UUID v7, NanoID, and ULID with format validator.',
     category: 'crypto',
     roles: ['Backend', 'DBA', 'Fullstack'],
     icon: 'Sparkles',
@@ -318,11 +319,11 @@ export const toolsRegistry: ToolDefinition[] = [
   {
     id: 'unix-timestamp',
     name: 'Unix Epoch & Timestamp Converter',
-    description: 'Convert between Unix epoch (s, ms, µs, ns) and human readable dates with batch mode.',
+    description: 'Convert between Unix epoch (s, ms, µs, ns) and human-readable dates with timezone inspector.',
     category: 'datetime',
     roles: ['Backend', 'DBA', 'QA', 'All'],
     icon: 'Clock',
-    tags: ['timestamp', 'epoch', 'unix', 'time', 'date', 'iso8601', 'batch', 'converter'],
+    tags: ['timestamp', 'epoch', 'unix', 'time', 'date', 'iso8601', 'converter'],
     isPopular: true,
     component: UnixTimestampConverter,
   },
@@ -347,6 +348,17 @@ export const toolsRegistry: ToolDefinition[] = [
     tags: ['cron', 'schedule', 'quartz', 'job', 'timer'],
     isPopular: true,
     component: CronParser,
+  },
+  {
+    id: 'task-reminder',
+    name: 'Dev Task Reminder & Alarm',
+    description: 'Set developer task reminders with offline audio chime, repeatable schedules (daily, weekdays), and up to 10 tasks.',
+    category: 'datetime',
+    roles: ['All', 'Backend', 'Frontend', 'Fullstack'],
+    icon: 'BellRing',
+    tags: ['reminder', 'task', 'alarm', 'schedule', 'todo', 'notification', 'timer', 'alert'],
+    isPopular: true,
+    component: TaskReminder,
   },
 
   // 6. Text & Regex & Diff

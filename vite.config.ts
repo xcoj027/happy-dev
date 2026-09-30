@@ -17,8 +17,12 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import electron from 'vite-plugin-electron';
 import { fileURLToPath, URL } from 'node:url';
+import appVersion from './scripts/app-version.cjs';
 
 export default defineConfig({
+  define: {
+    __APP_VERSION__: JSON.stringify(appVersion.getAppVersion()),
+  },
   plugins: [
     tailwindcss(),
     react(),

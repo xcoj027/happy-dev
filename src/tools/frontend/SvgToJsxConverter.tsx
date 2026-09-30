@@ -21,10 +21,15 @@ export const SvgToJsxConverter: React.FC = () => {
   const [svg, setSvg] = useState('');
   const [componentName, setComponentName] = useState('');
 
+  const MAX_SVG_LENGTH = 500000;
+
   // Convert SVG attributes to JSX camelCase
   const convertToJsx = (rawSvg: string) => {
     if (!rawSvg.trim()) return '';
-    const safeName = componentName.trim() || 'IconComponent';
+    if (rawSvg.length > MAX_SVG_LENGTH) {
+      return `// Error: SVG exceeds maximum supported length (${MAX_SVG_LENGTH.toLocaleString()} characters)`;
+    }
+    const safeName = componentName.trim().replace(/[^a-zA-Z0-9_]/g, '') || 'IconComponent';
     let jsx = rawSvg
       .replace(/class=/g, 'className=')
       .replace(/stroke-width=/g, 'strokeWidth=')
@@ -46,7 +51,7 @@ export const ${safeName}: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   };
 
   const toDataUri = (rawSvg: string) => {
-    if (!rawSvg.trim()) return '';
+    if (!rawSvg.trim() || rawSvg.length > MAX_SVG_LENGTH) return '';
     const encoded = encodeURIComponent(rawSvg.trim())
       .replace(/'/g, '%27')
       .replace(/"/g, '%22');
@@ -59,16 +64,16 @@ export const ${safeName}: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   return (
     <div className="space-y-4">
       {/* Component Name Config */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-gray-900/60 rounded-xl border border-gray-800">
-        <div className="flex items-center gap-2 text-xs text-gray-300">
-          <Code2 className="w-4 h-4 text-emerald-400" />
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3 card-3d rounded-xl">
+        <div className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
+          <Code2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
           <span>React Component Name:</span>
           <input
             type="text"
             value={componentName}
             onChange={(e) => setComponentName(e.target.value)}
             placeholder="IconComponent"
-            className="bg-gray-950 border border-gray-800 rounded px-2.5 py-1 text-xs font-mono text-emerald-400 outline-none focus:border-emerald-500"
+            className="input-3d rounded px-2.5 py-1 text-xs font-mono text-[var(--text-primary)] outline-none"
           />
         </div>
       </div>
@@ -89,19 +94,19 @@ export const ${safeName}: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
       </div>
 
       {/* SVG Preview & CSS Data URI */}
-      <div className="p-4 bg-gray-900/60 rounded-xl border border-gray-800 space-y-3">
+      <div className="p-4 card-3d rounded-xl space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold text-gray-300">CSS Data URI</span>
+          <span className="text-xs font-semibold text-[var(--text-secondary)]">CSS Data URI</span>
           <CopyButton text={`background-image: url("${dataUri}");`} label="Copy CSS rule" />
         </div>
         <div className="flex items-center gap-4">
           <div
             data-theme-island
-            className="w-16 h-16 rounded-xl bg-gray-950 border border-gray-800 flex items-center justify-center p-2 text-emerald-400 shrink-0"
+            className="w-16 h-16 rounded-xl well-3d flex items-center justify-center p-2 text-emerald-500 dark:text-emerald-400 shrink-0 overflow-hidden"
             dangerouslySetInnerHTML={{ __html: svg }}
           />
-          <pre className="flex-1 p-2.5 bg-gray-950 border border-gray-800 rounded-lg text-[11px] font-mono text-gray-400 truncate select-all">
-            {dataUri}
+          <pre className="flex-1 p-2.5 well-3d rounded-lg text-[11px] font-mono text-[var(--text-secondary)] truncate select-all">
+            {dataUri || '—'}
           </pre>
         </div>
       </div>

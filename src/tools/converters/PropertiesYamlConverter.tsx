@@ -16,7 +16,6 @@ import React, { useState, useMemo } from 'react';
 import YAML from 'yaml';
 import { CodeEditor } from '../../components/common/CodeEditor';
 import {
-  ArrowLeftRight,
   Settings2,
   CheckCircle2,
   AlertCircle,
@@ -206,8 +205,14 @@ function yamlToProperties(
   return flattenToProperties(parsed, options);
 }
 
-export const PropertiesYamlConverter: React.FC = () => {
-  const [direction, setDirection] = useState<'prop2yaml' | 'yaml2prop'>('prop2yaml');
+export interface PropertiesYamlConverterProps {
+  initialDirection?: 'prop2yaml' | 'yaml2prop';
+}
+
+export const PropertiesYamlConverter: React.FC<PropertiesYamlConverterProps> = ({
+  initialDirection = 'prop2yaml',
+}) => {
+  const [direction, setDirection] = useState<'prop2yaml' | 'yaml2prop'>(initialDirection);
   const [input, setInput] = useState<string>('');
   const [indent, setIndent] = useState<number>(2);
   const [sortKeys, setSortKeys] = useState<boolean>(false);
@@ -233,54 +238,36 @@ export const PropertiesYamlConverter: React.FC = () => {
     }
   }, [input, direction, indent, sortKeys, inferTypes, arrayFormat, delimiter]);
 
-  // Swap input and output
-  const handleSwap = () => {
-    if (output) {
-      setInput(output);
-    }
-    setDirection((prev) => (prev === 'prop2yaml' ? 'yaml2prop' : 'prop2yaml'));
-  };
 
   return (
     <div className="flex-1 flex flex-col h-full space-y-3 min-h-[540px]">
       {/* Top Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-[var(--border-color)]">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3 card-3d rounded-xl">
         {/* Direction Switcher */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center p-1 rounded-xl bg-[var(--control-input-bg)]">
-            <button
-              type="button"
-              onClick={() => setDirection('prop2yaml')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
-                direction === 'prop2yaml'
-                  ? 'bg-emerald-500 text-white'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-              }`}
-            >
-              Properties → YAML
-            </button>
-            <button
-              type="button"
-              onClick={() => setDirection('yaml2prop')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
-                direction === 'yaml2prop'
-                  ? 'bg-emerald-500 text-white'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-              }`}
-            >
-              YAML → Properties
-            </button>
-          </div>
-
           <button
             type="button"
-            onClick={handleSwap}
-            className="btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer"
-            title="Swap input and output"
+            onClick={() => setDirection('prop2yaml')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+              direction === 'prop2yaml'
+                ? 'bg-emerald-600 text-white font-semibold shadow-md'
+                : 'btn-3d text-[var(--text-secondary)]'
+            }`}
           >
-            <ArrowLeftRight className="w-3.5 h-3.5 text-emerald-500" />
-            <span className="hidden sm:inline">Swap</span>
+            Properties → YAML
           </button>
+          <button
+            type="button"
+            onClick={() => setDirection('yaml2prop')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+              direction === 'yaml2prop'
+                ? 'bg-emerald-600 text-white font-semibold shadow-md'
+                : 'btn-3d text-[var(--text-secondary)]'
+            }`}
+          >
+            YAML → Properties
+          </button>
+
         </div>
 
         {/* Options Toolbar */}

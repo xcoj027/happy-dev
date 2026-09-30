@@ -45,16 +45,6 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       tags: ['dashboard', 'workspace', 'modular', 'widgets'],
       component: null as any,
     },
-    {
-      id: 'home',
-      name: 'Utilities Catalog & Hub',
-      description: `Browse all ${toolsRegistry.length} developer utilities grouped by category.`,
-      category: 'converters',
-      roles: ['All' as any],
-      icon: 'LayoutGrid',
-      tags: ['home', 'catalog', 'hub', 'all'],
-      component: null as any,
-    },
   ], []);
 
   const filtered = useMemo(() => {

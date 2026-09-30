@@ -40,15 +40,15 @@ gap: ${gap}px;`;
   return (
     <div className="space-y-4">
       {/* Type Switcher */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-gray-900/60 rounded-xl border border-gray-800">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3 card-3d rounded-xl">
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setLayoutType('flex')}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
               layoutType === 'flex'
-                ? 'bg-emerald-500 text-white'
-                : 'bg-black/5 hover:bg-black/10 dark:bg-gray-800 dark:hover:bg-gray-700 text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                ? 'bg-emerald-600 text-white shadow-md'
+                : 'btn-3d text-[var(--text-secondary)]'
             }`}
           >
             Flexbox Layout
@@ -58,21 +58,21 @@ gap: ${gap}px;`;
             onClick={() => setLayoutType('grid')}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
               layoutType === 'grid'
-                ? 'bg-emerald-500 text-white'
-                : 'bg-black/5 hover:bg-black/10 dark:bg-gray-800 dark:hover:bg-gray-700 text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                ? 'bg-emerald-600 text-white shadow-md'
+                : 'btn-3d text-[var(--text-secondary)]'
             }`}
           >
             Grid Layout
           </button>
         </div>
 
-        <div className="flex items-center gap-3 text-xs text-gray-300">
+        <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)]">
           <label className="flex items-center gap-1.5">
             <span>Items:</span>
             <select
               value={itemCount}
               onChange={(e) => setItemCount(Number(e.target.value))}
-              className="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-xs text-gray-200 outline-none"
+              className="input-3d rounded px-2.5 py-1 text-xs outline-none text-[var(--text-primary)]"
             >
               {[3, 4, 6, 8, 12].map(n => <option key={n} value={n}>{n} items</option>)}
             </select>
@@ -81,7 +81,7 @@ gap: ${gap}px;`;
       </div>
 
       {/* Controls Bar */}
-      <div className="p-4 bg-gray-900/60 rounded-xl border border-gray-800 flex flex-wrap gap-4 text-xs text-gray-300">
+      <div className="p-4 card-3d rounded-xl flex flex-wrap gap-4 text-xs text-[var(--text-secondary)]">
         {layoutType === 'flex' ? (
           <>
             <label className="flex items-center gap-1.5">
@@ -89,7 +89,7 @@ gap: ${gap}px;`;
               <select
                 value={flexDirection}
                 onChange={(e) => setFlexDirection(e.target.value as any)}
-                className="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-xs text-gray-200 outline-none"
+                className="input-3d rounded px-2.5 py-1 text-xs outline-none text-[var(--text-primary)]"
               >
                 <option value="row">row</option>
                 <option value="column">column</option>
@@ -102,7 +102,7 @@ gap: ${gap}px;`;
               <select
                 value={justifyContent}
                 onChange={(e) => setJustifyContent(e.target.value)}
-                className="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-xs text-gray-200 outline-none"
+                className="input-3d rounded px-2.5 py-1 text-xs outline-none text-[var(--text-primary)]"
               >
                 <option value="flex-start">flex-start</option>
                 <option value="center">center</option>
@@ -117,7 +117,7 @@ gap: ${gap}px;`;
               <select
                 value={alignItems}
                 onChange={(e) => setAlignItems(e.target.value)}
-                className="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-xs text-gray-200 outline-none"
+                className="input-3d rounded px-2.5 py-1 text-xs outline-none text-[var(--text-primary)]"
               >
                 <option value="stretch">stretch</option>
                 <option value="center">center</option>
@@ -132,7 +132,7 @@ gap: ${gap}px;`;
             <select
               value={gridCols}
               onChange={(e) => setGridCols(Number(e.target.value))}
-              className="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-xs text-gray-200 outline-none"
+              className="input-3d rounded px-2.5 py-1 text-xs outline-none text-[var(--text-primary)]"
             >
               {[2, 3, 4, 6].map(c => <option key={c} value={c}>{c} columns</option>)}
             </select>
@@ -149,13 +149,13 @@ gap: ${gap}px;`;
             onChange={(e) => setGap(Number(e.target.value))}
             className="w-24 accent-emerald-500"
           />
-          <span className="font-mono text-emerald-400">{gap}px</span>
+          <span className="font-mono text-emerald-600 dark:text-emerald-400">{gap}px</span>
         </label>
       </div>
 
       {/* Visual Canvas */}
       <div
-        className="min-h-[220px] p-6 bg-gray-950 rounded-xl border border-gray-800 overflow-auto"
+        className="min-h-[220px] p-6 well-3d rounded-xl overflow-auto"
         style={
           layoutType === 'flex'
             ? { display: 'flex', flexDirection, justifyContent, alignItems, gap: `${gap}px` }
@@ -165,7 +165,7 @@ gap: ${gap}px;`;
         {Array.from({ length: itemCount }).map((_, i) => (
           <div
             key={i}
-            className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-700 dark:text-emerald-300 font-mono font-bold text-xs flex items-center justify-center min-w-[70px] min-h-[50px]"
+            className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-mono font-bold text-xs flex items-center justify-center min-w-[70px] min-h-[50px]"
           >
             Item #{i + 1}
           </div>
@@ -173,12 +173,12 @@ gap: ${gap}px;`;
       </div>
 
       {/* Code Export */}
-      <div className="p-4 bg-[var(--control-panel-bg)] rounded-xl border border-black/5 dark:border-gray-800 space-y-2">
-        <div className="flex items-center justify-between text-xs text-[var(--text-muted)] font-medium">
+      <div className="p-4 card-3d rounded-xl space-y-2">
+        <div className="flex items-center justify-between text-xs text-[var(--text-secondary)] font-medium">
           <span>Generated CSS Code</span>
           <CopyButton text={generatedCss} label="Copy CSS" />
         </div>
-        <pre className="p-3.5 bg-[var(--well-bg)] rounded-xl text-xs font-mono text-emerald-700 dark:text-emerald-400 select-all overflow-auto border border-black/5 dark:border-transparent">
+        <pre className="p-3.5 well-3d rounded-xl text-xs font-mono text-emerald-600 dark:text-emerald-400 select-all overflow-auto">
           {generatedCss}
         </pre>
       </div>

@@ -20,8 +20,13 @@ export const CodeMinifier: React.FC = () => {
   const [lang, setLang] = useState<'javascript' | 'css' | 'html'>('javascript');
   const [input, setInput] = useState('');
 
+  const MAX_INPUT_LENGTH = 500000;
+
   const minifyCode = (code: string, type: 'javascript' | 'css' | 'html') => {
     if (!code.trim()) return '';
+    if (code.length > MAX_INPUT_LENGTH) {
+      return `/* Error: Code exceeds maximum supported size of ${MAX_INPUT_LENGTH.toLocaleString()} characters */`;
+    }
 
     if (type === 'css') {
       return code
@@ -60,7 +65,7 @@ export const CodeMinifier: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-gray-900/60 rounded-xl border border-gray-800">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3 card-3d rounded-xl">
         <div className="flex items-center gap-2">
           {(['javascript', 'css', 'html'] as const).map((t) => (
             <button
@@ -68,8 +73,8 @@ export const CodeMinifier: React.FC = () => {
               onClick={() => setLang(t)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition uppercase ${
                 lang === t
-                  ? 'bg-emerald-500 text-gray-950 font-bold'
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                  ? 'bg-emerald-600 text-white font-bold shadow-md'
+                  : 'btn-3d text-[var(--text-secondary)]'
               }`}
             >
               {t === 'javascript' ? 'JavaScript' : t.toUpperCase()}
@@ -77,9 +82,9 @@ export const CodeMinifier: React.FC = () => {
           ))}
         </div>
 
-        <div className="flex items-center gap-2 text-xs text-emerald-400 font-mono">
+        <div className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400 font-mono">
           <Gauge className="w-4 h-4" />
-          <span>Saved {savings}% ({origSize}B → {minSize}B)</span>
+          <span>Saved {savings}% ({origSize.toLocaleString()}B → {minSize.toLocaleString()}B)</span>
         </div>
       </div>
 

@@ -12,7 +12,7 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CodeEditor } from '../../components/common/CodeEditor';
 import { RefreshCw, FileText } from 'lucide-react';
 
@@ -49,43 +49,46 @@ export const LoremIpsumGenerator: React.FC = () => {
   };
 
   const generate = () => {
+    const safeCount = Math.min(50, Math.max(1, count));
     if (unit === 'words') {
       const res = [];
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < safeCount; i++) {
         res.push(wordsBank[i % wordsBank.length]);
       }
       setText(res.join(' '));
     } else if (unit === 'sentences') {
       const res = [];
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < safeCount; i++) {
         res.push(generateSentence());
       }
       setText(res.join(' '));
     } else {
       const res = [];
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < safeCount; i++) {
         res.push(generateParagraph());
       }
       setText(res.join('\n\n'));
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     generate();
   }, [unit, count]);
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-gray-900/60 rounded-xl border border-gray-800">
-        <div className="flex items-center gap-3 text-xs text-gray-300">
-          <FileText className="w-4 h-4 text-emerald-400" />
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3 card-3d rounded-xl">
+        <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)]">
+          <FileText className="w-4 h-4 text-emerald-500" />
           <div className="flex items-center gap-1.5">
             {(['paragraphs', 'sentences', 'words'] as const).map((u) => (
               <button
                 key={u}
                 onClick={() => setUnit(u)}
-                className={`px-3 py-1.5 rounded-lg font-medium capitalize text-xs transition ${
-                  unit === u ? 'bg-emerald-500 text-gray-950 font-bold' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                className={`px-3 py-1.5 rounded-lg font-medium capitalize text-xs transition cursor-pointer ${
+                  unit === u
+                    ? 'btn-3d-active'
+                    : 'btn-3d text-[var(--text-secondary)]'
                 }`}
               >
                 {u}
@@ -94,21 +97,24 @@ export const LoremIpsumGenerator: React.FC = () => {
           </div>
 
           <label className="flex items-center gap-1.5 ml-2">
-            <span>Count:</span>
+            <span>Count (1-50):</span>
             <input
               type="number"
               min="1"
               max="50"
               value={count}
-              onChange={(e) => setCount(Math.max(1, Number(e.target.value)))}
-              className="w-16 bg-gray-950 border border-gray-800 rounded px-2 py-1 text-xs text-gray-200 outline-none"
+              onChange={(e) => {
+                const val = Number(e.target.value);
+                setCount(isNaN(val) ? 1 : Math.min(50, Math.max(1, val)));
+              }}
+              className="w-16 input-3d rounded px-2 py-1 text-xs text-[var(--text-primary)] outline-none text-center"
             />
           </label>
         </div>
 
         <button
           onClick={generate}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs transition"
+          className="btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-xs transition cursor-pointer"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           <span>Regenerate</span>

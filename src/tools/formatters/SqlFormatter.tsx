@@ -24,17 +24,24 @@ export const SqlFormatter: React.FC = () => {
   const [indent, setIndent] = useState(2);
   const [error, setError] = useState<string | null>(null);
 
+  const MAX_SQL_LENGTH = 500000;
+
   let formattedSql = '';
   try {
-    if (input.trim()) {
-      formattedSql = format(input, {
+    const trimmed = input.trim();
+    if (trimmed.length > MAX_SQL_LENGTH) {
+      setError(`SQL query exceeds maximum supported length (${MAX_SQL_LENGTH.toLocaleString()} characters)`);
+    } else if (trimmed) {
+      formattedSql = format(trimmed, {
         language,
         tabWidth: indent,
         keywordCase,
         linesBetweenQueries: 2,
       });
+      if (error) setError(null);
+    } else {
+      if (error) setError(null);
     }
-    if (error) setError(null);
   } catch (err: any) {
     formattedSql = '';
     if (input.trim() && (!error || error !== err.message)) {
@@ -45,15 +52,15 @@ export const SqlFormatter: React.FC = () => {
   return (
     <div className="flex-1 flex flex-col h-full space-y-3 min-h-[540px]">
       {/* Settings Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-gray-900/60 rounded-xl border border-gray-800">
-        <div className="flex items-center gap-3 text-xs text-gray-300">
-          <Database className="w-4 h-4 text-emerald-400" />
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3 card-3d rounded-xl">
+        <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)]">
+          <Database className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
           <label className="flex items-center gap-1.5">
             <span>Dialect:</span>
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value as any)}
-              className="bg-gray-800 border border-gray-700 rounded px-2.5 py-1 text-xs text-gray-200 outline-none uppercase font-semibold"
+              className="input-3d rounded px-2.5 py-1 text-xs outline-none uppercase font-semibold text-[var(--text-primary)]"
             >
               <option value="postgresql">PostgreSQL</option>
               <option value="mysql">MySQL</option>
@@ -68,7 +75,7 @@ export const SqlFormatter: React.FC = () => {
             <select
               value={keywordCase}
               onChange={(e) => setKeywordCase(e.target.value as any)}
-              className="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-xs text-gray-200 outline-none"
+              className="input-3d rounded px-2.5 py-1 text-xs outline-none text-[var(--text-primary)]"
             >
               <option value="upper">UPPERCASE</option>
               <option value="lower">lowercase</option>
@@ -78,12 +85,12 @@ export const SqlFormatter: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <label className="flex items-center gap-1.5 text-xs text-gray-300">
+          <label className="flex items-center gap-1.5 text-xs text-[var(--text-secondary)]">
             <span>Indent:</span>
             <select
               value={indent}
               onChange={(e) => setIndent(Number(e.target.value))}
-              className="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-xs text-gray-200 outline-none"
+              className="input-3d rounded px-2.5 py-1 text-xs outline-none text-[var(--text-primary)]"
             >
               <option value={2}>2 spaces</option>
               <option value={4}>4 spaces</option>
@@ -93,7 +100,7 @@ export const SqlFormatter: React.FC = () => {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-400 text-xs font-mono">
+        <div className="flex items-center gap-2 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-600 dark:text-rose-400 text-xs font-mono">
           <AlertCircle className="w-4 h-4 flex-shrink-0" />
           <span>{error}</span>
         </div>

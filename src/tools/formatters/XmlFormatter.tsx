@@ -21,14 +21,18 @@ export const XmlFormatter: React.FC = () => {
   const [indentSize, setIndentSize] = useState(2);
   const [error, setError] = useState<string | null>(null);
 
+  const MAX_XML_LENGTH = 500000;
+
   // Pure XML Beautifier algorithm
   const formatXml = (xml: string, tab: string) => {
     if (!xml.trim()) return '';
+    if (xml.length > MAX_XML_LENGTH) {
+      throw new Error(`XML document exceeds maximum supported length (${MAX_XML_LENGTH.toLocaleString()} characters)`);
+    }
     let formatted = '';
     let indent = '';
     const reg = /(>)(<)(\/*)/g;
     xml = xml.replace(reg, '$1\r\n$2$3');
-    const pad = 0;
     xml.split('\r\n').forEach((node) => {
       let indentDelta = 0;
       if (node.match(/.+<\/\w[^>]*>$/)) {
@@ -52,6 +56,10 @@ export const XmlFormatter: React.FC = () => {
   };
 
   const minifyXml = (xml: string) => {
+    if (xml.length > MAX_XML_LENGTH) {
+      setError(`XML document exceeds maximum supported length (${MAX_XML_LENGTH.toLocaleString()} characters)`);
+      return xml;
+    }
     return xml.replace(/>\s+</g, '><').trim();
   };
 
@@ -69,34 +77,38 @@ export const XmlFormatter: React.FC = () => {
 
   return (
     <div className="flex-1 flex flex-col h-full space-y-3 min-h-[540px]">
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-gray-900/60 rounded-xl border border-gray-800">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3 card-3d rounded-xl">
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => {
-              const tabStr = ' '.repeat(indentSize);
-              setInput(formatXml(input, tabStr));
+              try {
+                const tabStr = ' '.repeat(indentSize);
+                setInput(formatXml(input, tabStr));
+              } catch (e: any) {
+                setError(e.message);
+              }
             }}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-800 hover:bg-gray-700 text-gray-300 transition"
+            className="btn-3d px-3 py-1.5 rounded-lg text-xs font-medium transition"
           >
             Beautify XML
           </button>
           <button
             type="button"
             onClick={() => setInput(minifyXml(input))}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-800 hover:bg-gray-700 text-gray-300 transition"
+            className="btn-3d px-3 py-1.5 rounded-lg text-xs font-medium transition"
           >
             Minify XML
           </button>
         </div>
 
-        <div className="flex items-center gap-3 text-xs text-gray-300">
+        <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)]">
           <label className="flex items-center gap-1.5">
             <span>Indent:</span>
             <select
               value={indentSize}
               onChange={(e) => setIndentSize(Number(e.target.value))}
-              className="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-xs text-gray-200 outline-none"
+              className="input-3d rounded px-2.5 py-1 text-xs outline-none text-[var(--text-primary)]"
             >
               <option value={2}>2 spaces</option>
               <option value={4}>4 spaces</option>
@@ -106,7 +118,7 @@ export const XmlFormatter: React.FC = () => {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-400 text-xs font-mono">
+        <div className="flex items-center gap-2 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-600 dark:text-rose-400 text-xs font-mono">
           <AlertCircle className="w-4 h-4 flex-shrink-0" />
           <span>{error}</span>
         </div>

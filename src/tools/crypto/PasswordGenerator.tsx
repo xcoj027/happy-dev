@@ -24,8 +24,6 @@ export const PasswordGenerator: React.FC = () => {
   const [includeSymbols, setIncludeSymbols] = useState(true);
   const [excludeAmbiguous, setExcludeAmbiguous] = useState(true);
   const [password, setPassword] = useState('');
-  const [batchCount, setBatchCount] = useState(5);
-  const [batchList, setBatchList] = useState<string[]>([]);
 
   const generateSinglePassword = (len: number) => {
     let chars = '';
@@ -58,17 +56,11 @@ export const PasswordGenerator: React.FC = () => {
   const generate = () => {
     const main = generateSinglePassword(length);
     setPassword(main);
-
-    const list: string[] = [];
-    for (let i = 0; i < batchCount; i++) {
-      list.push(generateSinglePassword(length));
-    }
-    setBatchList(list);
   };
 
   React.useEffect(() => {
     generate();
-  }, [length, includeUpper, includeLower, includeNumbers, includeSymbols, excludeAmbiguous, batchCount]);
+  }, [length, includeUpper, includeLower, includeNumbers, includeSymbols, excludeAmbiguous]);
 
   // Calculate entropy bits
   let poolSize = 0;
@@ -181,25 +173,6 @@ export const PasswordGenerator: React.FC = () => {
             />
             <span>Exclude Ambiguous (0, O, 1, l, I)</span>
           </label>
-        </div>
-      </div>
-
-      {/* Batch List */}
-      <div className="p-4 card-3d rounded-xl space-y-2">
-        <div className="flex items-center justify-between text-xs text-[var(--text-secondary)]">
-          <span className="font-semibold text-[var(--text-primary)]">Batch Generated Secrets ({batchList.length})</span>
-          <CopyButton text={batchList.join('\n')} label="Copy All" />
-        </div>
-        <div className="space-y-1.5">
-          {batchList.map((pw, idx) => (
-            <div
-              key={idx}
-              className="flex items-center justify-between px-3 py-1.5 well-3d rounded-lg text-xs font-mono"
-            >
-              <span className="text-[var(--text-primary)] truncate pr-2">{pw}</span>
-              <CopyButton text={pw} />
-            </div>
-          ))}
         </div>
       </div>
     </div>

@@ -14,13 +14,15 @@
 
 import React, { useState } from 'react';
 import { CodeEditor } from '../../components/common/CodeEditor';
-import { ArrowLeftRight } from 'lucide-react';
 
 export const HtmlEntityEncoder: React.FC = () => {
   const [mode, setMode] = useState<'encode' | 'decode'>('encode');
   const [input, setInput] = useState('');
 
+  const MAX_INPUT_LENGTH = 500000;
+
   const encodeHtml = (str: string) => {
+    if (str.length > MAX_INPUT_LENGTH) return '/* Error: Input exceeds maximum supported length (500,000 characters) */';
     return str.replace(/[&<>"']/g, (m) => {
       switch (m) {
         case '&': return '&amp;';
@@ -34,6 +36,7 @@ export const HtmlEntityEncoder: React.FC = () => {
   };
 
   const decodeHtml = (str: string) => {
+    if (str.length > MAX_INPUT_LENGTH) return '/* Error: Input exceeds maximum supported length (500,000 characters) */';
     const doc = new DOMParser().parseFromString(str, 'text/html');
     return doc.documentElement.textContent || '';
   };
@@ -42,14 +45,14 @@ export const HtmlEntityEncoder: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 p-3 bg-gray-900/60 rounded-xl border border-gray-800">
+      <div className="flex items-center gap-2 p-3 card-3d rounded-xl">
         <button
           type="button"
           onClick={() => setMode('encode')}
           className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
             mode === 'encode'
-              ? 'bg-emerald-500 text-gray-950 font-semibold'
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+              ? 'bg-emerald-600 text-white font-semibold shadow-md'
+              : 'btn-3d text-[var(--text-secondary)]'
           }`}
         >
           HTML → Entities (Escape)
@@ -59,24 +62,11 @@ export const HtmlEntityEncoder: React.FC = () => {
           onClick={() => setMode('decode')}
           className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
             mode === 'decode'
-              ? 'bg-emerald-500 text-gray-950 font-semibold'
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+              ? 'bg-emerald-600 text-white font-semibold shadow-md'
+              : 'btn-3d text-[var(--text-secondary)]'
           }`}
         >
           Entities → HTML (Unescape)
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            if (output) {
-              setInput(output);
-              setMode(mode === 'encode' ? 'decode' : 'encode');
-            }
-          }}
-          className="p-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 transition"
-          title="Swap"
-        >
-          <ArrowLeftRight className="w-4 h-4" />
         </button>
       </div>
 

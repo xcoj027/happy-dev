@@ -12,16 +12,15 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CopyButton } from '../../components/common/CopyButton';
-import { RefreshCw, CheckCircle2, XCircle, Hash } from 'lucide-react';
+import { RefreshCw, CheckCircle2, XCircle } from 'lucide-react';
 
 export const UuidGenerator: React.FC = () => {
   const [version, setVersion] = useState<'v4' | 'v7' | 'nanoid' | 'ulid'>('v4');
-  const [count, setCount] = useState(10);
   const [hyphens, setHyphens] = useState(true);
   const [uppercase, setUppercase] = useState(false);
-  const [list, setList] = useState<string[]>([]);
+  const [generatedId, setGeneratedId] = useState('');
   const [validateInput, setValidateInput] = useState('');
 
   // UUID v4 generator
@@ -44,7 +43,6 @@ export const UuidGenerator: React.FC = () => {
     for (let i = 0; i < randomBytes.length; i++) {
       hex += randomBytes[i].toString(16).padStart(2, '0');
     }
-    // format as 8-4-4-4-12 with version 7 and variant 2
     const p1 = hex.slice(0, 8);
     const p2 = hex.slice(8, 12);
     const p3 = '7' + hex.slice(13, 16);
@@ -85,28 +83,24 @@ export const UuidGenerator: React.FC = () => {
   };
 
   const generate = () => {
-    const results: string[] = [];
-    for (let i = 0; i < count; i++) {
-      let id = '';
-      if (version === 'v4') id = genV4();
-      else if (version === 'v7') id = genV7();
-      else if (version === 'nanoid') id = genNanoId();
-      else if (version === 'ulid') id = genUlid();
+    let id = '';
+    if (version === 'v4') id = genV4();
+    else if (version === 'v7') id = genV7();
+    else if (version === 'nanoid') id = genNanoId();
+    else if (version === 'ulid') id = genUlid();
 
-      if ((version === 'v4' || version === 'v7') && !hyphens) {
-        id = id.replace(/-/g, '');
-      }
-      if (uppercase) id = id.toUpperCase();
-      else if (version === 'v4' || version === 'v7') id = id.toLowerCase();
-
-      results.push(id);
+    if ((version === 'v4' || version === 'v7') && !hyphens) {
+      id = id.replace(/-/g, '');
     }
-    setList(results);
+    if (uppercase) id = id.toUpperCase();
+    else if (version === 'v4' || version === 'v7') id = id.toLowerCase();
+
+    setGeneratedId(id);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     generate();
-  }, [version, count, hyphens, uppercase]);
+  }, [version, hyphens, uppercase]);
 
   // Validation
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -128,27 +122,12 @@ export const UuidGenerator: React.FC = () => {
                   : 'btn-3d text-[var(--text-secondary)]'
               }`}
             >
-              {t === 'v4' ? 'UUID v4' : t === 'v7' ? 'UUID v7 (Time-Ordered)' : t}
+              {t === 'v4' ? 'UUID v4' : t === 'v7' ? 'UUID v7' : t}
             </button>
           ))}
         </div>
 
         <div className="flex items-center gap-4 text-xs text-[var(--text-secondary)]">
-          <label className="flex items-center gap-1.5">
-            <span>Quantity:</span>
-            <select
-              value={count}
-              onChange={(e) => setCount(Number(e.target.value))}
-              className="bg-[var(--control-input-bg)] border border-black/10 dark:border-white/10 rounded px-2 py-1 text-xs text-[var(--text-primary)] outline-none"
-            >
-              <option value={1}>1</option>
-              <option value={5}>5</option>
-              <option value={10}>10</option>
-              <option value={25}>25</option>
-              <option value={50}>50</option>
-            </select>
-          </label>
-
           {(version === 'v4' || version === 'v7') && (
             <label className="flex items-center gap-1.5 cursor-pointer">
               <input
@@ -173,30 +152,25 @@ export const UuidGenerator: React.FC = () => {
 
           <button
             onClick={generate}
-            className="btn-3d p-1.5 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition cursor-pointer"
-            title="Regenerate"
+            className="btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition cursor-pointer"
+            title="Generate new ID"
           >
-            <RefreshCw className="w-4 h-4" />
+            <RefreshCw className="w-3.5 h-3.5" />
+            <span>Generate</span>
           </button>
         </div>
       </div>
 
-      {/* Generated List */}
+      {/* Generated Identifier Display */}
       <div className="p-4 card-3d rounded-xl space-y-2">
         <div className="flex items-center justify-between text-xs">
-          <span className="font-semibold text-[var(--text-primary)]">Generated Identifiers ({list.length})</span>
-          <CopyButton text={list.join('\n')} label="Copy All" />
+          <span className="font-semibold text-[var(--text-primary)]">Generated Identifier</span>
+          <CopyButton text={generatedId} />
         </div>
-        <div className="space-y-1.5 max-h-[300px] overflow-auto">
-          {list.map((id, idx) => (
-            <div
-              key={idx}
-              className="flex items-center justify-between px-3 py-1.5 well-3d rounded-lg text-xs font-mono"
-            >
-              <span className="text-emerald-600 dark:text-emerald-400 select-all font-semibold">{id}</span>
-              <CopyButton text={id} />
-            </div>
-          ))}
+        <div className="flex items-center justify-between p-3.5 well-3d rounded-xl">
+          <span className="text-sm sm:text-base font-mono font-bold text-emerald-600 dark:text-emerald-400 select-all break-all pr-2">
+            {generatedId}
+          </span>
         </div>
       </div>
 
@@ -214,9 +188,13 @@ export const UuidGenerator: React.FC = () => {
           {validateInput.trim() && (
             <div className="flex items-center gap-1.5 text-xs font-mono">
               {isValidUuid ? (
-                <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-semibold"><CheckCircle2 className="w-4 h-4" /> Valid UUID</span>
+                <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-semibold">
+                  <CheckCircle2 className="w-4 h-4" /> Valid UUID
+                </span>
               ) : (
-                <span className="text-rose-600 dark:text-rose-400 flex items-center gap-1 font-semibold"><XCircle className="w-4 h-4" /> Invalid UUID</span>
+                <span className="text-rose-600 dark:text-rose-400 flex items-center gap-1 font-semibold">
+                  <XCircle className="w-4 h-4" /> Invalid UUID
+                </span>
               )}
             </div>
           )}

@@ -66,12 +66,12 @@ export const UserAgentParser: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between p-3 bg-gray-900/60 rounded-xl border border-gray-800">
-        <span className="text-xs text-gray-300 font-medium">User-Agent Offline Inspector</span>
+      <div className="flex items-center justify-between p-3 card-3d rounded-xl">
+        <span className="text-xs text-[var(--text-secondary)] font-medium">User-Agent Offline Inspector</span>
         <button
           type="button"
           onClick={() => setUa(navigator.userAgent)}
-          className="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-gray-300 transition"
+          className="btn-3d px-3 py-1.5 rounded-lg text-xs transition"
         >
           Use Current Device UA
         </button>
@@ -86,21 +86,21 @@ export const UserAgentParser: React.FC = () => {
 
       {/* Parsed Telemetry */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-        <div className="p-3 bg-gray-900/60 border border-gray-800 rounded-xl space-y-1">
-          <span className="text-[11px] text-gray-400">Browser Name</span>
-          <div className="text-base font-bold text-emerald-400">{info.browser}</div>
-          <div className="text-[11px] text-gray-500 font-mono">v{info.version || 'Unknown'}</div>
+        <div className="p-3 card-3d rounded-xl space-y-1">
+          <span className="text-[11px] text-[var(--text-secondary)]">Browser Name</span>
+          <div className="text-base font-bold text-emerald-600 dark:text-emerald-400">{info.browser}</div>
+          <div className="text-[11px] text-[var(--text-secondary)] font-mono">v{info.version || 'Unknown'}</div>
         </div>
 
-        <div className="p-3 bg-gray-900/60 border border-gray-800 rounded-xl space-y-1">
-          <span className="text-[11px] text-gray-400">Operating System</span>
-          <div className="text-base font-bold text-cyan-400">{info.os}</div>
-          <div className="text-[11px] text-gray-500 font-mono">Device: {info.device}</div>
+        <div className="p-3 card-3d rounded-xl space-y-1">
+          <span className="text-[11px] text-[var(--text-secondary)]">Operating System</span>
+          <div className="text-base font-bold text-cyan-600 dark:text-cyan-400">{info.os}</div>
+          <div className="text-[11px] text-[var(--text-secondary)] font-mono">Device: {info.device}</div>
         </div>
 
-        <div className="p-3 bg-gray-900/60 border border-gray-800 rounded-xl space-y-1">
-          <span className="text-[11px] text-gray-400">Rendering Engine</span>
-          <div className="text-base font-bold text-indigo-400">{info.engine}</div>
+        <div className="p-3 card-3d rounded-xl space-y-1">
+          <span className="text-[11px] text-[var(--text-secondary)]">Rendering Engine</span>
+          <div className="text-base font-bold text-indigo-600 dark:text-indigo-400">{info.engine}</div>
         </div>
       </div>
     </div>

@@ -14,15 +14,20 @@
 
 import React, { useState } from 'react';
 import { CodeEditor } from '../../components/common/CodeEditor';
-import { ArrowLeftRight } from 'lucide-react';
 
 export const StringEscaper: React.FC = () => {
   const [lang, setLang] = useState<'json' | 'sql' | 'regex' | 'csharp'>('json');
   const [mode, setMode] = useState<'escape' | 'unescape'>('escape');
   const [input, setInput] = useState('');
 
+  const MAX_INPUT_LENGTH = 500000;
+
   const processString = (str: string, type: string, action: 'escape' | 'unescape') => {
     if (!str) return '';
+    if (str.length > MAX_INPUT_LENGTH) {
+      return `/* Error: String exceeds maximum supported length (${MAX_INPUT_LENGTH.toLocaleString()} characters) */`;
+    }
+
     try {
       if (action === 'escape') {
         if (type === 'json' || type === 'csharp') {
@@ -36,7 +41,16 @@ export const StringEscaper: React.FC = () => {
         }
       } else {
         if (type === 'json' || type === 'csharp') {
-          return JSON.parse(`"${str.replace(/"/g, '\\"')}"`);
+          try {
+            return JSON.parse(`"${str.replace(/\\"/g, '"').replace(/"/g, '\\"')}"`);
+          } catch {
+            return str
+              .replace(/\\n/g, '\n')
+              .replace(/\\t/g, '\t')
+              .replace(/\\r/g, '\r')
+              .replace(/\\"/g, '"')
+              .replace(/\\\\/g, '\\');
+          }
         }
         if (type === 'sql') {
           return str.replace(/''/g, "'");
@@ -55,13 +69,13 @@ export const StringEscaper: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-gray-900/60 rounded-xl border border-gray-800">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3 card-3d rounded-xl">
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setMode('escape')}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
-              mode === 'escape' ? 'bg-emerald-500 text-gray-950 font-bold' : 'bg-gray-800 text-gray-300'
+              mode === 'escape' ? 'bg-emerald-600 text-white font-bold shadow-md' : 'btn-3d text-[var(--text-secondary)]'
             }`}
           >
             Escape String
@@ -70,7 +84,7 @@ export const StringEscaper: React.FC = () => {
             type="button"
             onClick={() => setMode('unescape')}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
-              mode === 'unescape' ? 'bg-emerald-500 text-gray-950 font-bold' : 'bg-gray-800 text-gray-300'
+              mode === 'unescape' ? 'bg-emerald-600 text-white font-bold shadow-md' : 'btn-3d text-[var(--text-secondary)]'
             }`}
           >
             Unescape String
@@ -78,13 +92,13 @@ export const StringEscaper: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 text-xs">
-          <span className="text-gray-400">Target Language:</span>
+          <span className="text-[var(--text-secondary)]">Target Language:</span>
           {(['json', 'sql', 'regex', 'csharp'] as const).map((t) => (
             <button
               key={t}
               onClick={() => setLang(t)}
               className={`px-2.5 py-1 rounded-lg uppercase text-[11px] font-semibold transition ${
-                lang === t ? 'bg-cyan-500 text-gray-950' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                lang === t ? 'bg-cyan-600 text-white shadow-md' : 'btn-3d text-[var(--text-secondary)]'
               }`}
             >
               {t === 'csharp' ? 'C# / Java' : t}

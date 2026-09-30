@@ -14,10 +14,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { CopyButton } from '../../components/common/CopyButton';
-import { Clock, Play, Pause, RefreshCw, Calendar, ArrowRightLeft, ListFilter, CheckCircle2 } from 'lucide-react';
+import { Clock, Play, Pause, RefreshCw, Calendar, CheckCircle2 } from 'lucide-react';
 
 export const UnixTimestampConverter: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'single' | 'datetoepoch' | 'batch'>('single');
+  const [activeTab, setActiveTab] = useState<'single' | 'datetoepoch'>('single');
   const [currentEpoch, setCurrentEpoch] = useState(Math.floor(Date.now() / 1000));
   const [isLive, setIsLive] = useState(true);
 
@@ -31,9 +31,6 @@ export const UnixTimestampConverter: React.FC = () => {
     return new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 19);
   });
   const [dateTz, setDateTz] = useState<'local' | 'utc'>('local');
-
-  // Batch converter state
-  const [batchInput, setBatchInput] = useState<string>('');
 
   // Live timer tick
   useEffect(() => {
@@ -111,30 +108,6 @@ export const UnixTimestampConverter: React.FC = () => {
     }
   } catch {}
 
-  // Batch rows calculation
-  const batchRows = batchInput
-    .split('\n')
-    .map(line => line.trim())
-    .filter(Boolean)
-    .map(line => {
-      const num = Number(line);
-      if (isNaN(num)) return { raw: line, valid: false, iso: 'Invalid', local: 'Invalid', rel: 'Invalid' };
-      let d: Date;
-      if (line.length <= 11) d = new Date(num * 1000);
-      else if (line.length <= 14) d = new Date(num);
-      else if (line.length <= 17) d = new Date(num / 1000);
-      else d = new Date(num / 1000000);
-
-      if (isNaN(d.getTime())) return { raw: line, valid: false, iso: 'Invalid', local: 'Invalid', rel: 'Invalid' };
-      return {
-        raw: line,
-        valid: true,
-        iso: d.toISOString(),
-        local: d.toLocaleString(),
-        rel: getRelativeTime(d)
-      };
-    });
-
   return (
     <div className="flex-1 flex flex-col h-full space-y-4">
       {/* Live Current Epoch Banner */}
@@ -195,16 +168,6 @@ export const UnixTimestampConverter: React.FC = () => {
         >
           <Calendar className="w-3.5 h-3.5 text-emerald-400" />
           <span>Date & Time → Epoch</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab('batch')}
-          className={`btn-3d flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium cursor-pointer ${
-            activeTab === 'batch' ? 'btn-3d-active' : 'text-[var(--text-secondary)]'
-          }`}
-        >
-          <ListFilter className="w-3.5 h-3.5 text-sky-400" />
-          <span>Batch Converter</span>
         </button>
       </div>
 
@@ -389,73 +352,6 @@ export const UnixTimestampConverter: React.FC = () => {
               <div className="text-base font-mono font-semibold text-purple-400 truncate">
                 {calculatedEpochMs}000000
               </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 3: Batch Converter */}
-      {activeTab === 'batch' && (
-        <div className="space-y-4">
-          <div className="card-3d p-4 rounded-xl space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-[var(--text-primary)]">Paste Multiple Epoch Timestamps (one per line)</span>
-              <button
-                type="button"
-                onClick={() => setBatchInput('')}
-                className="text-xs text-[var(--text-muted)] hover:text-rose-400 cursor-pointer"
-              >
-                Clear
-              </button>
-            </div>
-            <textarea
-              rows={4}
-              value={batchInput}
-              onChange={(e) => setBatchInput(e.target.value)}
-              placeholder="1727180400&#10;1727184000&#10;1727187600"
-              className="input-3d w-full px-3 py-2 rounded-lg text-xs font-mono text-[var(--text-primary)] outline-none resize-none"
-            />
-          </div>
-
-          <div className="card-3d p-4 rounded-xl space-y-2">
-            <div className="flex items-center justify-between text-xs text-[var(--text-secondary)]">
-              <span>Parsed Results ({batchRows.length} rows)</span>
-              {batchRows.length > 0 && (
-                <CopyButton
-                  text={batchRows.map(r => `${r.raw},${r.iso},${r.local}`).join('\n')}
-                  label="Copy as CSV"
-                />
-              )}
-            </div>
-
-            <div className="well-3d p-2 rounded-xl overflow-auto max-h-[300px]">
-              <table className="w-full text-left text-xs font-mono">
-                <thead>
-                  <tr className="border-b border-[var(--well-header-bg)] text-[var(--text-muted)]">
-                    <th className="p-2">Timestamp</th>
-                    <th className="p-2">ISO 8601 (UTC)</th>
-                    <th className="p-2">Local Time</th>
-                    <th className="p-2">Relative</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--well-header-bg)]/40">
-                  {batchRows.map((r, i) => (
-                    <tr key={i} className="hover:bg-[var(--control-panel-bg)]/50 transition">
-                      <td className="p-2 text-orange-400 font-semibold">{r.raw}</td>
-                      <td className="p-2 text-[var(--text-primary)]">{r.iso}</td>
-                      <td className="p-2 text-emerald-400">{r.local}</td>
-                      <td className="p-2 text-[var(--text-muted)]">{r.rel}</td>
-                    </tr>
-                  ))}
-                  {batchRows.length === 0 && (
-                    <tr>
-                      <td colSpan={4} className="p-6 text-center text-[var(--text-muted)] italic">
-                        Paste epoch timestamps above to see parsed tabular output.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
             </div>
           </div>
         </div>

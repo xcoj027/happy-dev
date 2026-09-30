@@ -14,10 +14,14 @@
 
 import React, { useState } from 'react';
 import { CodeEditor } from '../../components/common/CodeEditor';
-import { ArrowLeftRight, Image as ImageIcon, AlertCircle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 
-export const Base64Converter: React.FC = () => {
-  const [mode, setMode] = useState<'encode' | 'decode'>('encode');
+interface Base64ConverterProps {
+  initialMode?: 'encode' | 'decode';
+}
+
+export const Base64Converter: React.FC<Base64ConverterProps> = ({ initialMode = 'encode' }) => {
+  const [mode, setMode] = useState<'encode' | 'decode'>(initialMode);
   const [input, setInput] = useState('');
   const [urlSafe, setUrlSafe] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -59,24 +63,18 @@ export const Base64Converter: React.FC = () => {
     }
   }
 
-  // Check if output looks like an image data URL or base64 image
-  const isImageBase64 =
-    (mode === 'encode' && input.startsWith('data:image/')) ||
-    (mode === 'decode' && input.startsWith('data:image/')) ||
-    (input.length > 50 && /^[A-Za-z0-9+/=]+$/.test(input.replace(/\s+/g, '')));
-
   return (
     <div className="space-y-4">
       {/* Mode Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-gray-900/60 rounded-xl border border-gray-800">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3 card-3d rounded-xl">
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setMode('encode')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
               mode === 'encode'
-                ? 'bg-emerald-500 text-gray-950 font-semibold'
-                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                ? 'bg-emerald-600 text-white font-semibold shadow-md'
+                : 'btn-3d text-[var(--text-secondary)]'
             }`}
           >
             Text → Base64 (Encode)
@@ -84,42 +82,29 @@ export const Base64Converter: React.FC = () => {
           <button
             type="button"
             onClick={() => setMode('decode')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
               mode === 'decode'
-                ? 'bg-emerald-500 text-gray-950 font-semibold'
-                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                ? 'bg-emerald-600 text-white font-semibold shadow-md'
+                : 'btn-3d text-[var(--text-secondary)]'
             }`}
           >
             Base64 → Text (Decode)
           </button>
-          <button
-            type="button"
-            onClick={() => {
-              if (output) {
-                setInput(output);
-                setMode(mode === 'encode' ? 'decode' : 'encode');
-              }
-            }}
-            className="p-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 transition"
-            title="Swap and invert"
-          >
-            <ArrowLeftRight className="w-4 h-4" />
-          </button>
         </div>
 
-        <label className="flex items-center gap-1.5 text-xs text-gray-300 cursor-pointer">
+        <label className="flex items-center gap-1.5 text-xs text-[var(--text-secondary)] cursor-pointer">
           <input
             type="checkbox"
             checked={urlSafe}
             onChange={(e) => setUrlSafe(e.target.checked)}
-            className="rounded bg-gray-800 border-gray-700 text-emerald-500 focus:ring-0"
+            className="rounded text-emerald-500 focus:ring-0 cursor-pointer"
           />
           <span>URL-Safe Base64 (- and _ instead of + and /)</span>
         </label>
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-400 text-xs font-mono">
+        <div className="flex items-center gap-2 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-500 dark:text-rose-400 text-xs font-mono">
           <AlertCircle className="w-4 h-4 flex-shrink-0" />
           <span>{error}</span>
         </div>

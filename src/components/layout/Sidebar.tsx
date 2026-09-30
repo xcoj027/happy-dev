@@ -12,29 +12,23 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
-import React, { useState } from 'react';
-import { categories, toolsRegistry } from '../../data/toolsRegistry';
-import { ToolCategory } from '../../types';
+import React, { useState, useEffect } from 'react';
+import { toolsRegistry } from '../../data/toolsRegistry';
 import { DynamicIcon } from '../common/DynamicIcon';
 import { getCategoryColor } from '../../utils/categoryColors';
 import {
-  Star,
   Search,
   Moon,
   Sun,
-  ChevronDown,
-  Layers,
-  LayoutGrid,
   LayoutDashboard,
+  PanelLeftClose,
+  PanelLeftOpen,
+  X,
 } from 'lucide-react';
 
 interface SidebarProps {
   activeToolId: string;
   onSelectTool: (id: string) => void;
-  selectedCategory: ToolCategory | 'all';
-  onSelectCategory: (cat: ToolCategory | 'all') => void;
-  favorites: string[];
-  onToggleFavorite: (id: string) => void;
   isDark: boolean;
   onToggleTheme: () => void;
 }
@@ -42,85 +36,102 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({
   activeToolId,
   onSelectTool,
-  selectedCategory,
-  onSelectCategory,
-  favorites,
-  onToggleFavorite,
   isDark,
   onToggleTheme,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
-
-  // Categories sorted by Name (A-Z)
-  const sortedCategories = [...categories].sort((a, b) => a.name.localeCompare(b.name));
-
-  // Filter tools by category and search
-  const filteredTools = toolsRegistry.filter((tool) => {
-    const matchesSearch =
-      tool.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      tool.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      tool.tags.some((t) => t.toLowerCase().includes(searchTerm.toLowerCase()));
-
-    const matchesCat =
-      selectedCategory === 'all' || tool.category === selectedCategory;
-
-    return matchesSearch && matchesCat;
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('happydev_sidebar_collapsed') === 'true';
+    } catch {
+      return false;
+    }
   });
 
-  // All filtered tools sorted by Name (A-Z)
-  const sortedFilteredTools = [...filteredTools].sort((a, b) => a.name.localeCompare(b.name));
+  useEffect(() => {
+    try {
+      localStorage.setItem('happydev_sidebar_collapsed', String(isCollapsed));
+    } catch {}
+  }, [isCollapsed]);
 
-  // Favorite tools sorted by Name (A-Z)
-  const sortedFavoriteTools = toolsRegistry
-    .filter((t) => favorites.includes(t.id))
-    .sort((a, b) => a.name.localeCompare(b.name));
+  // Filter tools by search query (A-Z)
+  const filteredTools = toolsRegistry.filter((tool) => {
+    const term = searchTerm.toLowerCase().trim();
+    if (!term) return true;
+    return (
+      tool.name.toLowerCase().includes(term) ||
+      tool.description.toLowerCase().includes(term) ||
+      tool.category.toLowerCase().includes(term) ||
+      tool.tags.some((t) => t.toLowerCase().includes(term))
+    );
+  });
+
+  const sortedFilteredTools = [...filteredTools].sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
 
   return (
-    <aside className="app-no-drag w-68 h-full min-h-0 bg-[var(--bg-sidebar)] flex flex-col justify-between select-none transition-colors shrink-0 z-10">
-      {/* Top Header / Filters */}
-      <div className="p-3 space-y-2.5">
-        {/* Category Dropdown (Sorted A-Z) */}
-        <div className="space-y-1">
-          <div className="flex items-center justify-between text-[11px] text-[var(--text-secondary)] font-semibold px-0.5">
-            <span className="flex items-center gap-1.5">
-              <Layers className={`w-3.5 h-3.5 ${selectedCategory === 'all' ? 'text-emerald-500' : getCategoryColor(selectedCategory).text}`} /> Category:
-            </span>
-            <span className="text-[10px] text-[var(--text-muted)] font-mono">
-              {selectedCategory === 'all' ? `All (${toolsRegistry.length})` : `${sortedFilteredTools.length} tools`}
-            </span>
-          </div>
-          <div className="relative">
-            <select
-              value={selectedCategory}
-              onChange={(e) => onSelectCategory(e.target.value as any)}
-              className="w-full bg-[var(--control-input-bg)] rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-primary)] outline-none appearance-none font-medium pr-8 cursor-pointer hover:bg-[var(--control-panel-bg)] transition"
+    <aside
+      className={`app-no-drag h-full min-h-0 bg-[var(--bg-sidebar)] flex flex-col justify-between select-none transition-all duration-300 ease-in-out shrink-0 z-20 ${
+        isCollapsed ? 'w-16' : 'w-64'
+      }`}
+    >
+      {/* Top Header / Search / Collapse Toggle */}
+      <div className="p-2.5 space-y-2 border-b border-black/[0.04] dark:border-white/[0.04]">
+        {isCollapsed ? (
+          <div className="flex flex-col items-center justify-center pt-1">
+            <button
+              type="button"
+              onClick={() => setIsCollapsed(false)}
+              className="p-2 rounded-xl text-[var(--text-secondary)] hover:text-emerald-500 hover:bg-[var(--control-panel-bg)] transition cursor-pointer"
+              title="Expand sidebar"
             >
-              <option value="all">All Categories ({toolsRegistry.length})</option>
-              {sortedCategories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="w-3.5 h-3.5 text-[var(--text-muted)] absolute right-2.5 top-2.5 pointer-events-none" />
+              <PanelLeftOpen className="w-4 h-4" />
+            </button>
           </div>
-        </div>
+        ) : (
+          <>
+            <div className="flex items-center justify-between px-1">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+                Utilities
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsCollapsed(true)}
+                className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-emerald-500 hover:bg-[var(--control-panel-bg)] transition cursor-pointer"
+                title="Collapse sidebar"
+              >
+                <PanelLeftClose className="w-4 h-4" />
+              </button>
+            </div>
 
-        {/* Search Input */}
-        <div className="relative">
-          <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-[var(--text-muted)]" />
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search utilities (A-Z)..."
-            className="w-full bg-[var(--control-input-bg)] rounded-lg pl-8 pr-2.5 py-1.5 text-xs text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)]"
-          />
-        </div>
+            {/* Search Input */}
+            <div className="relative">
+              <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-[var(--text-muted)] pointer-events-none" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search utilities (A-Z)..."
+                className="w-full bg-[var(--control-input-bg)] rounded-lg pl-8 pr-7 py-1.5 text-xs text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:ring-1 focus:ring-emerald-500"
+              />
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-2 top-2 p-0.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer"
+                  title="Clear search"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+          </>
+        )}
       </div>
 
-      {/* Tools Scrollable Navigation List */}
-      <div className="flex-1 overflow-y-auto px-2 py-2 space-y-3 min-h-0">
+      {/* Navigation Links Scrollable List */}
+      <div className="flex-1 overflow-y-auto px-2 py-2 space-y-1 min-h-0">
         {/* Custom Modular Dashboard */}
         <div
           onClick={() => onSelectTool('dashboard')}
@@ -132,178 +143,119 @@ export const Sidebar: React.FC<SidebarProps> = ({
               onSelectTool('dashboard');
             }
           }}
-          className={`w-full group flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer select-none ${
+          title={isCollapsed ? 'Dashboard' : undefined}
+          className={`w-full group flex items-center ${
+            isCollapsed ? 'justify-center p-2.5' : 'justify-between px-2.5 py-2'
+          } rounded-xl text-xs font-semibold transition cursor-pointer select-none ${
             activeToolId === 'dashboard'
-              ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+              ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-bold'
               : 'text-[var(--text-secondary)] hover:bg-[var(--control-panel-bg)] hover:text-[var(--text-primary)]'
           }`}
         >
-          <div className="flex items-center gap-2 pointer-events-none">
-            <LayoutDashboard className="w-4 h-4 text-emerald-500 shrink-0" />
-            <span>Dashboard</span>
+          <div className="flex items-center gap-2.5 pointer-events-none">
+            <LayoutDashboard
+              className={`w-4 h-4 shrink-0 ${
+                activeToolId === 'dashboard' ? 'text-emerald-500' : 'text-emerald-500/80 group-hover:text-emerald-500'
+              }`}
+            />
+            {!isCollapsed && <span>Dashboard</span>}
           </div>
         </div>
 
-        {/* All Utilities Catalog */}
-        <div
-          onClick={() => onSelectTool('home')}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              onSelectTool('home');
-            }
-          }}
-          className={`w-full group flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer select-none ${
-            activeToolId === 'home'
-              ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
-              : 'text-[var(--text-secondary)] hover:bg-[var(--control-panel-bg)] hover:text-[var(--text-primary)]'
-          }`}
-        >
-          <div className="flex items-center gap-2 pointer-events-none">
-            <LayoutGrid className="w-4 h-4 text-emerald-500 shrink-0" />
-            <span>Utilities Catalog</span>
-          </div>
-          <span className="text-[10px] font-mono text-[var(--text-muted)] px-1.5 py-0.2 rounded bg-black/5 dark:bg-white/5">
-            {toolsRegistry.length}
-          </span>
-        </div>
+        {/* Divider */}
+        <div className="my-1 border-t border-black/[0.04] dark:border-white/[0.04]" />
 
-        {/* Pinned Favorites Section */}
-        {sortedFavoriteTools.length > 0 && selectedCategory === 'all' && !searchTerm && (
-          <div className="space-y-1">
-            <div className="flex items-center justify-between px-2 text-[10px] uppercase font-bold tracking-wider text-amber-500/90 dark:text-amber-400/90">
-              <span className="flex items-center gap-1.5">
-                <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                <span>Favorites ({sortedFavoriteTools.length})</span>
-              </span>
-              <span className="text-[9px] text-[var(--text-muted)]">Sorted A-Z</span>
-            </div>
-            <div className="space-y-0.5">
-              {sortedFavoriteTools.map((tool) => {
-                const isActive = activeToolId === tool.id;
-                return (
-                  <div
-                    key={tool.id}
-                    onClick={() => onSelectTool(tool.id)}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        onSelectTool(tool.id);
-                      }
-                    }}
-                    className={`w-full group flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition cursor-pointer select-none ${
-                      isActive
-                        ? 'bg-amber-500/15 text-amber-600 dark:text-amber-300 font-semibold'
-                        : 'text-[var(--text-secondary)] hover:bg-[var(--control-panel-bg)] hover:text-[var(--text-primary)]'
-                    }`}
-                  >
-                    <div className="flex-1 flex items-center gap-2 truncate text-left pointer-events-none">
-                      <DynamicIcon name={tool.icon} size={14} className={`${getCategoryColor(tool.category).text} shrink-0`} />
-                      <span className="truncate">{tool.name}</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onToggleFavorite(tool.id);
-                      }}
-                      className="p-1 rounded text-amber-500 hover:text-rose-500 transition shrink-0 ml-1 cursor-pointer hover:bg-black/5 dark:hover:bg-white/10"
-                      title="Unpin favorite"
-                    >
-                      <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
+        {/* All Utilities List */}
+        {!isCollapsed && (
+          <div className="flex items-center justify-between px-2 py-1 text-[10px] uppercase font-bold tracking-wider text-[var(--text-muted)]">
+            <span>All Utilities</span>
+            <span className="text-[10px] font-mono">{sortedFilteredTools.length}</span>
           </div>
         )}
 
-        {/* All Utilities List (Sorted A-Z) */}
-        <div className="space-y-1">
-          <div className="flex items-center justify-between px-2 text-[10px] uppercase font-bold tracking-wider text-[var(--text-muted)]">
-            <span>Utilities ({sortedFilteredTools.length})</span>
-            <span className="text-[9px] text-[var(--text-muted)]">Sorted A-Z</span>
+        {sortedFilteredTools.length === 0 ? (
+          <div className="text-xs text-[var(--text-muted)] px-2 py-6 text-center">
+            {!isCollapsed && `No utilities matching "${searchTerm}"`}
           </div>
+        ) : (
+          <div className="space-y-0.5">
+            {sortedFilteredTools.map((tool) => {
+              const isActive = activeToolId === tool.id;
+              const catColor = getCategoryColor(tool.category);
 
-          {sortedFilteredTools.length === 0 ? (
-            <div className="text-xs text-[var(--text-muted)] px-3 py-6 text-center">
-              No utilities matching "{searchTerm}"
-            </div>
-          ) : (
-            <div className="space-y-0.5">
-              {sortedFilteredTools.map((tool) => {
-                const isActive = activeToolId === tool.id;
-                const isFav = favorites.includes(tool.id);
-
-                return (
+              return (
+                <div
+                  key={tool.id}
+                  onClick={() => onSelectTool(tool.id)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      onSelectTool(tool.id);
+                    }
+                  }}
+                  title={isCollapsed ? tool.name : undefined}
+                  className={`w-full group flex items-center ${
+                    isCollapsed ? 'justify-center p-2.5' : 'justify-between px-2.5 py-1.5'
+                  } rounded-lg text-xs transition cursor-pointer select-none ${
+                    isActive
+                      ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-semibold'
+                      : 'text-[var(--text-secondary)] hover:bg-[var(--control-panel-bg)] hover:text-[var(--text-primary)]'
+                  }`}
+                >
                   <div
-                    key={tool.id}
-                    onClick={() => onSelectTool(tool.id)}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        onSelectTool(tool.id);
-                      }
-                    }}
-                    className={`w-full group flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition cursor-pointer select-none ${
-                      isActive
-                        ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 font-semibold'
-                        : 'text-[var(--text-secondary)] hover:bg-[var(--control-panel-bg)] hover:text-[var(--text-primary)]'
-                    }`}
+                    className={`flex items-center ${
+                      isCollapsed ? 'justify-center' : 'gap-2 truncate text-left'
+                    } pointer-events-none min-w-0`}
                   >
-                    <div className="flex-1 flex items-center gap-2 truncate text-left pointer-events-none">
-                      <DynamicIcon
-                        name={tool.icon}
-                        size={14}
-                        className={`${getCategoryColor(tool.category).text} shrink-0`}
-                      />
+                    <DynamicIcon
+                      name={tool.icon}
+                      size={15}
+                      className={`${catColor.text} shrink-0`}
+                    />
+                    {!isCollapsed && (
                       <span className="truncate">{tool.name}</span>
-                    </div>
-
-                    {/* Star Icon for quick favoriting directly on any row */}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onToggleFavorite(tool.id);
-                      }}
-                      className={`p-1 rounded hover:bg-black/5 dark:hover:bg-white/10 transition shrink-0 ml-1 cursor-pointer ${
-                        isFav
-                          ? 'text-amber-500'
-                          : 'text-[var(--text-muted)] opacity-0 group-hover:opacity-100 hover:text-amber-500'
-                      }`}
-                      title={isFav ? 'Remove from favorites' : 'Star as favorite'}
-                    >
-                      <Star className={`w-3.5 h-3.5 ${isFav ? 'fill-amber-500 text-amber-500' : ''}`} />
-                    </button>
+                    )}
                   </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Bottom Footer: Theme & App Details */}
-      <div className="p-3 bg-[var(--bg-sidebar)] flex items-center justify-between text-xs text-[var(--text-secondary)]">
+      <div
+        className={`p-2.5 border-t border-black/[0.04] dark:border-white/[0.04] flex items-center ${
+          isCollapsed ? 'justify-center' : 'justify-between'
+        } text-xs text-[var(--text-secondary)]`}
+      >
         <button
           type="button"
           onClick={onToggleTheme}
-          className="btn-3d flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition cursor-pointer"
+          className={`btn-3d flex items-center ${
+            isCollapsed ? 'p-2 justify-center' : 'gap-1.5 px-2.5 py-1.5'
+          } rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition cursor-pointer`}
           title={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
         >
-          {isDark ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-indigo-500" />}
-          <span className="text-[11px] font-medium">{isDark ? 'Light' : 'Dark'}</span>
+          {isDark ? (
+            <Sun className="w-3.5 h-3.5 text-amber-400" />
+          ) : (
+            <Moon className="w-3.5 h-3.5 text-indigo-500" />
+          )}
+          {!isCollapsed && (
+            <span className="text-[11px] font-medium">
+              {isDark ? 'Light' : 'Dark'}
+            </span>
+          )}
         </button>
 
-        <span className="text-[11px] font-mono text-[var(--text-muted)]">{toolsRegistry.length} Utilities</span>
+        {!isCollapsed && (
+          <span className="text-[10px] font-mono text-[var(--text-muted)]">
+            {toolsRegistry.length} Tools
+          </span>
+        )}
       </div>
     </aside>
   );

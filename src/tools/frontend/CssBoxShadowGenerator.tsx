@@ -50,12 +50,12 @@ background-color: ${boxColor};`;
       </div>
 
       {/* Sliders Grid */}
-      <div className="p-4 bg-gray-900/60 rounded-xl border border-gray-800 space-y-4">
+      <div className="p-4 card-3d rounded-xl space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
           <div>
-            <div className="flex justify-between text-gray-400 mb-1">
+            <div className="flex justify-between text-[var(--text-secondary)] mb-1">
               <span>Offset X</span>
-              <span className="font-mono text-emerald-400">{x}px</span>
+              <span className="font-mono text-emerald-600 dark:text-emerald-400">{x}px</span>
             </div>
             <input
               type="range"
@@ -68,9 +68,9 @@ background-color: ${boxColor};`;
           </div>
 
           <div>
-            <div className="flex justify-between text-gray-400 mb-1">
+            <div className="flex justify-between text-[var(--text-secondary)] mb-1">
               <span>Offset Y</span>
-              <span className="font-mono text-emerald-400">{y}px</span>
+              <span className="font-mono text-emerald-600 dark:text-emerald-400">{y}px</span>
             </div>
             <input
               type="range"
@@ -83,9 +83,9 @@ background-color: ${boxColor};`;
           </div>
 
           <div>
-            <div className="flex justify-between text-gray-400 mb-1">
+            <div className="flex justify-between text-[var(--text-secondary)] mb-1">
               <span>Blur Radius</span>
-              <span className="font-mono text-emerald-400">{blur}px</span>
+              <span className="font-mono text-emerald-600 dark:text-emerald-400">{blur}px</span>
             </div>
             <input
               type="range"
@@ -98,9 +98,9 @@ background-color: ${boxColor};`;
           </div>
 
           <div>
-            <div className="flex justify-between text-gray-400 mb-1">
+            <div className="flex justify-between text-[var(--text-secondary)] mb-1">
               <span>Spread Radius</span>
-              <span className="font-mono text-emerald-400">{spread}px</span>
+              <span className="font-mono text-emerald-600 dark:text-emerald-400">{spread}px</span>
             </div>
             <input
               type="range"
@@ -113,13 +113,13 @@ background-color: ${boxColor};`;
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-4 pt-2 border-t border-gray-800 text-xs text-gray-300">
+        <div className="flex flex-wrap items-center justify-between gap-4 pt-2 border-t border-[var(--control-border)] text-xs text-[var(--text-secondary)]">
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
               checked={inset}
               onChange={(e) => setInset(e.target.checked)}
-              className="rounded bg-gray-800 border-gray-700 text-emerald-500"
+              className="rounded text-emerald-500"
             />
             <span>Inset Shadow</span>
           </label>
@@ -134,18 +134,18 @@ background-color: ${boxColor};`;
               onChange={(e) => setBorderRadius(Number(e.target.value))}
               className="w-24 accent-emerald-500"
             />
-            <span className="font-mono text-emerald-400 w-8">{borderRadius}px</span>
+            <span className="font-mono text-emerald-600 dark:text-emerald-400 w-8">{borderRadius}px</span>
           </label>
         </div>
       </div>
 
       {/* Code Export */}
-      <div className="p-4 bg-[var(--control-panel-bg)] rounded-xl border border-black/5 dark:border-gray-800 space-y-2">
-        <div className="flex items-center justify-between text-xs text-[var(--text-muted)] font-medium">
+      <div className="p-4 card-3d rounded-xl space-y-2">
+        <div className="flex items-center justify-between text-xs text-[var(--text-secondary)] font-medium">
           <span>Generated CSS</span>
           <CopyButton text={fullCss} label="Copy CSS" />
         </div>
-        <pre className="p-3.5 bg-[var(--well-bg)] rounded-xl text-xs font-mono text-emerald-700 dark:text-emerald-400 select-all overflow-auto border border-black/5 dark:border-transparent">
+        <pre className="p-3.5 well-3d rounded-xl text-xs font-mono text-emerald-600 dark:text-emerald-400 select-all overflow-auto">
           {fullCss}
         </pre>
       </div>

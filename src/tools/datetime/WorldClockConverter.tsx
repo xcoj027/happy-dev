@@ -14,7 +14,7 @@
 
 import React, { useState } from 'react';
 import { CopyButton } from '../../components/common/CopyButton';
-import { Globe, Clock, Search, Plus, Trash2, Calendar, ArrowRightLeft } from 'lucide-react';
+import { Globe, Clock, Search, Plus, Trash2, Calendar } from 'lucide-react';
 
 interface ZoneItem {
   id: string;
