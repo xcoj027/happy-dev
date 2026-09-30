@@ -1,0 +1,182 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: happy-dev-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cleanup-old-artifacts:
+    name: Clean old build artifacts
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete previous platform artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api --paginate "repos/${GITHUB_REPOSITORY}/actions/artifacts?per_page=100" \
+            --jq '.artifacts[] | select(.name | startswith("happydev-")) | .id' |
+          while read -r artifact_id; do
+            gh api --method DELETE "repos/${GITHUB_REPOSITORY}/actions/artifacts/${artifact_id}"
+          done
+
+  build-packages:
+    name: Build (${{ matrix.platform }})
+    needs: cleanup-old-artifacts
+    if: always() && (needs.cleanup-old-artifacts.result == 'success' || needs.cleanup-old-artifacts.result == 'skipped')
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            platform: macos
+            build_flag: --mac
+          - os: windows-latest
+            platform: windows
+            build_flag: --win
+          - os: ubuntu-latest
+            platform: linux
+            build_flag: --linux
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install Linux packaging dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes libarchive-tools libfuse2
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check and build application
+        run: npm run build
+
+      - name: Package application
+        run: npx electron-builder ${{ matrix.build_flag }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Upload platform artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: happydev-${{ matrix.platform }}
+          path: |
+            release/**/*.dmg
+            release/**/*.zip
+            release/**/*.exe
+            release/**/*.AppImage
+            release/**/*.deb
+          if-no-files-found: error
+          retention-days: 1
+
+  publish-release:
+    name: Publish public release
+    needs: build-packages
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all platform artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: happydev-*
+          path: downloaded-artifacts
+
+      - name: Prepare release assets and checksums
+        shell: bash
+        run: |
+          mkdir -p release-assets
+          find downloaded-artifacts -type f \( \
+            -name '*.dmg' -o \
+            -name '*.zip' -o \
+            -name '*.exe' -o \
+            -name '*.AppImage' -o \
+            -name '*.deb' \
+          \) -exec cp {} release-assets/ \;
+
+          if [[ -z "$(find release-assets -maxdepth 1 -type f -print -quit)" ]]; then
+            echo "::error::No release assets were downloaded."
+            exit 1
+          fi
+
+          cd release-assets
+          sha256sum * > SHA256SUMS.txt
+
+      - name: Determine release metadata
+        id: release_info
+        shell: bash
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            tag="${GITHUB_REF#refs/tags/}"
+            echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+            echo "title=HappyDev ${tag}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=latest" >> "$GITHUB_OUTPUT"
+            echo "title=HappyDev (Latest Build)" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Validate release token for public repository
+        shell: bash
+        env:
+          TARGET_REPOSITORY: ${{ vars.RELEASE_REPOSITORY || 'xcoj027/happy-dev-releases' }}
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        run: |
+          if [[ -z "$GH_TOKEN" ]]; then
+            echo "::error::Add a fine-grained PAT as the RELEASE_TOKEN secret. Grant Contents read/write access to $TARGET_REPOSITORY."
+            exit 1
+          fi
+
+          if ! gh api "repos/$TARGET_REPOSITORY" >/dev/null; then
+            echo "::error::RELEASE_TOKEN cannot access $TARGET_REPOSITORY."
+            exit 1
+          fi
+
+      - name: Remove previous public releases
+        shell: bash
+        env:
+          TARGET_REPOSITORY: ${{ vars.RELEASE_REPOSITORY || 'xcoj027/happy-dev-releases' }}
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        run: |
+          gh api --paginate "repos/$TARGET_REPOSITORY/releases?per_page=100" --jq '.[].id' |
+          while read -r release_id; do
+            if [[ "$release_id" =~ ^[0-9]+$ ]]; then
+              gh api --method DELETE "repos/$TARGET_REPOSITORY/releases/$release_id"
+            fi
+          done
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          repository: ${{ vars.RELEASE_REPOSITORY || 'xcoj027/happy-dev-releases' }}
+          token: ${{ secrets.RELEASE_TOKEN }}
+          tag_name: ${{ steps.release_info.outputs.tag }}
+          target_commitish: main
+          name: ${{ steps.release_info.outputs.title }}
+          body: Automated HappyDev packages for ${{ steps.release_info.outputs.title }}.
+          prerelease: false
+          files: release-assets/*
+          generate_release_notes: true

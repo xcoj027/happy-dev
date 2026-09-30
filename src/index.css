@@ -1,0 +1,440 @@
+/**
+ * HappyDev - Offline Developer Utilities Suite
+ *
+ * @author   TNQSW
+ * @license  MIT (with Trademark Retention Notice)
+ * @repo     https://github.com/xcoj027/happy-dev
+ *
+ * Copyright (c) 2026 TNQSW. All rights reserved.
+ *
+ * Trademark Notice:
+ * Any derivative work, fork, modification, or redistribution of this software
+ * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
+ */
+
+@import "tailwindcss";
+
+:root, .light {
+  color-scheme: light;
+  /* Soft clean slate light palette (Default) */
+  --bg-main: #f8fafc;
+  --bg-titlebar: #ffffff;
+  --bg-sidebar: #ffffff;
+  --bg-master: transparent;
+  --bg-card: #ffffff;
+  --bg-header: #ffffff;
+
+  --border-color: rgba(0, 0, 0, 0.08);
+  --border-subtle: rgba(0, 0, 0, 0.04);
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+
+  --well-bg: #f8fafc;
+  --well-border: rgba(0, 0, 0, 0.06);
+  --well-header-bg: #f1f5f9;
+  --well-text: #0f172a;
+  --well-readonly-bg: #ecfdf5;
+  --well-readonly-text: #065f46;
+
+  --control-panel-bg: #ffffff;
+  --control-input-bg: #f1f5f9;
+  --control-input-border: rgba(0, 0, 0, 0.08);
+}
+
+.dark {
+  color-scheme: dark;
+  /* Soft Charcoal Slate-Gray Palette (Not pitch-black) */
+  --bg-main: #181b22;
+  --bg-titlebar: #181b22;
+  --bg-sidebar: #1c202a;
+  --bg-master: transparent;
+  --bg-card: #232835;
+  --bg-header: rgba(35, 40, 53, 0.85);
+
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-subtle: rgba(255, 255, 255, 0.04);
+
+  /* Typography */
+  --text-primary: #f3f4f6;
+  --text-secondary: #9aa7b9;
+  --text-muted: #6b7a90;
+
+  /* Recessed Wells & Textareas */
+  --well-bg: #191c25;
+  --well-border: rgba(255, 255, 255, 0.06);
+  --well-header-bg: rgba(22, 25, 34, 0.8);
+  --well-text: #e2e8f0;
+  --well-readonly-bg: rgba(16, 185, 129, 0.08);
+  --well-readonly-text: #34d399;
+
+  /* Elevated Controls and Sub-Boxes */
+  --control-panel-bg: #232835;
+  --control-input-bg: #1a1d26;
+  --control-input-border: rgba(255, 255, 255, 0.08);
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Master Card Container - Seamless without colored box frame */
+.master-card-3d {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Dashboard Widget Cards */
+.dashboard-card {
+  background-color: #ffffff;
+  color: var(--text-primary);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.dark .dashboard-card {
+  background-color: #232835 !important;
+  color: #f3f4f6 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Content Sub-Panels */
+.card-3d {
+  background-color: #f8fafc;
+  color: var(--text-primary);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.dark .card-3d {
+  background-color: #1a1d26 !important;
+  color: #f3f4f6 !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Inset Textarea / Code Well */
+.well-3d {
+  background: var(--well-bg);
+  border: 1px solid var(--well-border);
+}
+
+.dark .well-3d {
+  background: #151821 !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+/* 3D Elevated Controls and Pills */
+.btn-3d {
+  background: linear-gradient(180deg, #343c50 0%, #282f40 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #cbd5e1;
+  transition: all 0.15s ease-in-out;
+}
+
+.btn-3d:hover {
+  background: linear-gradient(180deg, #404961 0%, #2f374a 100%);
+  color: #ffffff;
+}
+
+.light .btn-3d {
+  background: linear-gradient(180deg, #ffffff 0%, #edf2f7 100%);
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  color: #1e293b;
+}
+
+.light .btn-3d:hover {
+  background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+  color: #0f172a;
+}
+
+.btn-3d-active {
+  background: linear-gradient(180deg, #10b981 0%, #059669 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  border: none !important;
+}
+
+.light .btn-3d-active {
+  background: linear-gradient(180deg, #10b981 0%, #059669 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+/* ============================================================
+   SYSTEMIC THEME COLOR ENGINE (LIGHT & DARK SEPARATION)
+   Guarantees 0% theme color bleed / leakage
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. LIGHT THEME ENFORCEMENT
+   Neutralizes all hardcoded dark gray/black boxes and unreadable light text
+   ------------------------------------------------------------ */
+
+/* Neutralize all dark panel backgrounds */
+.light [class*="bg-gray-9"],
+.light [class*="bg-gray-8"],
+.light [class*="bg-gray-7"],
+.light [class*="bg-slate-9"],
+.light [class*="bg-slate-8"],
+.light [class*="bg-slate-7"],
+.light [class*="bg-zinc-9"],
+.light [class*="bg-zinc-8"],
+.light [class*="bg-neutral-9"],
+.light [class*="bg-neutral-8"],
+.light .bg-black {
+  background-color: var(--control-panel-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Recessed wells / sub-inputs in Light mode */
+.light [class*="bg-gray-950"],
+.light [class*="bg-slate-950"],
+.light [class*="bg-zinc-950"] {
+  background-color: var(--control-input-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Secondary button/pill backgrounds in Light mode */
+.light [class*="bg-gray-800"],
+.light [class*="bg-gray-700"],
+.light [class*="bg-slate-800"],
+.light [class*="bg-slate-700"] {
+  background-color: var(--control-input-bg) !important;
+  color: var(--text-secondary) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+.light [class*="hover:bg-gray-7"]:hover,
+.light [class*="hover:bg-gray-8"]:hover,
+.light [class*="hover:bg-slate-7"]:hover,
+.light [class*="hover:bg-slate-8"]:hover {
+  background-color: #e2e8f0 !important;
+  color: var(--text-primary) !important;
+}
+
+/* Text color correction in Light mode */
+.light [class*="text-gray-1"],
+.light [class*="text-gray-2"],
+.light [class*="text-slate-1"],
+.light [class*="text-slate-2"],
+.light [class*="text-zinc-1"],
+.light [class*="text-zinc-2"] {
+  color: var(--text-primary) !important;
+}
+
+.light [class*="text-gray-3"],
+.light [class*="text-gray-4"],
+.light [class*="text-slate-3"],
+.light [class*="text-slate-4"],
+.light [class*="text-zinc-3"],
+.light [class*="text-zinc-4"] {
+  color: var(--text-secondary) !important;
+}
+
+.light [class*="text-gray-5"],
+.light [class*="text-slate-5"] {
+  color: var(--text-muted) !important;
+}
+
+/* Primary actions keep white text */
+.light .btn-3d-active,
+.light [class*="bg-emerald-500"],
+.light [class*="bg-emerald-600"] {
+  color: #ffffff !important;
+}
+
+/* Border fixes in Light */
+.light [class*="border-gray-"],
+.light [class*="border-slate-"],
+.light [class*="border-zinc-"],
+.light [class*="border-neutral-"] {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Form controls in Light mode */
+.light input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]),
+.light select,
+.light textarea {
+  background-color: var(--control-input-bg) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.light select option {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+.light input[type="checkbox"],
+.light input[type="radio"] {
+  accent-color: #10b981;
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+.light pre:not([class*="text-"]),
+.light code:not([class*="text-"]) {
+  background-color: #f8fafc !important;
+  color: #065f46 !important;
+}
+
+.light kbd {
+  background-color: var(--control-input-bg) !important;
+  color: var(--text-secondary) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.light input[type="range"] {
+  accent-color: #059669;
+}
+
+/* ------------------------------------------------------------
+   2. DARK THEME ENFORCEMENT
+   Neutralizes all rogue white boxes and invisible black text
+   ------------------------------------------------------------ */
+
+/* Force all white and light-gray background utilities to dark charcoal */
+.dark .bg-white:not([data-keep-white]):not(.keep-white),
+.dark [class*="bg-gray-50"]:not([data-keep-white]):not(.keep-white),
+.dark [class*="bg-gray-100"]:not([data-keep-white]):not(.keep-white),
+.dark [class*="bg-gray-200"]:not([data-keep-white]):not(.keep-white),
+.dark [class*="bg-slate-50"]:not([data-keep-white]):not(.keep-white),
+.dark [class*="bg-slate-100"]:not([data-keep-white]):not(.keep-white),
+.dark [class*="bg-slate-200"]:not([data-keep-white]):not(.keep-white) {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Dark mode panel and well harmony */
+.dark [class*="bg-gray-9"],
+.dark [class*="bg-slate-9"],
+.dark [class*="bg-zinc-9"],
+.dark [class*="bg-neutral-9"] {
+  background-color: var(--control-panel-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark [class*="bg-gray-950"],
+.dark [class*="bg-slate-950"],
+.dark [class*="bg-zinc-950"] {
+  background-color: var(--control-input-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark [class*="bg-gray-8"],
+.dark [class*="bg-gray-7"],
+.dark [class*="bg-slate-8"],
+.dark [class*="bg-zinc-8"] {
+  background-color: var(--control-input-bg) !important;
+  color: var(--text-secondary) !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark [class*="hover:bg-gray-7"]:hover,
+.dark [class*="hover:bg-gray-8"]:hover,
+.dark [class*="hover:bg-slate-7"]:hover,
+.dark [class*="hover:bg-slate-8"]:hover {
+  background-color: #2e3545 !important;
+  color: var(--text-primary) !important;
+}
+
+/* Text color fixes in Dark: turn near-black text into crisp light text */
+.dark [class*="text-gray-9"],
+.dark [class*="text-gray-8"],
+.dark [class*="text-gray-7"],
+.dark [class*="text-slate-9"],
+.dark [class*="text-slate-8"],
+.dark [class*="text-slate-7"],
+.dark [class*="text-zinc-9"],
+.dark [class*="text-zinc-8"],
+.dark [class*="text-zinc-7"],
+.dark .text-black {
+  color: var(--text-primary) !important;
+}
+
+.dark [class*="text-gray-6"],
+.dark [class*="text-gray-5"],
+.dark [class*="text-slate-6"],
+.dark [class*="text-slate-5"] {
+  color: var(--text-secondary) !important;
+}
+
+/* Borders in Dark */
+.dark [class*="border-gray-"],
+.dark [class*="border-slate-"],
+.dark [class*="border-zinc-"],
+.dark [class*="border-black"] {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Form controls in Dark */
+.dark input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]),
+.dark select,
+.dark textarea {
+  background-color: var(--control-input-bg) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark select option {
+  background-color: #1a1d26 !important;
+  color: #f3f4f6 !important;
+}
+
+.dark input[type="checkbox"],
+.dark input[type="radio"] {
+  accent-color: #10b981;
+  background-color: #1a1d26 !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.dark pre:not([class*="text-"]),
+.dark code:not([class*="text-"]) {
+  background-color: #151821 !important;
+  color: #34d399 !important;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #373f50;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4a5468;
+}
+
+.light ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+
+.light ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Draggable regions for Electron Titlebar */
+.app-drag {
+  -webkit-app-region: drag;
+}
+
+.app-no-drag {
+  -webkit-app-region: no-drag;
+}
