@@ -14,9 +14,13 @@
 
 import React, { useRef } from 'react';
 import { CopyButton } from './CopyButton';
-import { Trash2, Upload, FileCode } from 'lucide-react';
+import { Trash2, Upload, FileEdit } from 'lucide-react';
+import { ResultPanel, ResultPanelProps } from './ResultPanel';
 
-interface CodeEditorProps {
+export { ResultPanel };
+export type { ResultPanelProps };
+
+export interface CodeEditorProps {
   value: string;
   onChange?: (val: string) => void;
   label?: string;
@@ -28,6 +32,13 @@ interface CodeEditorProps {
   showStats?: boolean;
   actions?: React.ReactNode;
 }
+
+const formatBytes = (bytes: number): string => {
+  if (bytes === 0) return '0 B';
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+};
 
 export const CodeEditor: React.FC<CodeEditorProps> = ({
   value,
@@ -42,6 +53,22 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // If readOnly is requested, render the dedicated ResultPanel component
+  if (readOnly) {
+    return (
+      <ResultPanel
+        value={value}
+        label={label || 'Output Result'}
+        placeholder={placeholder}
+        minHeight={minHeight}
+        language={language}
+        showStats={showStats}
+        actions={actions}
+        badgeText="Result"
+      />
+    );
+  }
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !onChange) return;
@@ -55,14 +82,20 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
 
   const lineCount = value ? value.split('\n').length : 0;
   const charCount = value ? value.length : 0;
+  const byteCount = value ? new TextEncoder().encode(value).length : 0;
 
   return (
-    <div className="well-3d flex flex-col flex-1 h-full min-h-[460px] rounded-xl overflow-hidden transition-all focus-within:ring-1 focus-within:ring-emerald-500/50">
-      {/* Editor Header Bar */}
-      <div className="flex items-center justify-between px-3.5 py-2 bg-[var(--well-header-bg)] border-b border-[var(--border-color)] text-xs">
+    <div className="well-3d flex flex-col flex-1 h-full min-h-[460px] rounded-xl overflow-hidden transition-all border border-[var(--border-default)] focus-within:ring-2 focus-within:ring-emerald-500/30 focus-within:border-emerald-500/40">
+      {/* Input Editor Header Bar */}
+      <div className="flex items-center justify-between px-3.5 py-2 bg-[var(--well-header-bg)] border-b border-[var(--border-color)] text-xs select-none">
         <div className="flex items-center gap-2 font-medium text-[var(--text-secondary)]">
-          <FileCode className="w-3.5 h-3.5 text-emerald-500" />
-          <span>{label || (readOnly ? 'Output' : 'Input')}</span>
+          <div className="w-5 h-5 rounded-md bg-sky-500/10 flex items-center justify-center text-sky-500 dark:text-sky-400">
+            <FileEdit className="w-3.5 h-3.5" />
+          </div>
+          <span className="font-semibold text-[var(--text-primary)]">{label || 'Input'}</span>
+          <span className="text-[10px] uppercase font-mono font-semibold px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
+            Input
+          </span>
           {language && (
             <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-black/10 dark:bg-black/40 text-[var(--text-secondary)] border border-[var(--border-color)]">
               {language}
@@ -73,7 +106,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
         <div className="flex items-center gap-1.5">
           {actions}
 
-          {!readOnly && onChange && (
+          {onChange && (
             <>
               <input
                 ref={fileInputRef}
@@ -110,22 +143,24 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           value={value}
           onChange={(e) => onChange && onChange(e.target.value)}
           placeholder={placeholder}
-          readOnly={readOnly}
           spellCheck={false}
           style={{ minHeight }}
-          className={`w-full h-full min-h-[440px] flex-1 p-3.5 font-mono text-xs leading-relaxed resize-y outline-none transition-colors ${
-            readOnly
-              ? 'text-[var(--well-readonly-text)] bg-[var(--well-readonly-bg)] cursor-text'
-              : 'text-[var(--well-text)] bg-transparent placeholder:text-[var(--text-muted)]'
-          }`}
+          className="w-full h-full min-h-[440px] flex-1 p-3.5 font-mono text-xs leading-relaxed resize-y outline-none transition-colors text-[var(--well-text)] bg-transparent placeholder:text-[var(--text-muted)] cursor-text"
         />
       </div>
 
       {/* Editor Footer / Stats */}
       {showStats && (
-        <div className="flex items-center justify-between px-3.5 py-1.5 bg-[var(--well-header-bg)] border-t border-[var(--border-color)] text-[11px] text-[var(--text-muted)] font-mono">
-          <span>{lineCount} lines</span>
-          <span>{charCount.toLocaleString()} chars</span>
+        <div className="flex items-center justify-between px-3.5 py-1.5 bg-[var(--well-header-bg)] border-t border-[var(--border-color)] text-[11px] text-[var(--text-muted)] font-mono select-none">
+          <div className="flex items-center gap-3">
+            <span>{lineCount} lines</span>
+            <span>•</span>
+            <span>{charCount.toLocaleString()} chars</span>
+            <span>•</span>
+            <span>{formatBytes(byteCount)}</span>
+          </div>
+
+          <span className="text-[10px] text-[var(--text-muted)]">Editable text input</span>
         </div>
       )}
     </div>

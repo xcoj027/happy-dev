@@ -25,18 +25,18 @@ export const MarkdownEditor: React.FC = () => {
   const renderMarkdown = (md: string) => {
     let html = md
       // Headers
-      .replace(/^### (.*$)/gim, '<h3 class="text-base font-bold text-gray-200 mt-3 mb-1">$1</h3>')
-      .replace(/^## (.*$)/gim, '<h2 class="text-lg font-bold text-gray-100 mt-4 mb-2 pb-1 border-b border-gray-800">$1</h2>')
-      .replace(/^# (.*$)/gim, '<h1 class="text-xl font-extrabold text-emerald-400 mt-2 mb-3 pb-1 border-b border-gray-800">$1</h1>')
+      .replace(/^### (.*$)/gim, '<h3 class="text-base font-bold text-[var(--text-primary)] mt-3 mb-1">$1</h3>')
+      .replace(/^## (.*$)/gim, '<h2 class="text-lg font-bold text-[var(--text-primary)] mt-4 mb-2 pb-1 border-b border-[var(--border-default)]">$1</h2>')
+      .replace(/^# (.*$)/gim, '<h1 class="text-xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-2 mb-3 pb-1 border-b border-[var(--border-default)]">$1</h1>')
       // Blockquotes
-      .replace(/^\> (.*$)/gim, '<blockquote class="border-l-4 border-emerald-500 pl-3 py-1 my-2 text-gray-300 italic bg-gray-900/50 rounded-r">$1</blockquote>')
+      .replace(/^\> (.*$)/gim, '<blockquote class="border-l-4 border-emerald-500 pl-3 py-1 my-2 text-[var(--text-secondary)] italic bg-[var(--surface-control)] rounded-r">$1</blockquote>')
       // Bold & Italic
-      .replace(/\*\*(.*?)\*\*/gim, '<strong class="font-bold text-white">$1</strong>')
-      .replace(/\*(.*?)\*/gim, '<em class="italic text-gray-300">$1</em>')
+      .replace(/\*\*(.*?)\*\*/gim, '<strong class="font-bold text-[var(--text-primary)]">$1</strong>')
+      .replace(/\*(.*?)\*/gim, '<em class="italic text-[var(--text-secondary)]">$1</em>')
       // Inline code
-      .replace(/`([^`]+)`/gim, '<code class="px-1.5 py-0.5 rounded bg-gray-800 text-emerald-300 font-mono text-xs">$1</code>')
+      .replace(/`([^`]+)`/gim, '<code class="px-1.5 py-0.5 rounded bg-[var(--surface-control)] text-emerald-600 dark:text-emerald-400 font-mono text-xs border border-[var(--border-subtle)]">$1</code>')
       // Lists
-      .replace(/^\- (.*$)/gim, '<li class="ml-4 list-disc text-gray-300">$1</li>')
+      .replace(/^\- (.*$)/gim, '<li class="ml-4 list-disc text-[var(--text-secondary)]">$1</li>')
       // Paragraphs
       .replace(/\n\n/gim, '<div class="h-3"></div>');
 
@@ -68,7 +68,7 @@ export const MarkdownEditor: React.FC = () => {
               viewMode === 'edit' ? 'bg-emerald-500 text-gray-950 font-bold' : 'bg-gray-800 text-gray-300'
             }`}
           >
-            Editor Only
+            Edit Only
           </button>
           <button
             type="button"
@@ -93,16 +93,16 @@ export const MarkdownEditor: React.FC = () => {
         )}
 
         {(viewMode === 'split' || viewMode === 'preview') && (
-          <div className="flex flex-col flex-1 h-full min-h-[500px] border border-gray-800 rounded-xl overflow-hidden bg-gray-950/80">
-            <div className="flex items-center justify-between px-3.5 py-2 bg-gray-900/80 border-b border-gray-800 text-xs">
-              <span className="font-medium text-gray-300 flex items-center gap-1.5">
-                <Eye className="w-3.5 h-3.5 text-cyan-400" />
+          <div className="flex flex-col flex-1 h-full min-h-[500px] border border-[var(--border-default)] rounded-xl overflow-hidden bg-[var(--surface-card)]">
+            <div className="flex items-center justify-between px-3.5 py-2 bg-[var(--well-header-bg)] border-b border-[var(--border-color)] text-xs">
+              <span className="font-medium text-[var(--text-secondary)] flex items-center gap-1.5">
+                <Eye className="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400" />
                 Live HTML Preview
               </span>
               <CopyButton text={renderMarkdown(markdown)} label="Copy HTML" />
             </div>
             <div
-              className="p-5 text-sm leading-relaxed overflow-auto flex-1 h-full text-gray-200 select-text"
+              className="p-5 text-sm leading-relaxed overflow-auto flex-1 h-full text-[var(--text-primary)] select-text"
               dangerouslySetInnerHTML={{ __html: renderMarkdown(markdown) }}
             />
           </div>

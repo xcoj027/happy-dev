@@ -55,8 +55,8 @@
 	--button-hover-bottom: #e2e8f0;
 	--button-pressed-top: #e2e8f0;
 	--button-pressed-bottom: #dbe4ee;
-	--readonly-bg: #ecfdf5;
-	--readonly-text: #065f46;
+	--readonly-bg: var(--surface-recessed);
+	--readonly-text: var(--text-primary);
 	--accent-emerald-fg: #047857;
 	--accent-cyan-fg: #0e7490;
 	--accent-amber-fg: #a34b06;
@@ -118,9 +118,18 @@
 	--button-hover-top: #404961;
 	--button-hover-bottom: #2f374a;
 	--button-pressed-top: #252c3b;
-	--button-pressed-bottom: #31394b;
-	--readonly-bg: rgba(16, 185, 129, 0.1);
-	--readonly-text: #6ee7b7;
+	--readonly-bg: var(--surface-recessed);
+	--readonly-text: var(--text-primary);
+	--accent-emerald-fg: #34d399;
+	--accent-cyan-fg: #22d3ee;
+	--accent-amber-fg: #fbbf24;
+	--accent-orange-fg: #fb923c;
+	--accent-indigo-fg: #818cf8;
+	--accent-purple-fg: #c084fc;
+	--accent-pink-fg: #f472b6;
+	--accent-sky-fg: #38bdf8;
+	--accent-blue-fg: #60a5fa;
+	--accent-rose-fg: #fb7185;
 
 	--bg-main: var(--canvas);
 	--bg-titlebar: var(--canvas);
@@ -274,83 +283,369 @@ body {
 	caret-color: var(--focus-border);
 }
 
-/* Exact-token compatibility for older dark-first tool views. */
-.light :where(:not([data-theme-island], [data-theme-island] *)):is([class~='bg-gray-900/50'], [class~='bg-gray-900/60'], [class~='bg-gray-900/80'], [class~='bg-gray-900/90']) {
+/* ==========================================================================
+   SYSTEMIC THEME COMPATIBILITY ENGINE
+   Applied generally across all utilities to guarantee flawless contrast in both themes.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. LIGHT THEME OVERRIDES (Dark utilities -> Clean light semantic surfaces)
+   -------------------------------------------------------------------------- */
+
+/* Surfaces & Backgrounds */
+.light :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='bg-gray-900'],
+	[class~='bg-gray-900/40'],
+	[class~='bg-gray-900/50'],
+	[class~='bg-gray-900/60'],
+	[class~='bg-gray-900/70'],
+	[class~='bg-gray-900/80'],
+	[class~='bg-gray-900/90'],
+	[class~='bg-slate-900'],
+	[class~='bg-zinc-900']
+) {
 	background-color: var(--surface-panel);
 }
 
-.light :where(:not([data-theme-island], [data-theme-island] *)):is([class~='bg-gray-950'], [class~='bg-gray-950/70'], [class~='bg-gray-950/80']) {
+.light :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='bg-gray-950'],
+	[class~='bg-gray-950/50'],
+	[class~='bg-gray-950/60'],
+	[class~='bg-gray-950/70'],
+	[class~='bg-gray-950/80'],
+	[class~='bg-gray-950/90'],
+	[class~='bg-slate-950'],
+	[class~='bg-zinc-950']
+) {
 	background-color: var(--surface-recessed);
 }
 
-.light :where(:not([data-theme-island], [data-theme-island] *))[class~='bg-gray-800'] {
+.light :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='bg-gray-800'],
+	[class~='bg-gray-800/50'],
+	[class~='bg-gray-800/60'],
+	[class~='bg-gray-800/70'],
+	[class~='bg-gray-800/80'],
+	[class~='bg-gray-800/90'],
+	[class~='bg-slate-800']
+) {
 	background-color: var(--surface-control);
 }
 
-.light :where(:not([data-theme-island], [data-theme-island] *)):is([class~='border-gray-500/20'], [class~='border-gray-500/30'], [class~='border-gray-700'], [class~='border-gray-700/50'], [class~='border-gray-800'], [class~='border-gray-800/80']) {
+/* Borders */
+.light :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='border-gray-500/20'],
+	[class~='border-gray-500/30'],
+	[class~='border-gray-700'],
+	[class~='border-gray-700/50'],
+	[class~='border-gray-700/60'],
+	[class~='border-gray-800'],
+	[class~='border-gray-800/50'],
+	[class~='border-gray-800/80'],
+	[class~='border-gray-900'],
+	[class~='border-slate-700'],
+	[class~='border-slate-800']
+) {
 	border-color: var(--border-default);
 }
 
-.light :where(:not([data-theme-island], [data-theme-island] *)):is([class~='text-gray-100'], [class~='text-gray-200']) {
-	color: var(--text-primary);
-}
-
-.light :where(:not([data-theme-island], [data-theme-island] *)):is([class~='text-gray-300'], [class~='text-gray-400']) {
-	color: var(--text-secondary);
-}
-
-.light :where(:not([data-theme-island], [data-theme-island] *))[class~='text-gray-500'] {
-	color: var(--text-muted);
-}
-
+/* Hover States */
 .light :where(:not([data-theme-island], [data-theme-island] *))[class~='hover:bg-gray-700']:hover,
+.light :where(:not([data-theme-island], [data-theme-island] *))[class~='hover:bg-gray-800']:hover,
 .light :where(:not([data-theme-island], [data-theme-island] *))[class~='hover:bg-gray-800/50']:hover {
 	background-color: var(--surface-hover);
 }
 
-.light :where(:not([data-theme-island], [data-theme-island] *))[class~='hover:border-gray-700']:hover {
+.light :where(:not([data-theme-island], [data-theme-island] *))[class~='hover:border-gray-700']:hover,
+.light :where(:not([data-theme-island], [data-theme-island] *))[class~='hover:border-gray-800']:hover {
 	border-color: var(--border-strong);
 }
 
-/* Bare pale accents are tuned for light-surface contrast without touching fills. */
-.light :where(:not([data-theme-island], [data-theme-island] *)):is([class~='text-emerald-300'], [class~='text-emerald-400']) {
+/* Neutral Text */
+.light :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='text-gray-100'],
+	[class~='text-gray-200'],
+	[class~='text-slate-100'],
+	[class~='text-slate-200']
+) {
+	color: var(--text-primary);
+}
+
+.light :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='text-gray-300'],
+	[class~='text-gray-400'],
+	[class~='text-slate-300'],
+	[class~='text-slate-400']
+) {
+	color: var(--text-secondary);
+}
+
+.light :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='text-gray-500'],
+	[class~='text-slate-500']
+) {
+	color: var(--text-muted);
+}
+
+/* In light theme, protect accidental text-white on transparent/card backgrounds */
+.light :where(:not([data-theme-island], [data-theme-island] *)):is([class~='text-white']):not(
+	[class*='bg-emerald'],
+	[class*='bg-rose'],
+	[class*='bg-blue'],
+	[class*='bg-indigo'],
+	[class*='bg-purple'],
+	[class*='bg-cyan'],
+	[class*='bg-amber'],
+	.btn-3d-active,
+	[class*='bg-gradient']
+) {
+	color: var(--text-primary);
+}
+
+/* Accent Foregrounds in Light Theme: map pale pastel 300/400/500 to WCAG AA high-contrast tokens */
+.light :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='text-emerald-300'],
+	[class~='text-emerald-400'],
+	[class~='text-emerald-500']
+) {
 	color: var(--accent-emerald-fg);
 }
 
-.light :where(:not([data-theme-island], [data-theme-island] *)):is([class~='text-cyan-300'], [class~='text-cyan-300/80'], [class~='text-cyan-400']) {
+.light :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='text-cyan-300'],
+	[class~='text-cyan-300/80'],
+	[class~='text-cyan-400'],
+	[class~='text-cyan-500']
+) {
 	color: var(--accent-cyan-fg);
 }
 
-.light :where(:not([data-theme-island], [data-theme-island] *)):is([class~='text-amber-300'], [class~='text-amber-400'], [class~='text-amber-400/90']) {
+.light :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='text-amber-300'],
+	[class~='text-amber-400'],
+	[class~='text-amber-400/90'],
+	[class~='text-amber-500'],
+	[class~='text-amber-500/90']
+) {
 	color: var(--accent-amber-fg);
 }
 
-.light :where(:not([data-theme-island], [data-theme-island] *))[class~='text-orange-400'] {
+.light :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='text-orange-300'],
+	[class~='text-orange-400'],
+	[class~='text-orange-500']
+) {
 	color: var(--accent-orange-fg);
 }
 
-.light :where(:not([data-theme-island], [data-theme-island] *)):is([class~='text-indigo-300'], [class~='text-indigo-400']) {
+.light :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='text-indigo-300'],
+	[class~='text-indigo-400'],
+	[class~='text-indigo-500']
+) {
 	color: var(--accent-indigo-fg);
 }
 
-.light :where(:not([data-theme-island], [data-theme-island] *))[class~='text-purple-400'] {
+.light :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='text-purple-300'],
+	[class~='text-purple-400'],
+	[class~='text-purple-500']
+) {
 	color: var(--accent-purple-fg);
 }
 
-.light :where(:not([data-theme-island], [data-theme-island] *))[class~='text-pink-400'] {
+.light :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='text-pink-300'],
+	[class~='text-pink-400'],
+	[class~='text-pink-500']
+) {
 	color: var(--accent-pink-fg);
 }
 
-.light :where(:not([data-theme-island], [data-theme-island] *))[class~='text-sky-400'] {
+.light :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='text-sky-300'],
+	[class~='text-sky-400'],
+	[class~='text-sky-500']
+) {
 	color: var(--accent-sky-fg);
 }
 
-.light :where(:not([data-theme-island], [data-theme-island] *))[class~='text-blue-400'] {
+.light :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='text-blue-300'],
+	[class~='text-blue-400'],
+	[class~='text-blue-500']
+) {
 	color: var(--accent-blue-fg);
 }
 
-.light :where(:not([data-theme-island], [data-theme-island] *)):is([class~='text-rose-300'], [class~='text-rose-400']) {
+.light :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='text-rose-300'],
+	[class~='text-rose-400'],
+	[class~='text-rose-500']
+) {
 	color: var(--accent-rose-fg);
+}
+
+/* --------------------------------------------------------------------------
+   2. DARK THEME OVERRIDES (Accidental light colors -> Rich dark semantic surfaces)
+   -------------------------------------------------------------------------- */
+
+/* Prevent blinding white card/container backgrounds in dark mode */
+.dark :where(:not([data-theme-island], [data-theme-island] *, [data-keep-white], [data-keep-white] *)):is(
+	[class~='bg-white'],
+	[class~='bg-gray-50'],
+	[class~='bg-gray-100'],
+	[class~='bg-slate-50'],
+	[class~='bg-slate-100']
+) {
+	background-color: var(--surface-card);
+}
+
+.dark :where(:not([data-theme-island], [data-theme-island] *, [data-keep-white], [data-keep-white] *))[class~='hover:bg-white']:hover {
+	background-color: var(--surface-hover);
+}
+
+/* Fix dark translucent overlays becoming harsh black in dark mode */
+.dark :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='bg-black/5'],
+	[class~='bg-black/10']
+) {
+	background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='bg-black/15'],
+	[class~='bg-black/40']
+) {
+	background-color: rgba(255, 255, 255, 0.08);
+}
+
+.dark :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='hover:bg-black/5']:hover,
+	[class~='hover:bg-black/10']:hover
+) {
+	background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Convert dark black borders to dark mode borders */
+.dark :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='border-black/5'],
+	[class~='border-black/10'],
+	[class~='border-black/[0.04]']
+) {
+	border-color: var(--border-default);
+}
+
+/* Fix accidental deep black text on dark surfaces in dark mode */
+.dark :where(:not([data-theme-island], [data-theme-island] *, [class*='bg-emerald'], [class*='bg-amber'], [class*='bg-cyan'], [class*='bg-yellow'], .btn-3d-active)):is(
+	[class~='text-gray-900'],
+	[class~='text-gray-950'],
+	[class~='text-black'],
+	[class~='text-slate-900'],
+	[class~='text-slate-950']
+) {
+	color: var(--text-primary);
+}
+
+.dark :where(:not([data-theme-island], [data-theme-island] *, [class*='bg-emerald'], [class*='bg-amber'], [class*='bg-cyan'], [class*='bg-yellow'], .btn-3d-active)):is(
+	[class~='text-gray-800'],
+	[class~='text-gray-700'],
+	[class~='text-slate-800'],
+	[class~='text-slate-700']
+) {
+	color: var(--text-secondary);
+}
+
+/* Accent Foregrounds in Dark Theme: map over-dark 600/700 accents to vibrant readable dark tokens */
+.dark :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='text-emerald-600'],
+	[class~='text-emerald-700']
+) {
+	color: var(--accent-emerald-fg);
+}
+
+.dark :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='text-cyan-600'],
+	[class~='text-cyan-700']
+) {
+	color: var(--accent-cyan-fg);
+}
+
+.dark :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='text-amber-600'],
+	[class~='text-amber-700']
+) {
+	color: var(--accent-amber-fg);
+}
+
+.dark :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='text-orange-600'],
+	[class~='text-orange-700']
+) {
+	color: var(--accent-orange-fg);
+}
+
+.dark :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='text-sky-600'],
+	[class~='text-sky-700']
+) {
+	color: var(--accent-sky-fg);
+}
+
+.dark :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='text-indigo-600'],
+	[class~='text-indigo-700']
+) {
+	color: var(--accent-indigo-fg);
+}
+
+.dark :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='text-purple-600'],
+	[class~='text-purple-700']
+) {
+	color: var(--accent-purple-fg);
+}
+
+.dark :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='text-pink-600'],
+	[class~='text-pink-700']
+) {
+	color: var(--accent-pink-fg);
+}
+
+.dark :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='text-rose-600'],
+	[class~='text-rose-700']
+) {
+	color: var(--accent-rose-fg);
+}
+
+.dark :where(:not([data-theme-island], [data-theme-island] *)):is(
+	[class~='text-blue-600'],
+	[class~='text-blue-700']
+) {
+	color: var(--accent-blue-fg);
+}
+
+/* --------------------------------------------------------------------------
+   3. GENERAL CONTROLS CONTRACT (Inputs, textareas, selects across both themes)
+   -------------------------------------------------------------------------- */
+.light input:not([type='checkbox']):not([type='radio']):not([type='color']):not([type='range']),
+.light textarea,
+.light select,
+.light .input-3d {
+	background-color: var(--surface-control);
+	border-color: var(--border-default);
+	color: var(--text-primary);
+}
+
+.dark input:not([type='checkbox']):not([type='radio']):not([type='color']):not([type='range']),
+.dark textarea,
+.dark select,
+.dark .input-3d {
+	background-color: var(--surface-control);
+	border-color: var(--border-default);
+	color: var(--text-primary);
 }
 
 ::-webkit-scrollbar {

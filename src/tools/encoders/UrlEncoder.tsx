@@ -14,35 +14,54 @@
 
 import React, { useState } from 'react';
 import { CodeEditor } from '../../components/common/CodeEditor';
-import { CopyButton } from '../../components/common/CopyButton';
-import { Globe, Plus, Trash2, ArrowLeftRight } from 'lucide-react';
+import { Globe, Plus, Trash2, ArrowLeftRight, AlertCircle } from 'lucide-react';
 
 export const UrlEncoder: React.FC = () => {
-  const [url, setUrl] = useState('');
-  const [mode, setMode] = useState<'encode' | 'decode'>('decode');
+  const [input, setInput] = useState('');
+  const [mode, setMode] = useState<'encode' | 'decode'>('encode');
+  const [encodeFullUri, setEncodeFullUri] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Parse URL components and query params
+  // Compute live output
+  let output = '';
+  try {
+    if (input) {
+      if (mode === 'encode') {
+        output = encodeFullUri ? encodeURI(input) : encodeURIComponent(input);
+      } else {
+        output = encodeFullUri ? decodeURI(input) : decodeURIComponent(input);
+      }
+    }
+    if (error) setError(null);
+  } catch (err: any) {
+    output = '';
+    if (!error || error !== err.message) {
+      setError(err.message || 'Invalid URI escape sequence');
+    }
+  }
+
+  // Parse URL components and query params from whichever contains valid URL (input or output)
+  const targetUrl = mode === 'encode' ? input : output || input;
   let parsedUrl: URL | null = null;
   const queryParams: { key: string; value: string }[] = [];
 
   try {
-    parsedUrl = new URL(url);
+    parsedUrl = new URL(targetUrl);
     parsedUrl.searchParams.forEach((value, key) => {
       queryParams.push({ key, value });
     });
   } catch (e) {
-    // If not a full URL, parse query string
-    if (url.includes('?') || url.includes('=')) {
-      const qs = url.split('?')[1] || url;
-      const sp = new URLSearchParams(qs);
-      sp.forEach((value, key) => {
-        queryParams.push({ key, value });
-      });
+    // If not a full URL, try parsing query string
+    if (targetUrl.includes('?') || targetUrl.includes('=')) {
+      const qs = targetUrl.split('?')[1] || targetUrl;
+      try {
+        const sp = new URLSearchParams(qs);
+        sp.forEach((value, key) => {
+          queryParams.push({ key, value });
+        });
+      } catch {}
     }
   }
-
-  const encodedFull = encodeURIComponent(url);
-  const decodedFull = decodeURIComponent(url);
 
   const updateParam = (index: number, newKey: string, newValue: string) => {
     try {
@@ -56,7 +75,7 @@ export const UrlEncoder: React.FC = () => {
             newUrl.searchParams.append(p.key, p.value);
           }
         });
-        setUrl(newUrl.toString());
+        setInput(newUrl.toString());
       }
     } catch (e) {
       // Fallback
@@ -71,7 +90,7 @@ export const UrlEncoder: React.FC = () => {
         queryParams.forEach((p, idx) => {
           if (idx !== index) newUrl.searchParams.append(p.key, p.value);
         });
-        setUrl(newUrl.toString());
+        setInput(newUrl.toString());
       }
     } catch (e) {
       // Fallback
@@ -83,42 +102,95 @@ export const UrlEncoder: React.FC = () => {
       if (parsedUrl) {
         const newUrl = new URL(parsedUrl.toString());
         newUrl.searchParams.append('new_param', 'value');
-        setUrl(newUrl.toString());
+        setInput(newUrl.toString());
       } else {
-        setUrl(url + (url.includes('?') ? '&' : '?') + 'new_param=value');
+        setInput(input + (input.includes('?') ? '&' : '?') + 'new_param=value');
       }
     } catch {
-      setUrl(url + '?new_param=value');
+      setInput(input + '?new_param=value');
+    }
+  };
+
+  const handleSwap = () => {
+    if (output) {
+      setInput(output);
+      setMode(mode === 'encode' ? 'decode' : 'encode');
     }
   };
 
   return (
     <div className="space-y-4">
+      {/* Mode Control Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-gray-900/60 rounded-xl border border-gray-800">
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => setUrl(encodeURIComponent(url))}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-800 text-gray-300 hover:bg-gray-700 transition"
+            onClick={() => setMode('encode')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+              mode === 'encode'
+                ? 'bg-emerald-500 text-gray-950 font-semibold'
+                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+            }`}
           >
-            Encode URL Component
+            URL / Text → Encoded (Encode)
           </button>
           <button
             type="button"
-            onClick={() => setUrl(decodeURIComponent(url))}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-800 text-gray-300 hover:bg-gray-700 transition"
+            onClick={() => setMode('decode')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+              mode === 'decode'
+                ? 'bg-emerald-500 text-gray-950 font-semibold'
+                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+            }`}
           >
-            Decode URL
+            Encoded → URL / Text (Decode)
+          </button>
+          <button
+            type="button"
+            onClick={handleSwap}
+            disabled={!output}
+            className="p-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 disabled:opacity-50 transition cursor-pointer"
+            title="Swap input and output"
+          >
+            <ArrowLeftRight className="w-4 h-4" />
           </button>
         </div>
+
+        <label className="flex items-center gap-1.5 text-xs text-gray-300 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={encodeFullUri}
+            onChange={(e) => setEncodeFullUri(e.target.checked)}
+            className="rounded bg-gray-800 border-gray-700 text-emerald-500 focus:ring-0"
+          />
+          <span>Full URI Mode ({encodeFullUri ? 'encodeURI' : 'encodeURIComponent'})</span>
+        </label>
       </div>
 
-      <CodeEditor
-        label="URL or Query String"
-        value={url}
-        onChange={setUrl}
-        minHeight="90px"
-      />
+      {error && (
+        <div className="flex items-center gap-2 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-400 text-xs font-mono">
+          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+          <span>{error}</span>
+        </div>
+      )}
+
+      {/* Editor Grid: Input (Text Input) and Output (Result Panel) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <CodeEditor
+          label={mode === 'encode' ? 'Raw URL or Query String' : 'Encoded URL String'}
+          value={input}
+          onChange={setInput}
+          placeholder={mode === 'encode' ? 'Enter URL or query string to encode...' : 'Paste %-encoded string to decode...'}
+          minHeight="220px"
+        />
+        <CodeEditor
+          label={mode === 'encode' ? 'Encoded URL Result' : 'Decoded URL Result'}
+          value={output}
+          readOnly
+          placeholder={mode === 'encode' ? 'Encoded URL will appear here...' : 'Decoded URL will appear here...'}
+          minHeight="220px"
+        />
+      </div>
 
       {/* Query Parameters Inspector & Builder */}
       <div className="p-4 bg-gray-900/60 rounded-xl border border-gray-800 space-y-3">
@@ -130,7 +202,7 @@ export const UrlEncoder: React.FC = () => {
           <button
             type="button"
             onClick={addParam}
-            className="inline-flex items-center gap-1 px-2.5 py-1 text-xs rounded bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30 transition"
+            className="inline-flex items-center gap-1 px-2.5 py-1 text-xs rounded bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30 transition cursor-pointer"
           >
             <Plus className="w-3 h-3" /> Add Param
           </button>
@@ -138,7 +210,7 @@ export const UrlEncoder: React.FC = () => {
 
         {queryParams.length === 0 ? (
           <div className="text-xs text-gray-500 py-3 text-center">
-            No query parameters found in this URL.
+            No query parameters found in the current URL.
           </div>
         ) : (
           <div className="space-y-2">
@@ -162,7 +234,7 @@ export const UrlEncoder: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => removeParam(idx)}
-                  className="p-1.5 text-gray-500 hover:text-rose-400 rounded transition"
+                  className="p-1.5 text-gray-500 hover:text-rose-400 rounded transition cursor-pointer"
                   title="Remove parameter"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
