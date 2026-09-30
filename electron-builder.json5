@@ -59,6 +59,7 @@
   "linux": {
     "target": ["AppImage", "deb"],
     "artifactName": "${productName}-${version}-linux-${arch}.${ext}",
+    "maintainer": "TNQSW <qui894@gmail.com>",
     "category": "Development",
     "icon": "public/icon.png"
   }

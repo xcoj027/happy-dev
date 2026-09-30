@@ -35,7 +35,7 @@ background-color: ${boxColor};`;
   return (
     <div className="space-y-4">
       {/* Visual Canvas */}
-      <div className="h-60 rounded-xl bg-gray-950 border border-gray-800 flex items-center justify-center p-6 overflow-hidden relative">
+      <div data-theme-island className="h-60 rounded-xl bg-gray-950 border border-gray-800 flex items-center justify-center p-6 overflow-hidden relative">
         <div className="absolute inset-0 bg-[radial-gradient(#1f293d_1px,transparent_1px)] [background-size:16px_16px] opacity-40 pointer-events-none" />
         <div
           className="w-48 h-32 flex items-center justify-center text-xs font-semibold text-gray-300 transition-all duration-150 border border-gray-700/50"

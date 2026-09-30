@@ -308,7 +308,7 @@ export const metadata: Metadata = {
           <div className="flex-1 flex items-center justify-center p-3 rounded-xl well-3d min-h-[220px]">
             {/* Google SERP Preview */}
             {previewTab === 'serp' && (
-              <div className="w-full max-w-lg p-4 rounded-xl bg-white dark:bg-[#1a1e27] space-y-1.5 text-left font-sans">
+              <div data-theme-island className="w-full max-w-lg p-4 rounded-xl bg-white dark:bg-[#1a1e27] space-y-1.5 text-left font-sans">
                 <div className="flex items-center gap-2">
                   <div className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center text-[10px] font-bold">
                     {parsedHost.charAt(0).toUpperCase()}
@@ -328,7 +328,7 @@ export const metadata: Metadata = {
 
             {/* Twitter / X Preview */}
             {previewTab === 'twitter' && (
-              <div className="w-full max-w-md rounded-2xl overflow-hidden bg-black text-white">
+              <div data-theme-island className="w-full max-w-md rounded-2xl overflow-hidden bg-black text-white">
                 {imageUrl ? (
                   <img
                     src={imageUrl}
@@ -353,7 +353,7 @@ export const metadata: Metadata = {
 
             {/* Open Graph (Facebook / LinkedIn) */}
             {previewTab === 'opengraph' && (
-              <div className="w-full max-w-md rounded-xl overflow-hidden bg-[#242526] text-white">
+              <div data-theme-island className="w-full max-w-md rounded-xl overflow-hidden bg-[#242526] text-white">
                 {imageUrl ? (
                   <img src={imageUrl} alt="OG Card" className="w-full h-44 object-cover" />
                 ) : (
@@ -371,7 +371,7 @@ export const metadata: Metadata = {
 
             {/* Discord Embed */}
             {previewTab === 'discord' && (
-              <div className="w-full max-w-md p-3 rounded-lg bg-[#2b2d31] border-l-4 border-emerald-500 space-y-1.5 text-left text-xs font-sans">
+              <div data-theme-island className="w-full max-w-md p-3 rounded-lg bg-[#2b2d31] border-l-4 border-emerald-500 space-y-1.5 text-left text-xs font-sans">
                 {siteName && <div className="text-[10px] text-gray-400">{siteName}</div>}
                 <div className="text-sm font-semibold text-[#00a8fc] hover:underline cursor-pointer">
                   {title || 'Page Title Preview'}

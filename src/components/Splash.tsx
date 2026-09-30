@@ -39,6 +39,7 @@ export const Splash: React.FC<SplashProps> = ({ onFinish }) => {
 
   return (
     <div
+      data-theme-island
       className={`happy-splash fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-[#070b14] px-8 text-[#eef6ff] select-none transition-opacity duration-500 ease-out ${
         isFading ? 'pointer-events-none opacity-0' : 'opacity-100'
       }`}

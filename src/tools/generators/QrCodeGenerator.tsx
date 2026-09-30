@@ -586,7 +586,7 @@ export const QrCodeGenerator: React.FC = () => {
           <div className="card-3d p-4 rounded-xl flex-1 flex flex-col items-center justify-between text-center min-h-[360px]">
             <span className="text-xs font-semibold text-[var(--text-primary)]">Live QR Preview</span>
 
-            <div data-keep-white className="my-auto p-4 rounded-2xl bg-white flex items-center justify-center">
+            <div data-theme-island data-keep-white className="my-auto p-4 rounded-2xl bg-white flex items-center justify-center">
               {dataUrl ? (
                 <img
                   src={dataUrl}

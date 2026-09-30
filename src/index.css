@@ -13,428 +13,379 @@
  */
 
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
-:root, .light {
-  color-scheme: light;
-  /* Soft clean slate light palette (Default) */
-  --bg-main: #f8fafc;
-  --bg-titlebar: #ffffff;
-  --bg-sidebar: #ffffff;
-  --bg-master: transparent;
-  --bg-card: #ffffff;
-  --bg-header: #ffffff;
+/*
+ * Theme contract
+ *
+ * App chrome and shared primitives consume semantic tokens. The app theme is
+ * class-driven so it remains independent from the operating-system theme.
+ * Add data-theme-island to previews whose authored palette must remain fixed.
+ */
+:root,
+.light {
+	color-scheme: light;
+	--canvas: #f8fafc;
+	--surface-elevated: #ffffff;
+	--surface-card: #ffffff;
+	--surface-panel: #f8fafc;
+	--surface-recessed: #eef2f7;
+	--surface-control: #f1f5f9;
+	--surface-hover: #e7edf4;
+	--surface-pressed: #dbe4ee;
+	--surface-disabled: #eef2f6;
+	--border-default: rgba(15, 23, 42, 0.12);
+	--border-subtle: rgba(15, 23, 42, 0.07);
+	--border-strong: rgba(15, 23, 42, 0.2);
+	--text-primary: #0f172a;
+	--text-secondary: #475569;
+	--text-muted: #64748b;
+	--text-disabled: #94a3b8;
+	--overlay: rgba(15, 23, 42, 0.42);
+	--focus-ring: rgba(16, 185, 129, 0.4);
+	--focus-border: #059669;
+	--selection-bg: rgba(16, 185, 129, 0.22);
+	--selection-text: #052e24;
+	--placeholder: #64748b;
+	--scrollbar: #cbd5e1;
+	--scrollbar-hover: #94a3b8;
+	--button-top: #ffffff;
+	--button-bottom: #edf2f7;
+	--button-hover-top: #f8fafc;
+	--button-hover-bottom: #e2e8f0;
+	--button-pressed-top: #e2e8f0;
+	--button-pressed-bottom: #dbe4ee;
+	--readonly-bg: #ecfdf5;
+	--readonly-text: #065f46;
+	--accent-emerald-fg: #047857;
+	--accent-cyan-fg: #0e7490;
+	--accent-amber-fg: #a34b06;
+	--accent-orange-fg: #c2410c;
+	--accent-indigo-fg: #4338ca;
+	--accent-purple-fg: #7e22ce;
+	--accent-pink-fg: #be185d;
+	--accent-sky-fg: #0369a1;
+	--accent-blue-fg: #1d4ed8;
+	--accent-rose-fg: #be123c;
 
-  --border-color: rgba(0, 0, 0, 0.08);
-  --border-subtle: rgba(0, 0, 0, 0.04);
-
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
-
-  --well-bg: #f8fafc;
-  --well-border: rgba(0, 0, 0, 0.06);
-  --well-header-bg: #f1f5f9;
-  --well-text: #0f172a;
-  --well-readonly-bg: #ecfdf5;
-  --well-readonly-text: #065f46;
-
-  --control-panel-bg: #ffffff;
-  --control-input-bg: #f1f5f9;
-  --control-input-border: rgba(0, 0, 0, 0.08);
+	/* Existing public aliases retained for components already using them. */
+	--bg-main: var(--canvas);
+	--bg-titlebar: var(--surface-elevated);
+	--bg-sidebar: var(--surface-elevated);
+	--bg-master: transparent;
+	--bg-card: var(--surface-card);
+	--bg-header: var(--surface-elevated);
+	--border-color: var(--border-default);
+	--well-bg: var(--surface-recessed);
+	--well-border: var(--border-subtle);
+	--well-header-bg: var(--surface-control);
+	--well-text: var(--text-primary);
+	--well-readonly-bg: var(--readonly-bg);
+	--well-readonly-text: var(--readonly-text);
+	--control-panel-bg: var(--surface-panel);
+	--control-input-bg: var(--surface-control);
+	--control-input-border: var(--border-default);
 }
 
 .dark {
-  color-scheme: dark;
-  /* Soft Charcoal Slate-Gray Palette (Not pitch-black) */
-  --bg-main: #181b22;
-  --bg-titlebar: #181b22;
-  --bg-sidebar: #1c202a;
-  --bg-master: transparent;
-  --bg-card: #232835;
-  --bg-header: rgba(35, 40, 53, 0.85);
+	color-scheme: dark;
+	--canvas: #181b22;
+	--surface-elevated: #202530;
+	--surface-card: #232835;
+	--surface-panel: #1f2430;
+	--surface-recessed: #151821;
+	--surface-control: #1a1e28;
+	--surface-hover: #2b3241;
+	--surface-pressed: #343d4f;
+	--surface-disabled: #202631;
+	--border-default: rgba(226, 232, 240, 0.12);
+	--border-subtle: rgba(226, 232, 240, 0.07);
+	--border-strong: rgba(226, 232, 240, 0.2);
+	--text-primary: #f1f5f9;
+	--text-secondary: #c0cada;
+	--text-muted: #94a3b8;
+	--text-disabled: #64748b;
+	--overlay: rgba(2, 6, 23, 0.72);
+	--focus-ring: rgba(52, 211, 153, 0.4);
+	--focus-border: #34d399;
+	--selection-bg: rgba(52, 211, 153, 0.3);
+	--selection-text: #ecfdf5;
+	--placeholder: #7f8da3;
+	--scrollbar: #3a4354;
+	--scrollbar-hover: #536078;
+	--button-top: #343c50;
+	--button-bottom: #282f40;
+	--button-hover-top: #404961;
+	--button-hover-bottom: #2f374a;
+	--button-pressed-top: #252c3b;
+	--button-pressed-bottom: #31394b;
+	--readonly-bg: rgba(16, 185, 129, 0.1);
+	--readonly-text: #6ee7b7;
 
-  --border-color: rgba(255, 255, 255, 0.08);
-  --border-subtle: rgba(255, 255, 255, 0.04);
+	--bg-main: var(--canvas);
+	--bg-titlebar: var(--canvas);
+	--bg-sidebar: #1c202a;
+	--bg-master: transparent;
+	--bg-card: var(--surface-card);
+	--bg-header: rgba(35, 40, 53, 0.88);
+	--border-color: var(--border-default);
+	--well-bg: var(--surface-recessed);
+	--well-border: var(--border-subtle);
+	--well-header-bg: rgba(22, 25, 34, 0.88);
+	--well-text: #e2e8f0;
+	--well-readonly-bg: var(--readonly-bg);
+	--well-readonly-text: var(--readonly-text);
+	--control-panel-bg: var(--surface-panel);
+	--control-input-bg: var(--surface-control);
+	--control-input-border: var(--border-default);
+}
 
-  /* Typography */
-  --text-primary: #f3f4f6;
-  --text-secondary: #9aa7b9;
-  --text-muted: #6b7a90;
-
-  /* Recessed Wells & Textareas */
-  --well-bg: #191c25;
-  --well-border: rgba(255, 255, 255, 0.06);
-  --well-header-bg: rgba(22, 25, 34, 0.8);
-  --well-text: #e2e8f0;
-  --well-readonly-bg: rgba(16, 185, 129, 0.08);
-  --well-readonly-text: #34d399;
-
-  /* Elevated Controls and Sub-Boxes */
-  --control-panel-bg: #232835;
-  --control-input-bg: #1a1d26;
-  --control-input-border: rgba(255, 255, 255, 0.08);
+html,
+body,
+#root {
+	min-height: 100%;
+	min-width: 0;
 }
 
 body {
-  background-color: var(--bg-main);
-  color: var(--text-primary);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  margin: 0;
-  padding: 0;
+	background-color: var(--canvas);
+	color: var(--text-primary);
+	font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	margin: 0;
+	padding: 0;
 }
 
-/* Master Card Container - Seamless without colored box frame */
+::selection {
+	background: var(--selection-bg);
+	color: var(--selection-text);
+}
+
 .master-card-3d {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
+	background: transparent;
+	border: 0;
+	box-shadow: none;
 }
 
-/* Dashboard Widget Cards */
 .dashboard-card {
-  background-color: #ffffff;
-  color: var(--text-primary);
-  border: 1px solid rgba(0, 0, 0, 0.08);
+	background-color: var(--surface-card);
+	border: 1px solid var(--border-default);
+	color: var(--text-primary);
 }
 
-.dark .dashboard-card {
-  background-color: #232835 !important;
-  color: #f3f4f6 !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-}
-
-/* Content Sub-Panels */
 .card-3d {
-  background-color: #f8fafc;
-  color: var(--text-primary);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+	background-color: var(--surface-panel);
+	border: 1px solid var(--border-subtle);
+	color: var(--text-primary);
 }
 
-.dark .card-3d {
-  background-color: #1a1d26 !important;
-  color: #f3f4f6 !important;
-  border: 1px solid rgba(255, 255, 255, 0.06) !important;
-}
-
-/* Inset Textarea / Code Well */
 .well-3d {
-  background: var(--well-bg);
-  border: 1px solid var(--well-border);
+	background: var(--surface-recessed);
+	border: 1px solid var(--border-subtle);
+	color: var(--well-text);
 }
 
-.dark .well-3d {
-  background: #151821 !important;
-  border: 1px solid rgba(255, 255, 255, 0.06) !important;
-}
-
-/* 3D Elevated Controls and Pills */
 .btn-3d {
-  background: linear-gradient(180deg, #343c50 0%, #282f40 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  color: #cbd5e1;
-  transition: all 0.15s ease-in-out;
+	background: linear-gradient(180deg, var(--button-top) 0%, var(--button-bottom) 100%);
+	border: 1px solid var(--border-default);
+	color: var(--text-secondary);
+	transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
 }
 
-.btn-3d:hover {
-  background: linear-gradient(180deg, #404961 0%, #2f374a 100%);
-  color: #ffffff;
+.btn-3d:hover:not(:disabled) {
+	background: linear-gradient(180deg, var(--button-hover-top) 0%, var(--button-hover-bottom) 100%);
+	color: var(--text-primary);
 }
 
-.light .btn-3d {
-  background: linear-gradient(180deg, #ffffff 0%, #edf2f7 100%);
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
-  color: #1e293b;
-}
-
-.light .btn-3d:hover {
-  background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
-  color: #0f172a;
+.btn-3d:active:not(:disabled) {
+	background: linear-gradient(180deg, var(--button-pressed-top) 0%, var(--button-pressed-bottom) 100%);
+	transform: translateY(1px);
 }
 
 .btn-3d-active {
-  background: linear-gradient(180deg, #10b981 0%, #059669 100%) !important;
-  color: #ffffff !important;
-  font-weight: 700;
-  border: none !important;
+	background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+	border-color: transparent;
+	color: #ffffff;
+	font-weight: 700;
 }
 
-.light .btn-3d-active {
-  background: linear-gradient(180deg, #10b981 0%, #059669 100%) !important;
-  color: #ffffff !important;
-  border: none !important;
+/* Shared controls use one semantic contract in both app themes. */
+:where(.light, .dark) :where(input, select, textarea) {
+	caret-color: var(--focus-border);
 }
 
-/* ============================================================
-   SYSTEMIC THEME COLOR ENGINE (LIGHT & DARK SEPARATION)
-   Guarantees 0% theme color bleed / leakage
-   ============================================================ */
-
-/* ------------------------------------------------------------
-   1. LIGHT THEME ENFORCEMENT
-   Neutralizes all hardcoded dark gray/black boxes and unreadable light text
-   ------------------------------------------------------------ */
-
-/* Neutralize all dark panel backgrounds */
-.light [class*="bg-gray-9"],
-.light [class*="bg-gray-8"],
-.light [class*="bg-gray-7"],
-.light [class*="bg-slate-9"],
-.light [class*="bg-slate-8"],
-.light [class*="bg-slate-7"],
-.light [class*="bg-zinc-9"],
-.light [class*="bg-zinc-8"],
-.light [class*="bg-neutral-9"],
-.light [class*="bg-neutral-8"],
-.light .bg-black {
-  background-color: var(--control-panel-bg) !important;
-  color: var(--text-primary) !important;
-  border-color: rgba(0, 0, 0, 0.08) !important;
+:where(.light, .dark) :where(input:not([type='checkbox']):not([type='radio']):not([type='color']):not([type='range']), select, textarea, .input-3d) {
+	background-color: var(--surface-control);
+	border-color: var(--border-default);
+	color: var(--text-primary);
 }
 
-/* Recessed wells / sub-inputs in Light mode */
-.light [class*="bg-gray-950"],
-.light [class*="bg-slate-950"],
-.light [class*="bg-zinc-950"] {
-  background-color: var(--control-input-bg) !important;
-  color: var(--text-primary) !important;
-  border-color: rgba(0, 0, 0, 0.08) !important;
+:where(.light, .dark) :where(input, select, textarea, button):focus-visible {
+	border-color: var(--focus-border);
+	box-shadow: 0 0 0 3px var(--focus-ring);
+	outline: none;
 }
 
-/* Secondary button/pill backgrounds in Light mode */
-.light [class*="bg-gray-800"],
-.light [class*="bg-gray-700"],
-.light [class*="bg-slate-800"],
-.light [class*="bg-slate-700"] {
-  background-color: var(--control-input-bg) !important;
-  color: var(--text-secondary) !important;
-  border-color: rgba(0, 0, 0, 0.06) !important;
+:where(.light, .dark) :where(input, select, textarea):invalid:not(:placeholder-shown) {
+	border-color: #f43f5e;
 }
 
-.light [class*="hover:bg-gray-7"]:hover,
-.light [class*="hover:bg-gray-8"]:hover,
-.light [class*="hover:bg-slate-7"]:hover,
-.light [class*="hover:bg-slate-8"]:hover {
-  background-color: #e2e8f0 !important;
-  color: var(--text-primary) !important;
+:where(.light, .dark) :where(input, select, textarea, button):disabled {
+	background-color: var(--surface-disabled);
+	color: var(--text-disabled);
+	cursor: not-allowed;
+	opacity: 0.72;
 }
 
-/* Text color correction in Light mode */
-.light [class*="text-gray-1"],
-.light [class*="text-gray-2"],
-.light [class*="text-slate-1"],
-.light [class*="text-slate-2"],
-.light [class*="text-zinc-1"],
-.light [class*="text-zinc-2"] {
-  color: var(--text-primary) !important;
+:where(.light, .dark) :where(input, textarea)::placeholder {
+	color: var(--placeholder);
+	opacity: 1;
 }
 
-.light [class*="text-gray-3"],
-.light [class*="text-gray-4"],
-.light [class*="text-slate-3"],
-.light [class*="text-slate-4"],
-.light [class*="text-zinc-3"],
-.light [class*="text-zinc-4"] {
-  color: var(--text-secondary) !important;
+:where(.light, .dark) select option {
+	background-color: var(--surface-elevated);
+	color: var(--text-primary);
 }
 
-.light [class*="text-gray-5"],
-.light [class*="text-slate-5"] {
-  color: var(--text-muted) !important;
+:where(.light, .dark) :where(input[type='checkbox'], input[type='radio'], input[type='range']) {
+	accent-color: #10b981;
 }
 
-/* Primary actions keep white text */
-.light .btn-3d-active,
-.light [class*="bg-emerald-500"],
-.light [class*="bg-emerald-600"] {
-  color: #ffffff !important;
+:where(.light, .dark) :where(input[type='checkbox'], input[type='radio']) {
+	background-color: var(--surface-control);
+	border-color: var(--border-strong);
 }
 
-/* Border fixes in Light */
-.light [class*="border-gray-"],
-.light [class*="border-slate-"],
-.light [class*="border-zinc-"],
-.light [class*="border-neutral-"] {
-  border-color: rgba(0, 0, 0, 0.08) !important;
+:where(.light, .dark) input[type='color'] {
+	background: var(--surface-control);
+	border-color: var(--border-default);
 }
 
-/* Form controls in Light mode */
-.light input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]),
-.light select,
-.light textarea {
-  background-color: var(--control-input-bg) !important;
-  color: var(--text-primary) !important;
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+:where(.light, .dark) kbd {
+	background-color: var(--surface-control);
+	border: 1px solid var(--border-default);
+	color: var(--text-secondary);
 }
 
-.light select option {
-  background-color: #ffffff !important;
-  color: #0f172a !important;
+:where(.light, .dark) :where(input, textarea):-webkit-autofill,
+:where(.light, .dark) :where(input, textarea):-webkit-autofill:hover,
+:where(.light, .dark) :where(input, textarea):-webkit-autofill:focus {
+	-webkit-text-fill-color: var(--text-primary);
+	box-shadow: 0 0 0 1000px var(--surface-control) inset;
+	caret-color: var(--focus-border);
 }
 
-.light input[type="checkbox"],
-.light input[type="radio"] {
-  accent-color: #10b981;
-  background-color: #ffffff !important;
-  border-color: rgba(0, 0, 0, 0.2) !important;
+/* Exact-token compatibility for older dark-first tool views. */
+.light :where(:not([data-theme-island], [data-theme-island] *)):is([class~='bg-gray-900/50'], [class~='bg-gray-900/60'], [class~='bg-gray-900/80'], [class~='bg-gray-900/90']) {
+	background-color: var(--surface-panel);
 }
 
-.light pre:not([class*="text-"]),
-.light code:not([class*="text-"]) {
-  background-color: #f8fafc !important;
-  color: #065f46 !important;
+.light :where(:not([data-theme-island], [data-theme-island] *)):is([class~='bg-gray-950'], [class~='bg-gray-950/70'], [class~='bg-gray-950/80']) {
+	background-color: var(--surface-recessed);
 }
 
-.light kbd {
-  background-color: var(--control-input-bg) !important;
-  color: var(--text-secondary) !important;
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+.light :where(:not([data-theme-island], [data-theme-island] *))[class~='bg-gray-800'] {
+	background-color: var(--surface-control);
 }
 
-.light input[type="range"] {
-  accent-color: #059669;
+.light :where(:not([data-theme-island], [data-theme-island] *)):is([class~='border-gray-500/20'], [class~='border-gray-500/30'], [class~='border-gray-700'], [class~='border-gray-700/50'], [class~='border-gray-800'], [class~='border-gray-800/80']) {
+	border-color: var(--border-default);
 }
 
-/* ------------------------------------------------------------
-   2. DARK THEME ENFORCEMENT
-   Neutralizes all rogue white boxes and invisible black text
-   ------------------------------------------------------------ */
-
-/* Force all white and light-gray background utilities to dark charcoal */
-.dark .bg-white:not([data-keep-white]):not(.keep-white),
-.dark [class*="bg-gray-50"]:not([data-keep-white]):not(.keep-white),
-.dark [class*="bg-gray-100"]:not([data-keep-white]):not(.keep-white),
-.dark [class*="bg-gray-200"]:not([data-keep-white]):not(.keep-white),
-.dark [class*="bg-slate-50"]:not([data-keep-white]):not(.keep-white),
-.dark [class*="bg-slate-100"]:not([data-keep-white]):not(.keep-white),
-.dark [class*="bg-slate-200"]:not([data-keep-white]):not(.keep-white) {
-  background-color: var(--bg-card) !important;
-  color: var(--text-primary) !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
+.light :where(:not([data-theme-island], [data-theme-island] *)):is([class~='text-gray-100'], [class~='text-gray-200']) {
+	color: var(--text-primary);
 }
 
-/* Dark mode panel and well harmony */
-.dark [class*="bg-gray-9"],
-.dark [class*="bg-slate-9"],
-.dark [class*="bg-zinc-9"],
-.dark [class*="bg-neutral-9"] {
-  background-color: var(--control-panel-bg) !important;
-  color: var(--text-primary) !important;
-  border-color: rgba(255, 255, 255, 0.06) !important;
+.light :where(:not([data-theme-island], [data-theme-island] *)):is([class~='text-gray-300'], [class~='text-gray-400']) {
+	color: var(--text-secondary);
 }
 
-.dark [class*="bg-gray-950"],
-.dark [class*="bg-slate-950"],
-.dark [class*="bg-zinc-950"] {
-  background-color: var(--control-input-bg) !important;
-  color: var(--text-primary) !important;
-  border-color: rgba(255, 255, 255, 0.06) !important;
+.light :where(:not([data-theme-island], [data-theme-island] *))[class~='text-gray-500'] {
+	color: var(--text-muted);
 }
 
-.dark [class*="bg-gray-8"],
-.dark [class*="bg-gray-7"],
-.dark [class*="bg-slate-8"],
-.dark [class*="bg-zinc-8"] {
-  background-color: var(--control-input-bg) !important;
-  color: var(--text-secondary) !important;
-  border-color: rgba(255, 255, 255, 0.06) !important;
+.light :where(:not([data-theme-island], [data-theme-island] *))[class~='hover:bg-gray-700']:hover,
+.light :where(:not([data-theme-island], [data-theme-island] *))[class~='hover:bg-gray-800/50']:hover {
+	background-color: var(--surface-hover);
 }
 
-.dark [class*="hover:bg-gray-7"]:hover,
-.dark [class*="hover:bg-gray-8"]:hover,
-.dark [class*="hover:bg-slate-7"]:hover,
-.dark [class*="hover:bg-slate-8"]:hover {
-  background-color: #2e3545 !important;
-  color: var(--text-primary) !important;
+.light :where(:not([data-theme-island], [data-theme-island] *))[class~='hover:border-gray-700']:hover {
+	border-color: var(--border-strong);
 }
 
-/* Text color fixes in Dark: turn near-black text into crisp light text */
-.dark [class*="text-gray-9"],
-.dark [class*="text-gray-8"],
-.dark [class*="text-gray-7"],
-.dark [class*="text-slate-9"],
-.dark [class*="text-slate-8"],
-.dark [class*="text-slate-7"],
-.dark [class*="text-zinc-9"],
-.dark [class*="text-zinc-8"],
-.dark [class*="text-zinc-7"],
-.dark .text-black {
-  color: var(--text-primary) !important;
+/* Bare pale accents are tuned for light-surface contrast without touching fills. */
+.light :where(:not([data-theme-island], [data-theme-island] *)):is([class~='text-emerald-300'], [class~='text-emerald-400']) {
+	color: var(--accent-emerald-fg);
 }
 
-.dark [class*="text-gray-6"],
-.dark [class*="text-gray-5"],
-.dark [class*="text-slate-6"],
-.dark [class*="text-slate-5"] {
-  color: var(--text-secondary) !important;
+.light :where(:not([data-theme-island], [data-theme-island] *)):is([class~='text-cyan-300'], [class~='text-cyan-300/80'], [class~='text-cyan-400']) {
+	color: var(--accent-cyan-fg);
 }
 
-/* Borders in Dark */
-.dark [class*="border-gray-"],
-.dark [class*="border-slate-"],
-.dark [class*="border-zinc-"],
-.dark [class*="border-black"] {
-  border-color: rgba(255, 255, 255, 0.06) !important;
+.light :where(:not([data-theme-island], [data-theme-island] *)):is([class~='text-amber-300'], [class~='text-amber-400'], [class~='text-amber-400/90']) {
+	color: var(--accent-amber-fg);
 }
 
-/* Form controls in Dark */
-.dark input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]),
-.dark select,
-.dark textarea {
-  background-color: var(--control-input-bg) !important;
-  color: var(--text-primary) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+.light :where(:not([data-theme-island], [data-theme-island] *))[class~='text-orange-400'] {
+	color: var(--accent-orange-fg);
 }
 
-.dark select option {
-  background-color: #1a1d26 !important;
-  color: #f3f4f6 !important;
+.light :where(:not([data-theme-island], [data-theme-island] *)):is([class~='text-indigo-300'], [class~='text-indigo-400']) {
+	color: var(--accent-indigo-fg);
 }
 
-.dark input[type="checkbox"],
-.dark input[type="radio"] {
-  accent-color: #10b981;
-  background-color: #1a1d26 !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
+.light :where(:not([data-theme-island], [data-theme-island] *))[class~='text-purple-400'] {
+	color: var(--accent-purple-fg);
 }
 
-.dark pre:not([class*="text-"]),
-.dark code:not([class*="text-"]) {
-  background-color: #151821 !important;
-  color: #34d399 !important;
+.light :where(:not([data-theme-island], [data-theme-island] *))[class~='text-pink-400'] {
+	color: var(--accent-pink-fg);
 }
 
-/* Custom scrollbars */
+.light :where(:not([data-theme-island], [data-theme-island] *))[class~='text-sky-400'] {
+	color: var(--accent-sky-fg);
+}
+
+.light :where(:not([data-theme-island], [data-theme-island] *))[class~='text-blue-400'] {
+	color: var(--accent-blue-fg);
+}
+
+.light :where(:not([data-theme-island], [data-theme-island] *)):is([class~='text-rose-300'], [class~='text-rose-400']) {
+	color: var(--accent-rose-fg);
+}
+
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+	height: 6px;
+	width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+	background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #373f50;
-  border-radius: 9999px;
+	background: var(--scrollbar);
+	border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #4a5468;
+	background: var(--scrollbar-hover);
 }
 
-.light ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-}
-
-.light ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-/* Draggable regions for Electron Titlebar */
 .app-drag {
-  -webkit-app-region: drag;
+	-webkit-app-region: drag;
 }
 
 .app-no-drag {
-  -webkit-app-region: no-drag;
+	-webkit-app-region: no-drag;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		scroll-behavior: auto !important;
+		transition-duration: 0.01ms !important;
+	}
 }

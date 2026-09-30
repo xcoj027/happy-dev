@@ -96,6 +96,7 @@ export const ${safeName}: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
         </div>
         <div className="flex items-center gap-4">
           <div
+            data-theme-island
             className="w-16 h-16 rounded-xl bg-gray-950 border border-gray-800 flex items-center justify-center p-2 text-emerald-400 shrink-0"
             dangerouslySetInnerHTML={{ __html: svg }}
           />
