@@ -30,3 +30,11 @@ declare module '*.jpg' {
   const content: string;
   export default content;
 }
+
+interface Window {
+  electronAPI?: {
+    platform: string;
+    version: string;
+    showReminderNotification: (payload: { title: string; body: string; silent: boolean }) => Promise<boolean>;
+  };
+}

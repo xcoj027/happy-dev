@@ -1,15 +1,9 @@
-const { execFileSync } = require('node:child_process');
-const path = require('node:path');
-
 function getAppVersion() {
-  const commit = execFileSync('git', ['rev-parse', 'HEAD'], {
-    cwd: path.resolve(__dirname, '..'),
-    encoding: 'utf8',
-  }).trim();
-  if (!/^[0-9a-f]{40,64}$/.test(commit)) {
-    throw new Error('Cannot determine the app version from Git HEAD.');
+  const version = process.env.APP_VERSION || 'local';
+  if (version !== 'local' && !/^v\.[1-9]\d*$/.test(version)) {
+    throw new Error('APP_VERSION must be local or v.N, where N is a positive integer.');
   }
-  return commit.slice(-6);
+  return version;
 }
 
 module.exports = { getAppVersion };

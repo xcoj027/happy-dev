@@ -217,6 +217,14 @@ body {
 	font-weight: 700;
 }
 
+.btn-3d-active:disabled {
+	background: var(--surface-disabled);
+	border: 1px solid var(--border-default);
+	color: var(--text-secondary);
+	cursor: not-allowed;
+	opacity: 1;
+}
+
 /* Shared controls use one semantic contract in both app themes. */
 :where(.light, .dark) :where(input, select, textarea) {
 	caret-color: var(--focus-border);

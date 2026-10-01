@@ -12,7 +12,7 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, Notification } from 'electron';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -74,6 +74,34 @@ app.whenReady().then(() => {
       app.dock.setIcon(path.join(__dirname, '../public/icon.png'));
     } catch {}
   }
+
+  ipcMain.handle('reminder:notify', (event, payload: unknown) => {
+    if (event.sender !== mainWindow?.webContents || !Notification.isSupported()) return false;
+    if (!payload || typeof payload !== 'object') return false;
+    const { title, body, silent } = payload as Record<string, unknown>;
+    if (typeof title !== 'string' || typeof body !== 'string' || typeof silent !== 'boolean') return false;
+
+    try {
+      const notification = new Notification({
+        title: title.slice(0, 200),
+        body: body.slice(0, 1000),
+        silent,
+      });
+      notification.on('click', () => {
+        if (mainWindow?.isMinimized()) mainWindow.restore();
+        mainWindow?.show();
+        mainWindow?.focus();
+      });
+      return new Promise<boolean>((resolve) => {
+        const timeout = setTimeout(() => resolve(false), 5000);
+        notification.once('show', () => { clearTimeout(timeout); resolve(true); });
+        notification.once('failed', () => { clearTimeout(timeout); resolve(false); });
+        notification.show();
+      });
+    } catch {
+      return false;
+    }
+  });
 
   createWindow();
 

@@ -46,64 +46,18 @@ export interface ReminderTask {
 const STORAGE_KEY = 'happydev_task_reminders_v1';
 const MAX_TASKS = 10;
 
-/**
- * Synthesizes an offline chime tone using Web Audio API (no external mp3/assets needed)
- */
-function playOfflineChime() {
-  try {
-    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
-    if (ctx.state === 'suspended') {
-      ctx.resume();
-    }
-
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = 'sine';
-    const now = ctx.currentTime;
-    osc.frequency.setValueAtTime(587.33, now); // D5
-    osc.frequency.setValueAtTime(880, now + 0.12); // A5
-    osc.frequency.setValueAtTime(1174.66, now + 0.24); // D6
-
-    gain.gain.setValueAtTime(0.18, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.65);
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
-    osc.start(now);
-    osc.stop(now + 0.65);
-  } catch {}
-}
-
 export const TaskReminder: React.FC = () => {
   const [tasks, setTasks] = useState<ReminderTask[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed.slice(0, MAX_TASKS);
+        if (Array.isArray(parsed)) {
+          return parsed.filter((task) => task?.id !== 'task_sample_1').slice(0, MAX_TASKS);
+        }
       }
     } catch {}
-    // Initial sample reminder
-    const initialDue = new Date(Date.now() + 30 * 60 * 1000);
-    const initialDueStr = new Date(initialDue.getTime() - initialDue.getTimezoneOffset() * 60000)
-      .toISOString()
-      .slice(0, 16);
-
-    return [
-      {
-        id: 'task_sample_1',
-        title: 'Review pull requests & update ticket status',
-        targetTime: initialDueStr,
-        repeat: 'daily',
-        enabled: true,
-        isCompleted: false,
-        createdAt: new Date().toISOString(),
-      },
-    ];
+    return [];
   });
 
   // Form state
@@ -114,6 +68,9 @@ export const TaskReminder: React.FC = () => {
   });
   const [repeat, setRepeat] = useState<RepeatOption>('none');
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const nativeNotifications = Boolean(window.electronAPI?.showReminderNotification);
+  const [notificationError, setNotificationError] = useState('');
+  const triggeredOccurrences = useRef(new Map<string, string>());
   const [notifPermission, setNotifPermission] = useState<NotificationPermission>(() => {
     return typeof Notification !== 'undefined' ? Notification.permission : 'default';
   });
@@ -138,6 +95,24 @@ export const TaskReminder: React.FC = () => {
     }
   };
 
+  const showAlert = async (taskTitle: string, body: string) => {
+    try {
+      if (window.electronAPI?.showReminderNotification) {
+        const shown = await window.electronAPI.showReminderNotification({
+          title: `Dev Reminder: ${taskTitle}`, body, silent: !soundEnabled,
+        });
+        setNotificationError(shown ? '' : 'Unable to show OS alert. Check HappyDev notifications in system settings.');
+      } else if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+        new Notification(`Dev Reminder: ${taskTitle}`, { body, silent: !soundEnabled });
+        setNotificationError('');
+      } else {
+        setNotificationError('Allow notifications to receive OS alerts.');
+      }
+    } catch {
+      setNotificationError('Unable to show OS alert. Check notification permissions in system settings.');
+    }
+  };
+
   // Live timer tick to evaluate reminders (every 2 seconds)
   useEffect(() => {
     const interval = setInterval(() => {
@@ -158,16 +133,10 @@ export const TaskReminder: React.FC = () => {
             hasChanges = true;
             setDueTask(task);
 
-            if (soundEnabled) {
-              playOfflineChime();
-            }
-
-            if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
-              try {
-                new Notification(`⏰ Dev Reminder: ${task.title}`, {
-                  body: `Scheduled time reached. Repeat: ${task.repeat.toUpperCase()}`,
-                });
-              } catch {}
+            const occurrence = `${task.id}:${task.targetTime}:${nowMinute}`;
+            if (triggeredOccurrences.current.get(task.id) !== occurrence) {
+              triggeredOccurrences.current.set(task.id, occurrence);
+              void showAlert(task.title, `Scheduled time reached. Repeat: ${task.repeat.toUpperCase()}`);
             }
 
             // Calculate next time if repeating
@@ -237,6 +206,7 @@ export const TaskReminder: React.FC = () => {
   };
 
   const handleDeleteTask = (id: string) => {
+    triggeredOccurrences.current.delete(id);
     setTasks((prev) => prev.filter((t) => t.id !== id));
     if (dueTask?.id === id) setDueTask(null);
   };
@@ -363,24 +333,24 @@ export const TaskReminder: React.FC = () => {
             className={`btn-3d flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg transition cursor-pointer ${
               soundEnabled ? 'text-emerald-600 dark:text-emerald-400' : 'text-[var(--text-secondary)]'
             }`}
-            title={soundEnabled ? 'Chime sound enabled' : 'Chime sound muted'}
+            title={soundEnabled ? 'OS alert sound enabled' : 'OS alert sound muted'}
           >
             {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
-            <span className="hidden sm:inline">{soundEnabled ? 'Chime ON' : 'Chime Muted'}</span>
+            <span className="hidden sm:inline">{soundEnabled ? 'Sound ON' : 'Sound Muted'}</span>
           </button>
 
-          {/* Test Chime */}
+          {/* Test Alert */}
           <button
             type="button"
-            onClick={playOfflineChime}
+            onClick={() => void showAlert('Test alert', 'HappyDev reminder notifications are working.')} 
             className="btn-3d px-2.5 py-1.5 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition cursor-pointer"
-            title="Test audio chime"
+            title="Test OS notification"
           >
-            Test Chime
+            Test Alert
           </button>
 
           {/* Desktop Notification Request */}
-          {notifPermission !== 'granted' && (
+          {!nativeNotifications && notifPermission !== 'granted' && (
             <button
               type="button"
               onClick={requestNotificationPermission}
@@ -394,274 +364,280 @@ export const TaskReminder: React.FC = () => {
         </div>
       </div>
 
+      {notificationError && (
+        <p role="alert" className="text-xs text-amber-600 dark:text-amber-400">{notificationError}</p>
+      )}
+
       {/* Task Creation Input Section */}
-      <form onSubmit={handleAddTask} className="p-4 card-3d rounded-xl space-y-3">
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]">
-            Create New Reminder (Max {MAX_TASKS})
-          </span>
-          {tasks.length >= MAX_TASKS && (
-            <span className="text-xs text-rose-500 font-medium">
-              Limit reached (10/10). Delete or complete tasks to add more.
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+        <form onSubmit={handleAddTask} className="min-w-0 p-4 card-3d rounded-xl space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]">
+              Create New Reminder (Max {MAX_TASKS})
             </span>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            disabled={tasks.length >= MAX_TASKS}
-            placeholder="What do you need to be reminded of? (e.g., Standup meeting, Push release, Deploy to staging)"
-            className="w-full input-3d rounded-lg px-3 py-2 text-xs text-[var(--text-primary)] outline-none"
-            maxLength={150}
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {/* Reminder Date & Time Input */}
-            <div className="space-y-1">
-              <label className="text-[11px] font-semibold text-[var(--text-secondary)] flex items-center gap-1">
-                <Calendar className="w-3 h-3 text-cyan-500" />
-                Reminder Time
-              </label>
-              <input
-                type="datetime-local"
-                value={targetTime}
-                onChange={(e) => setTargetTime(e.target.value)}
-                disabled={tasks.length >= MAX_TASKS}
-                className="w-full input-3d rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-primary)] outline-none"
-                required
-              />
-            </div>
-
-            {/* Repeat Option */}
-            <div className="space-y-1">
-              <label className="text-[11px] font-semibold text-[var(--text-secondary)] flex items-center gap-1">
-                <RotateCw className="w-3 h-3 text-emerald-500" />
-                Repeat Frequency
-              </label>
-              <select
-                value={repeat}
-                onChange={(e) => setRepeat(e.target.value as RepeatOption)}
-                disabled={tasks.length >= MAX_TASKS}
-                className="w-full input-3d rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-primary)] outline-none cursor-pointer"
-              >
-                <option value="none">Once (No repeat)</option>
-                <option value="hourly">Hourly</option>
-                <option value="daily">Daily (Every day)</option>
-                <option value="weekdays">Weekdays (Mon - Fri)</option>
-                <option value="weekends">Weekends (Sat - Sun)</option>
-                <option value="weekly">Weekly</option>
-              </select>
-            </div>
-
-            {/* Quick Offset Presets */}
-            <div className="space-y-1">
-              <span className="text-[11px] font-semibold text-[var(--text-secondary)] flex items-center gap-1">
-                <Timer className="w-3 h-3 text-amber-500" />
-                Quick Set Time
+            {tasks.length >= MAX_TASKS && (
+              <span className="text-xs text-rose-500 font-medium">
+                Limit reached (10/10). Delete or complete tasks to add more.
               </span>
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <button
-                  type="button"
-                  onClick={() => setQuickTime(15)}
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              disabled={tasks.length >= MAX_TASKS}
+              placeholder="What do you need to be reminded of? (e.g., Standup meeting, Push release, Deploy to staging)"
+              className="w-full input-3d rounded-lg px-3 py-2 text-xs text-[var(--text-primary)] outline-none"
+              maxLength={150}
+            />
+
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
+              {/* Reminder Date & Time Input */}
+              <div className="space-y-1">
+                <label className="text-[11px] font-semibold text-[var(--text-secondary)] flex items-center gap-1">
+                  <Calendar className="w-3 h-3 text-cyan-500" />
+                  Reminder Time
+                </label>
+                <input
+                  type="datetime-local"
+                  value={targetTime}
+                  onChange={(e) => setTargetTime(e.target.value)}
                   disabled={tasks.length >= MAX_TASKS}
-                  className="btn-3d px-2 py-1 rounded text-[11px] transition cursor-pointer"
-                >
-                  +15m
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setQuickTime(30)}
+                  className="w-full input-3d rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-primary)] outline-none"
+                  required
+                />
+              </div>
+
+              {/* Repeat Option */}
+              <div className="space-y-1">
+                <label className="text-[11px] font-semibold text-[var(--text-secondary)] flex items-center gap-1">
+                  <RotateCw className="w-3 h-3 text-emerald-500" />
+                  Repeat Frequency
+                </label>
+                <select
+                  value={repeat}
+                  onChange={(e) => setRepeat(e.target.value as RepeatOption)}
                   disabled={tasks.length >= MAX_TASKS}
-                  className="btn-3d px-2 py-1 rounded text-[11px] transition cursor-pointer"
+                  className="w-full input-3d rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-primary)] outline-none cursor-pointer"
                 >
-                  +30m
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setQuickTime(60)}
-                  disabled={tasks.length >= MAX_TASKS}
-                  className="btn-3d px-2 py-1 rounded text-[11px] transition cursor-pointer"
-                >
-                  +1h
-                </button>
-                <button
-                  type="button"
-                  onClick={setTomorrowMorning}
-                  disabled={tasks.length >= MAX_TASKS}
-                  className="btn-3d px-2 py-1 rounded text-[11px] transition cursor-pointer"
-                >
-                  Tmrw 9am
-                </button>
+                  <option value="none">Once (No repeat)</option>
+                  <option value="hourly">Hourly</option>
+                  <option value="daily">Daily (Every day)</option>
+                  <option value="weekdays">Weekdays (Mon - Fri)</option>
+                  <option value="weekends">Weekends (Sat - Sun)</option>
+                  <option value="weekly">Weekly</option>
+                </select>
+              </div>
+
+              {/* Quick Offset Presets */}
+              <div className="space-y-1 xl:col-span-2">
+                <span className="text-[11px] font-semibold text-[var(--text-secondary)] flex items-center gap-1">
+                  <Timer className="w-3 h-3 text-amber-500" />
+                  Quick Set Time
+                </span>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={() => setQuickTime(15)}
+                    disabled={tasks.length >= MAX_TASKS}
+                    className="btn-3d px-2 py-1 rounded text-[11px] transition cursor-pointer"
+                  >
+                    +15m
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setQuickTime(30)}
+                    disabled={tasks.length >= MAX_TASKS}
+                    className="btn-3d px-2 py-1 rounded text-[11px] transition cursor-pointer"
+                  >
+                    +30m
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setQuickTime(60)}
+                    disabled={tasks.length >= MAX_TASKS}
+                    className="btn-3d px-2 py-1 rounded text-[11px] transition cursor-pointer"
+                  >
+                    +1h
+                  </button>
+                  <button
+                    type="button"
+                    onClick={setTomorrowMorning}
+                    disabled={tasks.length >= MAX_TASKS}
+                    className="btn-3d px-2 py-1 rounded text-[11px] transition cursor-pointer"
+                  >
+                    Tmrw 9am
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="flex justify-end pt-1">
-          <button
-            type="submit"
-            disabled={!title.trim() || tasks.length >= MAX_TASKS}
-            className="btn-3d-active inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold cursor-pointer disabled:opacity-50"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Add Task Reminder</span>
-          </button>
-        </div>
-      </form>
-
-      {/* Task List (Result Panel) */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs text-[var(--text-secondary)] px-1">
-          <span className="font-semibold uppercase tracking-wider text-[11px]">
-            Active & Scheduled Reminders ({tasks.filter((t) => !t.isCompleted).length} active)
-          </span>
-          {tasks.length > 0 && (
+          <div className="flex justify-end pt-1">
             <button
-              type="button"
-              onClick={() => {
-                if (window.confirm('Clear all task reminders?')) setTasks([]);
-              }}
-              className="text-rose-500 hover:text-rose-600 transition cursor-pointer text-xs"
+              type="submit"
+              disabled={!title.trim() || tasks.length >= MAX_TASKS}
+              className="btn-3d-active inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold cursor-pointer"
             >
-              Clear All
+              <Plus className="w-4 h-4" />
+              <span>Add Task Reminder</span>
             </button>
-          )}
-        </div>
-
-        {tasks.length === 0 ? (
-          <div className="p-8 text-center well-3d rounded-xl space-y-2">
-            <Clock className="w-8 h-8 text-[var(--text-secondary)] mx-auto opacity-50" />
-            <div className="text-xs font-bold text-[var(--text-primary)]">No Reminders Set</div>
-            <div className="text-[11px] text-[var(--text-secondary)] max-w-xs mx-auto">
-              Add reminders above to keep track of tasks, deployments, pull requests, and meetings.
-            </div>
           </div>
-        ) : (
-          <div className="space-y-2.5">
-            {tasks.map((task) => {
-              const due = new Date(task.targetTime);
-              const isPast = Date.now() >= due.getTime();
-              const repeatLabel =
-                task.repeat === 'none'
-                  ? 'Once'
-                  : task.repeat === 'weekdays'
-                  ? 'Mon-Fri'
-                  : task.repeat === 'weekends'
-                  ? 'Sat-Sun'
-                  : task.repeat;
+        </form>
 
-              return (
-                <div
-                  key={task.id}
-                  className={`p-3.5 rounded-xl border transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
-                    task.isCompleted
-                      ? 'bg-black/[0.02] dark:bg-white/[0.02] border-[var(--border-subtle)] opacity-60'
-                      : !task.enabled
-                      ? 'bg-black/[0.02] dark:bg-white/[0.02] border-[var(--border-subtle)] opacity-50'
-                      : isPast
-                      ? 'bg-amber-500/10 border-amber-500/30'
-                      : 'card-3d'
-                  }`}
-                >
-                  <div className="flex items-start gap-3 min-w-0 flex-1">
-                    {/* Checkbox Complete */}
-                    <button
-                      type="button"
-                      onClick={() => handleToggleComplete(task.id)}
-                      className={`mt-0.5 w-5 h-5 rounded-md border flex items-center justify-center transition cursor-pointer shrink-0 ${
-                        task.isCompleted
-                          ? 'bg-emerald-600 border-emerald-600 text-white'
-                          : 'border-[var(--border-default)] hover:border-emerald-500'
-                      }`}
-                      title={task.isCompleted ? 'Mark as active' : 'Mark as completed'}
-                    >
-                      {task.isCompleted && <Check className="w-3.5 h-3.5" />}
-                    </button>
+        {/* Task List (Result Panel) */}
+        <div className="min-w-0 space-y-2">
+          <div className="flex items-center justify-between text-xs text-[var(--text-secondary)] px-1">
+            <span className="font-semibold uppercase tracking-wider text-[11px]">
+              Active & Scheduled Reminders ({tasks.filter((t) => !t.isCompleted).length} active)
+            </span>
+            {tasks.length > 0 && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (window.confirm('Clear all task reminders?')) setTasks([]);
+                }}
+                className="text-rose-500 hover:text-rose-600 transition cursor-pointer text-xs"
+              >
+                Clear All
+              </button>
+            )}
+          </div>
 
-                    <div className="space-y-1 min-w-0 flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span
-                          className={`text-xs font-semibold ${
-                            task.isCompleted
-                              ? 'line-through text-[var(--text-secondary)]'
-                              : 'text-[var(--text-primary)]'
-                          }`}
-                        >
-                          {task.title}
-                        </span>
+          {tasks.length === 0 ? (
+            <div className="p-8 text-center well-3d rounded-xl space-y-2">
+              <Clock className="w-8 h-8 text-[var(--text-secondary)] mx-auto opacity-50" />
+              <div className="text-xs font-bold text-[var(--text-primary)]">No Reminders Set</div>
+              <div className="text-[11px] text-[var(--text-secondary)] max-w-xs mx-auto">
+                Create a reminder to keep track of tasks, deployments, pull requests, and meetings.
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-2.5">
+              {tasks.map((task) => {
+                const due = new Date(task.targetTime);
+                const isPast = Date.now() >= due.getTime();
+                const repeatLabel =
+                  task.repeat === 'none'
+                    ? 'Once'
+                    : task.repeat === 'weekdays'
+                    ? 'Mon-Fri'
+                    : task.repeat === 'weekends'
+                    ? 'Sat-Sun'
+                    : task.repeat;
 
-                        {/* Repeat Badge */}
-                        <span className="text-[10px] uppercase font-bold font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                          {repeatLabel}
-                        </span>
-
-                        {/* Relative Time Badge */}
-                        {!task.isCompleted && task.enabled && (
-                          <span
-                            className={`text-[10px] font-mono px-2 py-0.5 rounded font-semibold ${
-                              isPast
-                                ? 'bg-rose-500/15 text-rose-600 dark:text-rose-400'
-                                : 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400'
-                            }`}
-                          >
-                            {getRelativeTimeDisplay(task.targetTime)}
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="flex items-center gap-3 text-[11px] text-[var(--text-secondary)] font-mono">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
-                          {due.toLocaleDateString()} {due.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Actions Bar */}
-                  <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
-                    {/* Snooze Options */}
-                    {!task.isCompleted && (
+                return (
+                  <div
+                    key={task.id}
+                    className={`p-3.5 rounded-xl border transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+                      task.isCompleted
+                        ? 'bg-black/[0.02] dark:bg-white/[0.02] border-[var(--border-subtle)] opacity-60'
+                        : !task.enabled
+                        ? 'bg-black/[0.02] dark:bg-white/[0.02] border-[var(--border-subtle)] opacity-50'
+                        : isPast
+                        ? 'bg-amber-500/10 border-amber-500/30'
+                        : 'card-3d'
+                    }`}
+                  >
+                    <div className="flex items-start gap-3 min-w-0 flex-1">
+                      {/* Checkbox Complete */}
                       <button
                         type="button"
-                        onClick={() => handleSnooze(task.id, 10)}
-                        className="btn-3d px-2 py-1 rounded text-[11px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition cursor-pointer"
-                        title="Snooze reminder for 10 minutes"
+                        onClick={() => handleToggleComplete(task.id)}
+                        className={`mt-0.5 w-5 h-5 rounded-md border flex items-center justify-center transition cursor-pointer shrink-0 ${
+                          task.isCompleted
+                            ? 'bg-emerald-600 border-emerald-600 text-white'
+                            : 'border-[var(--border-default)] hover:border-emerald-500'
+                        }`}
+                        title={task.isCompleted ? 'Mark as active' : 'Mark as completed'}
                       >
-                        +10m
+                        {task.isCompleted && <Check className="w-3.5 h-3.5" />}
                       </button>
-                    )}
 
-                    {/* Enable/Disable */}
-                    <button
-                      type="button"
-                      onClick={() => handleToggleEnabled(task.id)}
-                      className={`btn-3d p-1.5 rounded-lg transition cursor-pointer ${
-                        task.enabled ? 'text-emerald-500' : 'text-[var(--text-secondary)]'
-                      }`}
-                      title={task.enabled ? 'Pause reminder' : 'Resume reminder'}
-                    >
-                      {task.enabled ? <Bell className="w-3.5 h-3.5" /> : <BellOff className="w-3.5 h-3.5" />}
-                    </button>
+                      <div className="space-y-1 min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span
+                            className={`text-xs font-semibold ${
+                              task.isCompleted
+                                ? 'line-through text-[var(--text-secondary)]'
+                                : 'text-[var(--text-primary)]'
+                            }`}
+                          >
+                            {task.title}
+                          </span>
 
-                    {/* Delete */}
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteTask(task.id)}
-                      className="btn-3d p-1.5 rounded-lg text-[var(--text-secondary)] hover:text-rose-500 transition cursor-pointer"
-                      title="Delete reminder"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                          {/* Repeat Badge */}
+                          <span className="text-[10px] uppercase font-bold font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                            {repeatLabel}
+                          </span>
+
+                          {/* Relative Time Badge */}
+                          {!task.isCompleted && task.enabled && (
+                            <span
+                              className={`text-[10px] font-mono px-2 py-0.5 rounded font-semibold ${
+                                isPast
+                                  ? 'bg-rose-500/15 text-rose-600 dark:text-rose-400'
+                                  : 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400'
+                              }`}
+                            >
+                              {getRelativeTimeDisplay(task.targetTime)}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-3 text-[11px] text-[var(--text-secondary)] font-mono">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            {due.toLocaleDateString()} {due.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Actions Bar */}
+                    <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
+                      {/* Snooze Options */}
+                      {!task.isCompleted && (
+                        <button
+                          type="button"
+                          onClick={() => handleSnooze(task.id, 10)}
+                          className="btn-3d px-2 py-1 rounded text-[11px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition cursor-pointer"
+                          title="Snooze reminder for 10 minutes"
+                        >
+                          +10m
+                        </button>
+                      )}
+
+                      {/* Enable/Disable */}
+                      <button
+                        type="button"
+                        onClick={() => handleToggleEnabled(task.id)}
+                        className={`btn-3d p-1.5 rounded-lg transition cursor-pointer ${
+                          task.enabled ? 'text-emerald-500' : 'text-[var(--text-secondary)]'
+                        }`}
+                        title={task.enabled ? 'Pause reminder' : 'Resume reminder'}
+                      >
+                        {task.enabled ? <Bell className="w-3.5 h-3.5" /> : <BellOff className="w-3.5 h-3.5" />}
+                      </button>
+
+                      {/* Delete */}
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteTask(task.id)}
+                        className="btn-3d p-1.5 rounded-lg text-[var(--text-secondary)] hover:text-rose-500 transition cursor-pointer"
+                        title="Delete reminder"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

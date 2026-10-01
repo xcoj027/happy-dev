@@ -136,7 +136,7 @@ npm run pack
 ```
 
 ### Generating Distributable Installers
-The app displays the last six characters of Git `HEAD` as its version (for example, `2ce532`). Installer filenames and GitHub release titles use the same value. Numeric package metadata is retained for platform compatibility; rebuilding the same commit keeps the same displayed version. Build from a Git checkout so the commit can be resolved.
+Local builds display `local`. Release builds display `v.1`, `v.2`, and so on, with the same version in installer filenames and GitHub release titles. Numeric package metadata is retained for platform compatibility.
 
 ```bash
 # Build macOS installers (.dmg)
@@ -157,8 +157,8 @@ The repository includes an automated GitHub Actions workflow defined in [`.githu
 - The workflow automatically runs on every push to the `main` branch, on version tags (`v*`), and on manual workflow dispatch triggers.
 - It builds binaries concurrently across three operating system runners: `macos-latest`, `windows-latest`, and `ubuntu-latest`.
 - Each release contains one universal macOS `.dmg` (Intel and Apple Silicon), one Windows x64 setup `.exe`, and one Linux x64 `.AppImage`, plus a checksum file. ZIP archives, portable Windows builds, and Debian packages are not generated.
-- When commits are pushed to the `main` branch, the release step publishes the `latest` assets to the public [`happy-dev-releases`](https://github.com/xcoj027/happy-dev-releases/releases/latest) repository.
-- Version tags (`v*`) publish matching versioned releases to the same public repository.
+- Every release publishes the next `v.N` tag to the public [`happy-dev-releases`](https://github.com/xcoj027/happy-dev-releases/releases/latest) repository and marks it as latest, including releases triggered by source tags or manual dispatch.
+- Release runs are serialized. The next number is one greater than the highest existing `v.N` tag (starting at `v.1`). Old releases are removed, but their tags are retained as the counter history; do not delete those tags. Failed builds do not consume a number unless a release tag was already created. Pull request builds use `local`.
 
 ### Release Repository Configuration
 

@@ -352,7 +352,7 @@ export const toolsRegistry: ToolDefinition[] = [
   {
     id: 'task-reminder',
     name: 'Dev Task Reminder & Alarm',
-    description: 'Set developer task reminders with offline audio chime, repeatable schedules (daily, weekdays), and up to 10 tasks.',
+    description: 'Set developer task reminders with native OS alerts, repeatable schedules (daily, weekdays), and up to 10 tasks.',
     category: 'datetime',
     roles: ['All', 'Backend', 'Frontend', 'Fullstack'],
     icon: 'BellRing',

@@ -16,15 +16,34 @@ permissions:
   actions: write
 
 concurrency:
-  group: happy-dev-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: happy-dev-${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || 'release' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   cleanup-old-artifacts:
-    name: Clean old build artifacts
+    name: Prepare release version and clean old artifacts
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
+      - name: Determine next release version
+        id: version
+        shell: bash
+        env:
+          TARGET_REPOSITORY: ${{ vars.RELEASE_REPOSITORY || 'xcoj027/happy-dev-releases' }}
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        run: |
+          if [[ -z "$GH_TOKEN" ]]; then
+            echo "::error::RELEASE_TOKEN is required to determine the next release version."
+            exit 1
+          fi
+          numbers=$(gh api --paginate "repos/$TARGET_REPOSITORY/tags?per_page=100" \
+            --jq '.[] | .name | select(test("^v\\.[1-9][0-9]*$")) | ltrimstr("v.")')
+          last=$(printf '%s\n' "$numbers" | sort -n | tail -n 1)
+          next=$(( ${last:-0} + 1 ))
+          echo "version=v.$next" >> "$GITHUB_OUTPUT"
+
       - name: Delete previous platform artifacts
         env:
           GH_TOKEN: ${{ github.token }}
@@ -40,6 +59,8 @@ jobs:
     needs: cleanup-old-artifacts
     if: always() && (needs.cleanup-old-artifacts.result == 'success' || needs.cleanup-old-artifacts.result == 'skipped')
     runs-on: ${{ matrix.os }}
+    env:
+      APP_VERSION: ${{ needs.cleanup-old-artifacts.outputs.version || 'local' }}
     strategy:
       fail-fast: false
       matrix:
@@ -118,17 +139,19 @@ jobs:
         with:
           name: happydev-${{ matrix.platform }}
           path: |
-            release/**/*.dmg
-            release/**/*.exe
-            release/**/*.AppImage
+            release/**/HappyDev-${{ env.APP_VERSION }}-mac-universal.dmg
+            release/**/HappyDev-${{ env.APP_VERSION }}-windows-x64-setup.exe
+            release/**/HappyDev-${{ env.APP_VERSION }}-linux-x64.AppImage
           if-no-files-found: error
           retention-days: 1
 
   publish-release:
     name: Publish public release
-    needs: build-packages
+    needs: [cleanup-old-artifacts, build-packages]
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
+    env:
+      APP_VERSION: ${{ needs.cleanup-old-artifacts.outputs.version }}
     steps:
       - name: Download all platform artifacts
         uses: actions/download-artifact@v4
@@ -141,9 +164,9 @@ jobs:
         run: |
           mkdir -p release-assets
           find downloaded-artifacts -type f \( \
-            -name '*.dmg' -o \
-            -name '*.exe' -o \
-            -name '*.AppImage' \
+            -name "HappyDev-${APP_VERSION}-mac-universal.dmg" -o \
+            -name "HappyDev-${APP_VERSION}-windows-x64-setup.exe" -o \
+            -name "HappyDev-${APP_VERSION}-linux-x64.AppImage" \
           \) -exec cp {} release-assets/ \;
 
           for extension in dmg exe AppImage; do
@@ -161,14 +184,8 @@ jobs:
         id: release_info
         shell: bash
         run: |
-          version="${GITHUB_SHA: -6}"
-          echo "title=HappyDev ${version}" >> "$GITHUB_OUTPUT"
-          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
-            tag="${GITHUB_REF#refs/tags/}"
-            echo "tag=${tag}" >> "$GITHUB_OUTPUT"
-          else
-            echo "tag=latest" >> "$GITHUB_OUTPUT"
-          fi
+          echo "title=HappyDev ${APP_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tag=${APP_VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Validate release token for public repository
         id: release_target
@@ -219,5 +236,6 @@ jobs:
           name: ${{ steps.release_info.outputs.title }}
           body: Automated HappyDev packages for ${{ steps.release_info.outputs.title }}. Source commit ${{ github.sha }}.
           prerelease: false
+          make_latest: true
           files: release-assets/*
           generate_release_notes: true

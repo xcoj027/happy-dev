@@ -16,6 +16,8 @@ import { contextBridge, ipcRenderer } from 'electron';
 
 // Expose protected methods that allow the renderer process to use ipcRenderer
 contextBridge.exposeInMainWorld('electronAPI', {
+  showReminderNotification: (payload: { title: string; body: string; silent: boolean }): Promise<boolean> =>
+    ipcRenderer.invoke('reminder:notify', payload),
   platform: process.platform,
   version: process.versions.electron,
 });
