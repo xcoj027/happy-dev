@@ -64,7 +64,7 @@ export const Base64Converter: React.FC<Base64ConverterProps> = ({ initialMode = 
   }
 
   return (
-    <div className="space-y-4">
+    <div className="base64-layout space-y-4 min-w-0">
       {/* Mode Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 p-3 card-3d rounded-xl">
         <div className="flex items-center gap-2">
@@ -111,7 +111,7 @@ export const Base64Converter: React.FC<Base64ConverterProps> = ({ initialMode = 
       )}
 
       {/* Editor Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="base64-editors grid grid-cols-1 gap-4">
         <CodeEditor
           label={mode === 'encode' ? 'Plain Text String' : 'Base64 Encoded String'}
           value={input}

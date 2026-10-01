@@ -126,7 +126,7 @@ export const App: React.FC = () => {
         />
 
         {/* Center Content Stage */}
-        <main className="flex-1 h-full min-h-0 overflow-hidden p-4 bg-transparent flex flex-col">
+        <main className="flex-1 h-full min-h-0 min-w-0 overflow-hidden p-4 bg-transparent flex flex-col">
           {isDashboard ? (
             /* Dashboard: Pure borderless canvas without enclosing background box */
             <div className="flex-1 flex flex-col min-h-0 overflow-y-auto px-1 py-0.5 bg-transparent">

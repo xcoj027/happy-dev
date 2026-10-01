@@ -82,7 +82,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`app-no-drag h-full min-h-0 bg-[var(--bg-sidebar)] flex flex-col justify-between select-none transition-all duration-300 ease-in-out shrink-0 z-20 ${
+      className={`app-no-drag h-full min-h-0 bg-[var(--bg-sidebar)] flex flex-col justify-between select-none transition-[width] duration-300 ease-in-out motion-reduce:transition-none shrink-0 z-20 ${
         isCollapsed ? 'w-16' : 'w-64'
       }`}
     >
@@ -116,8 +116,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
 
             {/* Search Input */}
-            <div className="relative">
-              <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-[var(--text-muted)] pointer-events-none" />
+            <div className="search-field relative rounded-lg">
+              <Search className="search-icon w-3.5 h-3.5 absolute left-2.5 top-2.5 text-[var(--text-muted)] pointer-events-none" />
               <input
                 type="text"
                 value={searchTerm}
@@ -201,25 +201,34 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <>
                     <span className="flex-1 text-left">{category.name}</span>
                     <span className="text-[10px] text-[var(--text-muted)]">{category.tools.length}</span>
-                    <ChevronDown size={14} className={`shrink-0 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                    <ChevronDown size={14} className={`shrink-0 transition-transform duration-250 ease-in-out motion-reduce:transition-none ${isExpanded ? 'rotate-180' : ''}`} />
                   </>
                 )}
               </button>
-              <div id={`sidebar-category-${category.id}`} hidden={!isExpanded} className="ml-3 border-l border-black/[0.06] dark:border-white/[0.06] pl-2 space-y-0.5 pb-2">
-                {category.tools.map((tool) => (
-                  <button
-                    key={tool.id}
-                    type="button"
-                    onClick={() => onSelectTool(tool.id)}
-                    aria-current={activeToolId === tool.id ? 'page' : undefined}
-                    className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs text-left transition cursor-pointer ${activeToolId === tool.id
-                      ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-semibold'
-                      : 'text-[var(--text-secondary)] hover:bg-[var(--control-panel-bg)] hover:text-[var(--text-primary)]'}`}
-                  >
-                    <DynamicIcon name={tool.icon} size={15} className={`${catColor.text} shrink-0`} />
-                    <span className="truncate">{tool.name}</span>
-                  </button>
-                ))}
+              <div
+                id={`sidebar-category-${category.id}`}
+                aria-hidden={!isExpanded}
+                inert={!isExpanded}
+                className={`grid transition-[grid-template-rows,opacity] duration-250 ease-in-out motion-reduce:transition-none ${isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
+              >
+                <div className="min-h-0 overflow-hidden">
+                  <div className="ml-3 border-l border-black/[0.06] dark:border-white/[0.06] pl-2 space-y-0.5 pb-2">
+                    {category.tools.map((tool) => (
+                      <button
+                        key={tool.id}
+                        type="button"
+                        onClick={() => onSelectTool(tool.id)}
+                        aria-current={activeToolId === tool.id ? 'page' : undefined}
+                        className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs text-left transition cursor-pointer ${activeToolId === tool.id
+                          ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-semibold'
+                          : 'text-[var(--text-secondary)] hover:bg-[var(--control-panel-bg)] hover:text-[var(--text-primary)]'}`}
+                      >
+                        <DynamicIcon name={tool.icon} size={15} className={`${catColor.text} shrink-0`} />
+                        <span className="truncate">{tool.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           );

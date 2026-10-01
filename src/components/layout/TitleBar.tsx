@@ -14,8 +14,6 @@
 
 import React from 'react';
 import { Search } from 'lucide-react';
-import { isTauri } from '@tauri-apps/api/core';
-import { getCurrentWindow } from '@tauri-apps/api/window';
 import { AppLogo } from '../common/AppLogo';
 
 interface TitleBarProps {
@@ -28,11 +26,7 @@ export const TitleBar: React.FC<TitleBarProps> = ({ onOpenCommandPalette, onGoHo
 
   return (
     <header
-      onMouseDown={(event) => {
-        if (event.button === 0 && isTauri() && !(event.target as HTMLElement).closest('.app-no-drag')) {
-          void getCurrentWindow().startDragging().catch(console.error);
-        }
-      }}
+      data-tauri-drag-region="deep"
       className="h-10 w-full bg-[var(--bg-titlebar)] flex items-center justify-between px-3 select-none text-xs text-[var(--text-secondary)] z-40 transition-colors"
     >
       {/* Left side: Mac traffic light spacing or App branding */}
@@ -41,6 +35,7 @@ export const TitleBar: React.FC<TitleBarProps> = ({ onOpenCommandPalette, onGoHo
         <div className={isMac ? 'w-16' : ''} />
         <div
           onClick={onGoHome}
+          data-tauri-drag-region="false"
           className="app-no-drag flex items-center gap-2 font-semibold text-[var(--text-primary)] cursor-pointer hover:opacity-85 transition"
           title="Go to Homepage"
         >
@@ -55,14 +50,14 @@ export const TitleBar: React.FC<TitleBarProps> = ({ onOpenCommandPalette, onGoHo
       </div>
 
       {/* Center: Command Palette Trigger */}
-      <div className="app-no-drag flex-1 max-w-sm mx-4">
+      <div data-tauri-drag-region="false" className="app-no-drag flex-1 max-w-sm mx-4">
         <button
           type="button"
           onClick={onOpenCommandPalette}
-          className="btn-3d w-full flex items-center justify-between px-3 py-1 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition group cursor-pointer"
+          className="search-trigger btn-3d w-full flex items-center justify-between px-3 py-1 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition group cursor-pointer"
         >
           <div className="flex items-center gap-2 text-xs">
-            <Search className="w-3.5 h-3.5 text-[var(--text-muted)] group-hover:text-emerald-500 transition" />
+            <Search className="search-icon w-3.5 h-3.5 text-[var(--text-muted)] group-hover:text-emerald-500 transition" />
             <span>Search 38+ dev utilities...</span>
           </div>
           <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--control-input-bg)] text-[var(--text-secondary)]">

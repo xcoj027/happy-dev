@@ -91,9 +91,7 @@ export const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
                 className="bg-black/5 dark:bg-[#1a1d26] border border-black/5 dark:border-white/10 rounded-md px-2 py-1 text-xs text-[var(--text-primary)] outline-none cursor-pointer"
               >
                 <option value={6}>1/2 (Half Width)</option>
-                <option value={12}>Full (12 cols)</option>
-                <option value={4}>1/3 (Small)</option>
-                <option value={8}>2/3 (Wide)</option>
+                <option value={12}>Full Width</option>
               </select>
             </div>
 

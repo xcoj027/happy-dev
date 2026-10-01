@@ -20,7 +20,7 @@ export interface DashboardWidget {
   toolId: string;      // ID in toolsRegistry, e.g. "uuid-generator"
   title: string;       // Custom section name
   width?: WidgetWidth;  // Legacy width fallback
-  colSpan?: number;    // Dynamic column span in 12-col grid (3 to 12)
+  colSpan?: number;    // Half width (6) or full width (12)
   height?: WidgetHeight;
   customHeight?: number; // Drag-resizable pixel height
   isCollapsed?: boolean;
@@ -34,14 +34,8 @@ export interface DashboardPreset {
 }
 
 export const getWidgetColSpan = (widget: DashboardWidget): number => {
-  if (typeof widget.colSpan === 'number' && widget.colSpan >= 3 && widget.colSpan <= 12) {
-    return widget.colSpan;
+  if (typeof widget.colSpan === 'number' && Number.isFinite(widget.colSpan)) {
+    return widget.colSpan > 6 ? 12 : 6;
   }
-  switch (widget.width) {
-    case '1/3': return 4;
-    case '1/2': return 6;
-    case '2/3': return 8;
-    case 'full': return 12;
-    default: return 6;
-  }
+  return widget.width === 'full' || widget.width === '2/3' ? 12 : 6;
 };

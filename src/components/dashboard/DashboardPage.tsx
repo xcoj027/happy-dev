@@ -30,24 +30,18 @@ import {
   ChevronUp,
   RotateCcw,
   LayoutDashboard,
+  Columns2,
 } from 'lucide-react';
 
-const STORAGE_KEY = 'happydev_custom_dashboard_v6';
+const STORAGE_KEY = 'happydev_custom_dashboard_v7';
+const LEGACY_STORAGE_KEY = 'happydev_custom_dashboard_v6';
 
 const DEFAULT_WIDGETS: DashboardWidget[] = [
   {
     id: 'w_b64_default',
     toolId: 'base64-converter',
     title: 'Base64 Text & File Converter',
-    colSpan: 6,
-    customHeight: 520,
-  },
-  {
-    id: 'w_yaml_properties_default',
-    toolId: 'properties-yaml-converter',
-    title: 'Properties ⇄ YAML Converter',
-    colSpan: 6,
-    customHeight: 520,
+    colSpan: 12,
   },
 ];
 
@@ -67,11 +61,17 @@ interface ResizingState {
 export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) => {
   const [widgets, setWidgets] = useState<DashboardWidget[]>(() => {
     try {
-      const savedV6 = localStorage.getItem(STORAGE_KEY);
+      const savedV6 = localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(LEGACY_STORAGE_KEY);
       if (savedV6) {
         const parsed = JSON.parse(savedV6);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map((w) => ({ ...w, colSpan: getWidgetColSpan(w) }));
+        if (Array.isArray(parsed)) {
+          const oldDefault = !localStorage.getItem(STORAGE_KEY) && parsed.length === 2 && parsed[0]?.id === 'w_b64_default' && parsed[1]?.id === 'w_yaml_properties_default' && parsed[0]?.title === 'Base64 Text & File Converter' && parsed[1]?.title === 'Properties ⇄ YAML Converter' && parsed.every((widget) => widget.colSpan === 6 && widget.customHeight === 520 && !widget.isCollapsed);
+          if (oldDefault) return DEFAULT_WIDGETS;
+          return parsed.filter((w) => w && typeof w.id === 'string' && toolsRegistry.some((tool) => tool.id === w.toolId)).map((w) => ({
+            ...w,
+            colSpan: getWidgetColSpan(w),
+            customHeight: w.id === 'w_b64_default' && w.customHeight === 520 ? undefined : w.customHeight,
+          }));
         }
       }
     } catch {}
@@ -86,7 +86,19 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
 
   // Drag and drop state
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-  const lastSwapTimeRef = useRef<number>(0);
+  const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
+  const [hasTwoColumns, setHasTwoColumns] = useState(false);
+  const resizeCleanupRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    const grid = gridContainerRef.current;
+    if (!grid) return;
+    const observer = new ResizeObserver(([entry]) => setHasTwoColumns(entry.contentRect.width >= 960));
+    observer.observe(grid);
+    return () => observer.disconnect();
+  }, [widgets.length]);
+
+  useEffect(() => () => resizeCleanupRef.current?.(), []);
 
   // Dynamic resize state
   const [resizingState, setResizingState] = useState<ResizingState | null>(null);
@@ -139,7 +151,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
       id: `widget_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
       toolId,
       title: customTitle || tool?.name || 'Utility Section',
-      colSpan: resolvedCols,
+      colSpan: resolvedCols > 6 ? 12 : 6,
       customHeight: resolvedCols >= 12 ? 520 : 460,
       isCollapsed: false,
     };
@@ -190,7 +202,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
 
   // Reset to default
   const handleResetDefault = () => {
-    if (window.confirm('Reset dashboard to default 2 sections (Base64 on left, Properties ⇄ YAML on right)?')) {
+    if (window.confirm('Reset dashboard to one full-width Base64 section?')) {
       setWidgets(DEFAULT_WIDGETS);
     }
   };
@@ -214,30 +226,25 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
   };
 
   const handleDragEnter = (targetIndex: number) => {
-    if (draggedIndex === null || draggedIndex === targetIndex) return;
-
-    // Smooth throttle to avoid rapid jitter
-    const now = Date.now();
-    if (now - lastSwapTimeRef.current < 75) return;
-    lastSwapTimeRef.current = now;
-
-    // Live reorder
-    setWidgets((prev) => {
-      const list = [...prev];
-      const [draggedItem] = list.splice(draggedIndex, 1);
-      list.splice(targetIndex, 0, draggedItem);
-      return list;
-    });
-    setDraggedIndex(targetIndex);
+    if (draggedIndex !== null && draggedIndex !== targetIndex) setDropTargetIndex(targetIndex);
   };
 
   const handleDragEnd = () => {
     setDraggedIndex(null);
+    setDropTargetIndex(null);
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = (e: React.DragEvent, targetIndex: number) => {
     e.preventDefault();
-    setDraggedIndex(null);
+    if (draggedIndex !== null && draggedIndex !== targetIndex) {
+      setWidgets((previous) => {
+        const next = [...previous];
+        const [item] = next.splice(draggedIndex, 1);
+        next.splice(targetIndex, 0, item);
+        return next;
+      });
+    }
+    handleDragEnd();
   };
 
   // ==========================================
@@ -253,11 +260,15 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
     e.preventDefault();
     e.stopPropagation();
 
+    const content = e.currentTarget.closest('.dashboard-card')?.querySelector<HTMLElement>('[data-widget-content]');
+    if (content) initialHeight = content.getBoundingClientRect().height;
+
     const startX = e.clientX;
     const startY = e.clientY;
     const container = gridContainerRef.current;
     const containerWidth = container ? container.getBoundingClientRect().width : 1200;
-    const colWidth = containerWidth / 12;
+    const colWidth = (containerWidth - 16) / 2;
+    resizeCleanupRef.current?.();
 
     resizeContextRef.current = {
       widgetId,
@@ -284,58 +295,58 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
     document.body.style.cursor =
       mode === 'both' ? 'nwse-resize' : mode === 'width' ? 'col-resize' : 'row-resize';
 
-    const onMouseMove = (moveEvent: MouseEvent) => {
+    let latestMove: MouseEvent | null = null;
+    const updateResize = (moveEvent: MouseEvent) => {
       moveEvent.preventDefault();
-      const ctx = resizeContextRef.current;
-      if (!ctx) return;
+      const curCtx = resizeContextRef.current;
+      if (!curCtx) return;
 
-      if (rafIdRef.current !== null) {
-        cancelAnimationFrame(rafIdRef.current);
+      let nextCols = curCtx.lastCols;
+      let nextHeight = curCtx.lastHeight;
+
+      if (curCtx.mode === 'width' || curCtx.mode === 'both') {
+        const deltaX = moveEvent.clientX - curCtx.startX;
+        if (hasTwoColumns) {
+          const desiredWidth = curCtx.initialCols / 6 * curCtx.colWidth + deltaX;
+          nextCols = desiredWidth >= curCtx.colWidth * 1.5 ? 12 : 6;
+        }
       }
 
-      rafIdRef.current = requestAnimationFrame(() => {
-        const curCtx = resizeContextRef.current;
-        if (!curCtx) return;
+      if (curCtx.mode === 'height' || curCtx.mode === 'both') {
+        const deltaY = moveEvent.clientY - curCtx.startY;
+        nextHeight = Math.max(260, Math.min(1200, Math.round(curCtx.initialHeight + deltaY)));
+      }
 
-        let nextCols = curCtx.lastCols;
-        let nextHeight = curCtx.lastHeight;
+      if (nextCols !== curCtx.lastCols || nextHeight !== curCtx.lastHeight) {
+        curCtx.lastCols = nextCols;
+        curCtx.lastHeight = nextHeight;
 
-        if (curCtx.mode === 'width' || curCtx.mode === 'both') {
-          const deltaX = moveEvent.clientX - curCtx.startX;
-          const colDelta = Math.round(deltaX / curCtx.colWidth);
-          nextCols = Math.max(3, Math.min(12, curCtx.initialCols + colDelta));
-        }
+        setResizingState({
+          widgetId: curCtx.widgetId,
+          mode: curCtx.mode,
+          initialCols: curCtx.initialCols,
+          initialHeight: curCtx.initialHeight,
+          currentCols: nextCols,
+          currentHeight: nextHeight,
+        });
 
-        if (curCtx.mode === 'height' || curCtx.mode === 'both') {
-          const deltaY = moveEvent.clientY - curCtx.startY;
-          nextHeight = Math.max(260, Math.min(1200, Math.round(curCtx.initialHeight + deltaY)));
-        }
-
-        if (nextCols !== curCtx.lastCols || nextHeight !== curCtx.lastHeight) {
-          curCtx.lastCols = nextCols;
-          curCtx.lastHeight = nextHeight;
-
-          setResizingState({
-            widgetId: curCtx.widgetId,
-            mode: curCtx.mode,
-            initialCols: curCtx.initialCols,
-            initialHeight: curCtx.initialHeight,
-            currentCols: nextCols,
-            currentHeight: nextHeight,
-          });
-
-          setWidgets((prev) =>
-            prev.map((w) =>
-              w.id === curCtx.widgetId
-                ? { ...w, colSpan: nextCols, customHeight: nextHeight }
-                : w
-            )
-          );
-        }
-      });
+        setWidgets((prev) =>
+          prev.map((w) =>
+            w.id === curCtx.widgetId
+              ? { ...w, colSpan: nextCols, customHeight: nextHeight }
+              : w
+          )
+        );
+      }
+    };
+    const onMouseMove = (event: MouseEvent) => {
+      latestMove = event;
+      if (rafIdRef.current !== null) cancelAnimationFrame(rafIdRef.current);
+      rafIdRef.current = requestAnimationFrame(() => updateResize(event));
     };
 
     const onMouseUp = () => {
+      if (latestMove) updateResize(latestMove);
       if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current);
         rafIdRef.current = null;
@@ -346,14 +357,18 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
       document.body.style.cursor = '';
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseup', onMouseUp);
+      window.removeEventListener('blur', onMouseUp);
+      resizeCleanupRef.current = null;
     };
 
     window.addEventListener('mousemove', onMouseMove, { passive: false });
     window.addEventListener('mouseup', onMouseUp);
+    window.addEventListener('blur', onMouseUp);
+    resizeCleanupRef.current = onMouseUp;
   };
 
   return (
-    <div className="space-y-4 pb-12 relative">
+    <div className="dashboard-layout space-y-4 pb-12 relative min-w-0">
       {/* Full-screen mouse capture backdrop overlay during active drag resize */}
       {resizingState && (
         <div
@@ -387,7 +402,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
             type="button"
             onClick={handleResetDefault}
             className="btn-3d flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer"
-            title="Reset to default 2 sections (Base64 on left, Properties ⇄ YAML on right)"
+            title="Reset to one full-width Base64 section"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Reset Default</span>
@@ -429,12 +444,10 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
           </div>
         </div>
       ) : (
-        /* Dynamic 12-Column Grid Layout with Live Reordering and Silky-Smooth Drag-Resizing */
+        /* Responsive one- or two-column dashboard with half/full section widths */
         <div
           ref={gridContainerRef}
-          className={`grid grid-cols-1 md:grid-cols-12 gap-4 ${
-            resizingState ? 'transition-none' : 'transition-all duration-200'
-          }`}
+          className="dashboard-grid"
         >
           {widgets.map((widget, index) => {
             const tool = toolsRegistry.find((t) => t.id === widget.toolId);
@@ -453,18 +466,18 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
                 key={widget.id}
                 onDragOver={handleDragOver}
                 onDragEnter={() => handleDragEnter(index)}
-                onDrop={handleDrop}
+                onDrop={(event) => handleDrop(event, index)}
                 style={{
-                  gridColumn: `span ${colSpan} / span ${colSpan}`,
-                }}
-                className={`relative ${
+                  '--widget-span': colSpan === 12 ? 2 : 1,
+                } as React.CSSProperties}
+                className={`dashboard-widget relative min-w-0 ${
                   resizingState
                     ? 'transition-none'
                     : 'transition-all duration-200 ease-out'
                 } ${
                   isBeingDragged
                     ? 'opacity-40 scale-[0.98] ring-2 ring-emerald-500/70 z-20'
-                    : 'opacity-100 z-10'
+                    : dropTargetIndex === index ? 'ring-2 ring-emerald-500 ring-offset-2 z-10' : 'opacity-100 z-10'
                 }`}
               >
                 <div
@@ -482,8 +495,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
                   {isBeingResized && resizingState && (
                     <div className="absolute top-3 right-3 z-40 bg-emerald-600 text-white text-[11px] font-mono font-bold px-2.5 py-1 rounded-lg flex items-center gap-1.5 pointer-events-none animate-fade-in shadow-md">
                       <span>
-                        {resizingState.currentCols}/12 cols (
-                        {Math.round((resizingState.currentCols / 12) * 100)}%)
+                        {hasTwoColumns && resizingState.currentCols === 6 ? 'Half width' : 'Full width'}
                       </span>
                       <span className="opacity-60">•</span>
                       <span>{resizingState.currentHeight}px</span>
@@ -492,17 +504,33 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
 
                   {/* Section Header Bar - Draggable for Dynamic Repositioning */}
                   <div
-                    draggable={!isEditingTitle && !isBeingResized}
-                    onDragStart={(e) => handleDragStart(e, index)}
-                    onDragEnd={handleDragEnd}
                     className="flex items-center justify-between px-3.5 py-2.5 bg-transparent border-b border-black/[0.04] dark:border-white/[0.06] select-none cursor-grab active:cursor-grabbing group/header"
-                    title="Drag header to reorder section dynamically"
+                    title="Use the grip to reorder; double-click the title to rename"
                   >
                     {/* Left: Drag Handle, Tool Icon, and Editable Title */}
                     <div className="flex items-center gap-2 min-w-0 flex-1 mr-2">
-                      <div className="text-[var(--text-muted)] group-hover/header:text-emerald-500 transition-colors shrink-0">
+                      <button
+                        type="button"
+                        draggable={!isEditingTitle && !isBeingResized}
+                        onDragStart={(event) => handleDragStart(event, index)}
+                        onDragEnd={handleDragEnd}
+                        aria-label={`Move ${widget.title}`}
+                        title="Drag to reorder; use Arrow Up or Arrow Down to move"
+                        onKeyDown={(event) => {
+                          if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
+                          event.preventDefault();
+                          const target = Math.max(0, Math.min(widgets.length - 1, index + (event.key === 'ArrowUp' ? -1 : 1)));
+                          setWidgets((previous) => {
+                            const next = [...previous];
+                            const [item] = next.splice(index, 1);
+                            next.splice(target, 0, item);
+                            return next;
+                          });
+                        }}
+                        className="p-1 cursor-grab active:cursor-grabbing text-[var(--text-muted)] hover:text-emerald-500 shrink-0"
+                      >
                         <GripVertical className="w-4 h-4" />
-                      </div>
+                      </button>
 
                       <div
                         className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${catColor.bg} ${catColor.text}`}
@@ -566,6 +594,12 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
                       onMouseDown={(e) => e.stopPropagation()}
                     >
                       {/* Open Standalone Tool */}
+                      {hasTwoColumns && <button
+                        type="button"
+                        onClick={() => setWidgets((previous) => previous.map((item) => item.id === widget.id ? { ...item, colSpan: colSpan === 12 ? 6 : 12 } : item))}
+                        className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-emerald-500 transition cursor-pointer"
+                        title={colSpan === 12 ? 'Use half width' : 'Use full width'}
+                      ><Columns2 className="w-3.5 h-3.5" /></button>}
                       <button
                         type="button"
                         onClick={() => onSelectTool(tool.id)}
@@ -604,10 +638,11 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
                   {/* Section Content Area */}
                   {!widget.isCollapsed && (
                     <div
+                      data-widget-content
                       style={{
-                        height: `${customHeight}px`,
+                        height: tool.id === 'base64-converter' && !widget.customHeight ? undefined : `${customHeight}px`,
                       }}
-                      className={`flex-1 p-4 overflow-y-auto ${
+                      className={`min-w-0 p-4 overflow-auto ${
                         isBeingResized ? 'pointer-events-none select-none' : ''
                       }`}
                     >
@@ -636,15 +671,15 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
                   )}
 
                   {/* DYNAMIC RESIZE HANDLE 1: RIGHT EDGE (DRAG WIDTH HORIZONTALLY) */}
-                  <div
+                  {hasTwoColumns && <div
                     onMouseDown={(e) =>
                       handleResizeStart(e, widget.id, 'width', colSpan, customHeight)
                     }
                     className="absolute top-0 right-0 bottom-4 w-3 cursor-col-resize z-20 flex items-center justify-center group/resizew select-none hover:bg-emerald-500/15 active:bg-emerald-500/30 transition-colors"
-                    title="Drag horizontally to resize section width (cols)"
+                    title="Drag to switch between half and full width"
                   >
                     <div className="w-0.5 h-8 rounded-full bg-black/15 dark:bg-white/20 group-hover/resizew:bg-emerald-500 transition-colors" />
-                  </div>
+                  </div>}
 
                   {/* DYNAMIC RESIZE HANDLE 2: BOTTOM EDGE (DRAG HEIGHT VERTICALLY) */}
                   {!widget.isCollapsed && (
@@ -664,7 +699,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
                   {!widget.isCollapsed && (
                     <div
                       onMouseDown={(e) =>
-                        handleResizeStart(e, widget.id, 'both', colSpan, customHeight)
+                        handleResizeStart(e, widget.id, hasTwoColumns ? 'both' : 'height', colSpan, customHeight)
                       }
                       onDoubleClick={() => handleResetSize(widget.id)}
                       className="absolute right-0 bottom-0 w-6 h-6 cursor-nwse-resize z-30 flex items-center justify-center rounded-br-2xl hover:bg-emerald-500/30 active:bg-emerald-500/50 transition-colors group/resizecorner select-none"

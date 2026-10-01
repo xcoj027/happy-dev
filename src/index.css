@@ -685,3 +685,49 @@ body {
 		transition-duration: 0.01ms !important;
 	}
 }
+
+/* Dashboard columns follow available content width, including the sidebar. */
+.dashboard-layout { container-type: inline-size; container-name: dashboard; }
+.base64-layout { container-type: inline-size; container-name: base64; }
+@container base64 (min-width: 700px) {
+  .base64-editors { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.dashboard-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; align-items: start; }
+.dashboard-widget { grid-column: span 1; }
+@container dashboard (min-width: 960px) {
+  .dashboard-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dashboard-widget { grid-column: span var(--widget-span, 1); }
+}
+
+.search-trigger,
+.search-field {
+  transition: box-shadow 180ms ease, transform 180ms ease;
+}
+.search-trigger:hover,
+.search-trigger:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 2px rgb(16 185 129 / 20%);
+}
+.search-trigger:active { transform: translateY(0); }
+.search-field:focus-within { box-shadow: inset 0 0 0 1px rgb(16 185 129 / 40%); }
+.search-icon { transition: transform 180ms ease, color 180ms ease; }
+.search-trigger:hover .search-icon,
+.search-trigger:focus-visible .search-icon,
+.search-field:focus-within .search-icon {
+  transform: scale(1.12) rotate(-8deg);
+  color: var(--color-emerald-500, #10b981);
+}
+.search-backdrop { animation: search-backdrop-enter 160ms ease-out both; }
+.search-palette { animation: search-palette-enter 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes search-backdrop-enter { from { opacity: 0; } to { opacity: 1; } }
+@keyframes search-palette-enter {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .search-trigger, .search-field, .search-icon { transition: none; }
+  .search-trigger:hover, .search-trigger:focus-visible,
+  .search-trigger:hover .search-icon, .search-trigger:focus-visible .search-icon,
+  .search-field:focus-within .search-icon { transform: none; }
+  .search-backdrop, .search-palette { animation: none; }
+}

@@ -97,14 +97,14 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 bg-black/60 backdrop-blur-sm animate-fade-in p-4">
+    <div className="search-backdrop fixed inset-0 z-50 flex items-start justify-center pt-20 bg-black/60 backdrop-blur-sm p-4">
       <div
-        className="w-full max-w-xl bg-[var(--control-panel-bg)] rounded-2xl overflow-hidden flex flex-col"
+        className="search-palette w-full max-w-xl bg-[var(--control-panel-bg)] rounded-2xl overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input Bar */}
-        <div className="flex items-center px-4 py-3 bg-[var(--control-input-bg)]">
-          <Search className="w-5 h-5 text-emerald-500 dark:text-emerald-400 mr-3 shrink-0" />
+        <div className="search-field flex items-center px-4 py-3 bg-[var(--control-input-bg)]">
+          <Search className="search-icon w-5 h-5 text-emerald-500 dark:text-emerald-400 mr-3 shrink-0" />
           <input
             ref={inputRef}
             type="text"
