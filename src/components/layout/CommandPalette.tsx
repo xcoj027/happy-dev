@@ -13,10 +13,10 @@
  */
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { toolsRegistry, categories } from '../../data/toolsRegistry';
+import { toolsRegistry } from '../../data/toolsRegistry';
 import { ToolDefinition } from '../../types';
 import { DynamicIcon } from '../common/DynamicIcon';
-import { Search, X, ArrowRight, CornerDownLeft } from 'lucide-react';
+import { Search, X, CornerDownLeft } from 'lucide-react';
 import { getCategoryColor } from '../../utils/categoryColors';
 
 interface CommandPaletteProps {

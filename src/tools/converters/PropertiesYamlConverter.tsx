@@ -16,10 +16,7 @@ import React, { useState, useMemo } from 'react';
 import YAML from 'yaml';
 import { CodeEditor } from '../../components/common/CodeEditor';
 import {
-  Settings2,
-  CheckCircle2,
   AlertCircle,
-  FileCode,
 } from 'lucide-react';
 
 /**

@@ -15,7 +15,7 @@
 import React, { useState } from 'react';
 import { CopyButton } from '../../components/common/CopyButton';
 import { CodeEditor } from '../../components/common/CodeEditor';
-import { Type } from 'lucide-react';
+
 
 export const CaseConverter: React.FC = () => {
   const [input, setInput] = useState('');

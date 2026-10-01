@@ -15,7 +15,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
-import electron from 'vite-plugin-electron';
 import { fileURLToPath, URL } from 'node:url';
 import appVersion from './scripts/app-version.cjs';
 
@@ -26,33 +25,6 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
     react(),
-    electron([
-      {
-        entry: 'electron/main.ts',
-        vite: {
-          build: {
-            outDir: 'dist-electron',
-            rollupOptions: {
-              external: ['electron'],
-            },
-          },
-        },
-      },
-      {
-        entry: 'electron/preload.ts',
-        onstart(args) {
-          args.reload();
-        },
-        vite: {
-          build: {
-            outDir: 'dist-electron',
-            rollupOptions: {
-              external: ['electron'],
-            },
-          },
-        },
-      },
-    ]),
   ],
   resolve: {
     alias: {
@@ -62,9 +34,11 @@ export default defineConfig({
   server: {
     port: 7200,
     strictPort: true,
+    host: process.env.TAURI_DEV_HOST || '127.0.0.1',
   },
   build: {
     outDir: 'dist',
     emptyOutDir: true,
+    target: ['es2021', 'chrome105', 'safari14'],
   },
 });

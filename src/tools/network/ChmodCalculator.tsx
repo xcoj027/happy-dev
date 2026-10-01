@@ -14,7 +14,7 @@
 
 import React, { useState } from 'react';
 import { CopyButton } from '../../components/common/CopyButton';
-import { Terminal, Shield } from 'lucide-react';
+
 
 export const ChmodCalculator: React.FC = () => {
   const [perms, setPerms] = useState({

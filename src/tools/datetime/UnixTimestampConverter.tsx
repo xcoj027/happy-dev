@@ -14,7 +14,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { CopyButton } from '../../components/common/CopyButton';
-import { Clock, Play, Pause, RefreshCw, Calendar, CheckCircle2 } from 'lucide-react';
+import { Clock, Play, Pause, Calendar } from 'lucide-react';
 
 export const UnixTimestampConverter: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'single' | 'datetoepoch'>('single');

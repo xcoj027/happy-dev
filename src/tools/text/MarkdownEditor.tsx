@@ -15,7 +15,7 @@
 import React, { useState } from 'react';
 import { CodeEditor } from '../../components/common/CodeEditor';
 import { CopyButton } from '../../components/common/CopyButton';
-import { FileText, Eye, Code } from 'lucide-react';
+import { FileText, Eye } from 'lucide-react';
 
 export const MarkdownEditor: React.FC = () => {
   const [markdown, setMarkdown] = useState('');

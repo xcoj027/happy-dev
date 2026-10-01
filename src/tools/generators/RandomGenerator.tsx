@@ -50,7 +50,7 @@ export const RandomGenerator: React.FC = () => {
   const [minNum, setMinNum] = useState(1);
   const [maxNum, setMaxNum] = useState(100);
   const [isFloat, setIsFloat] = useState(false);
-  const [decimalPlaces, setDecimalPlaces] = useState(2);
+  const decimalPlaces = 2;
 
   // Network options
   const [networkType, setNetworkType] = useState<'ipv4' | 'ipv6' | 'mac' | 'port'>('ipv4');

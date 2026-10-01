@@ -14,7 +14,7 @@
 
 import React, { useState } from 'react';
 import { CopyButton } from '../../components/common/CopyButton';
-import { Search, Share2, Globe, MessageSquare, Code2, AlertCircle, CheckCircle2 } from 'lucide-react';
+
 
 export const MetaTagsPreviewer: React.FC = () => {
   const [title, setTitle] = useState('');

@@ -14,7 +14,7 @@
 
 import React, { useState } from 'react';
 import { CodeEditor } from '../../components/common/CodeEditor';
-import { Settings, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Settings, AlertCircle } from 'lucide-react';
 
 interface ConversionOptions {
   rootName: string;

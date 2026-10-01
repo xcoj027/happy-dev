@@ -1,0 +1,52 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "HappyDev",
+  "version": "1.0.0",
+  "identifier": "com.happydev.app",
+  "build": {
+    "beforeDevCommand": "npm run dev:web",
+    "beforeBuildCommand": "npm run build",
+    "devUrl": "http://127.0.0.1:7200",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "HappyDev - Developer Utilities Suite",
+        "width": 1280,
+        "height": 850,
+        "minWidth": 980,
+        "minHeight": 650,
+        "backgroundColor": "#070b14"
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["dmg", "nsis", "appimage"],
+    "category": "DeveloperTool",
+    "shortDescription": "Offline developer utilities",
+    "copyright": "Copyright (c) 2026 TNQSW. All rights reserved.",
+    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
+    "macOS": {
+      "minimumSystemVersion": "12.0",
+      "signingIdentity": "-",
+      "hardenedRuntime": true
+    },
+    "windows": {
+      "webviewInstallMode": {
+        "type": "downloadBootstrapper",
+        "silent": true
+      },
+      "nsis": {
+        "installMode": "currentUser",
+        "compression": "lzma",
+        "startMenuFolder": "HappyDev"
+      }
+    }
+  }
+}

@@ -14,7 +14,7 @@
 
 import React, { useState } from 'react';
 import { CodeEditor } from '../../components/common/CodeEditor';
-import { FileText, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 export const TextInspector: React.FC = () => {
   const [text, setText] = useState('');

@@ -13,7 +13,7 @@
  */
 
 import React, { useState } from 'react';
-import { Search, Globe, ExternalLink } from 'lucide-react';
+import { Search } from 'lucide-react';
 
 const statusCodes = [
   { code: 200, name: 'OK', category: '2xx Success', desc: 'Standard response for successful HTTP requests.' },

@@ -18,7 +18,7 @@ import { ToolDefinition, ToolCategory } from '../../types';
 import { DynamicIcon } from '../common/DynamicIcon';
 import { getCategoryColor } from '../../utils/categoryColors';
 import { WidgetWidth } from './DashboardTypes';
-import { Search, X, Plus, Sparkles, Layers } from 'lucide-react';
+import { Search, X, Plus } from 'lucide-react';
 
 interface AddWidgetModalProps {
   isOpen: boolean;
@@ -136,7 +136,6 @@ export const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
             </button>
             {categories.map((cat) => {
               const isSelected = selectedCat === cat.id;
-              const catColor = getCategoryColor(cat.id);
               return (
                 <button
                   key={cat.id}

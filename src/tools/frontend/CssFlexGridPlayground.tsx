@@ -14,7 +14,7 @@
 
 import React, { useState } from 'react';
 import { CopyButton } from '../../components/common/CopyButton';
-import { LayoutGrid } from 'lucide-react';
+
 
 export const CssFlexGridPlayground: React.FC = () => {
   const [layoutType, setLayoutType] = useState<'flex' | 'grid'>('flex');

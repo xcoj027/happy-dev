@@ -18,16 +18,16 @@ HappyDev is a comprehensive developer toolbox created as a modern, lightweight, 
 
 ## 🚀 Download Releases
 
-You can download the latest pre-compiled installers and portable binaries directly from the official GitHub Releases page:
+You can download the latest pre-compiled installers directly from the official GitHub Releases page:
 
 👉 **[Download Latest Version from GitHub Releases](https://github.com/xcoj027/happy-dev-releases/releases/latest)**
 
 ### Automated Builds on Main Branch
 The repository is configured with an automated continuous deployment pipeline powered by GitHub Actions. Every push to the `main` branch automatically triggers a multi-platform compilation matrix that builds and publishes updated installers for all supported operating systems:
 
-- **macOS (Apple Silicon & Intel)**: Download the `.dmg` installer or the standalone `.zip` archive.
-- **Windows (x64 & ARM64)**: Download the standard `.exe` setup installer or the portable executable.
-- **Linux (x64)**: Download the universal `.AppImage` package or the Debian `.deb` installer.
+- **macOS (Apple Silicon & Intel)**: Download the universal `.dmg` installer.
+- **Windows (x64)**: Download the `.exe` setup installer.
+- **Linux (x64)**: Download the `.AppImage` package.
 
 ---
 
@@ -107,8 +107,20 @@ The repository is configured with an automated continuous deployment pipeline po
 Follow these steps to run and build the application from source code on your local workstation:
 
 ### Prerequisites
-- Node.js version 20 or higher is required.
+- Node.js 22 or higher is required.
+- Install stable Rust with Cargo and the [Tauri platform prerequisites](https://v2.tauri.app/start/prerequisites/): Xcode Command Line Tools on macOS, Microsoft C++ Build Tools and WebView2 on Windows, or WebKitGTK 4.1 development packages on Linux.
+- Universal macOS installers require both Rust targets: `rustup target add aarch64-apple-darwin x86_64-apple-darwin`.
 - The npm package manager must be available in your shell environment.
+
+If `npm run dev` reports that `cargo metadata` cannot be found, load Rust into your current shell and retry:
+
+```bash
+source "$HOME/.cargo/env"
+cargo --version
+npm run dev
+```
+
+If `$HOME/.cargo/env` does not exist, install Rust using the instructions in the Tauri prerequisites above, then open a new terminal.
 
 ### Cloning and Installation
 ```bash
@@ -117,37 +129,73 @@ git clone https://github.com/xcoj027/happy-dev.git
 cd happy-dev
 
 # Install all project dependencies
-npm install
+npm ci
 ```
 
 ### Running the Live Development Environment
 ```bash
-# Start the Vite development server and launch the Electron desktop window
+# Start the Vite development server and launch the Tauri desktop window
 npm run dev
+
+# Or run only the frontend in a browser
+npm run dev:web
+```
+
+### Building and Opening a Local macOS App
+```bash
+# Build the native app and open it
+npm run app
+
+# Rebuild without opening it
+npm run update-app
 ```
 
 ### Compiling Production Assets
 ```bash
-# Verify TypeScript types and compile the client and Electron bundles
+# Verify TypeScript types and compile the React frontend
 npm run build
 
-# Package the application for your local operating system architecture
+# Build the native executable without creating an installer
 npm run pack
 ```
 
-### Generating Distributable Installers
-Local builds display `local`. Release builds display `v.1`, `v.2`, and so on, with the same version in installer filenames and GitHub release titles. Numeric package metadata is retained for platform compatibility.
+`npm run build` builds only the frontend. Use the installer commands below to create desktop packages.
+
+### Cleaning Build Files
+
+Rust build caches can grow to several GB after development and builds for multiple architectures. Development builds omit full native debug symbols to reduce cache size. To reclaim space after stopping development or packaging:
 
 ```bash
-# Build macOS installers (.dmg)
-npm run dist:mac
-
-# Build Windows installers (.exe, portable)
-npm run dist:win
-
-# Build Linux package (.AppImage)
-npm run dist:linux
+npm run clean
 ```
+
+This removes the managed Rust cache, legacy Rust build output in the project, compiled frontend assets, and the Vite cache. It keeps source files, installed npm dependencies, and installers in `release/tauri/`. The next desktop run or package build recompiles Rust dependencies and takes longer. Stop development or packaging before cleaning.
+
+To also remove installed npm dependencies and all generated installers, run `npm run clean:all`. Run `npm ci` before starting or building the app again. Source, configuration, lockfiles, assets, documentation, and Git history are preserved.
+
+### Desktop Runtime and Package Size
+HappyDev uses Tauri 2 and the system WebView, with no bundled Chromium or Node runtime. The packaging script rejects any installer that is 100,000,000 bytes or larger. This limit applies to the compressed download, not the installed app or system WebView.
+
+Windows uses the existing WebView2 runtime when available. If it is missing, the installer downloads Microsoft's runtime bootstrapper, so that first installation needs internet access. Tool processing remains offline. Linux requires a compatible WebKitGTK/glibc environment and AppImage/FUSE support; see [Tauri AppImage requirements](https://v2.tauri.app/distribute/appimage/).
+
+The Electron and Tauri WebViews use separate local storage locations. Existing Electron reminders and preferences are not automatically imported. Keep the old app if you need to refer to that data. Scheduled reminder alerts require HappyDev to remain running.
+
+Local Rust build files and desktop bundles are stored outside the project: `~/Library/Caches/HappyDev/tauri` on macOS, `%LOCALAPPDATA%/HappyDev/tauri` on Windows, and `${XDG_CACHE_HOME:-~/.cache}/HappyDev/tauri` on Linux. They still consume disk space; `npm run clean` removes this managed cache. A custom `CARGO_TARGET_DIR` overrides the build location and is not deleted by cleanup. GitHub Actions uses its runner workspace for Rust caching and signing verification.
+
+Installers are staged under `release/tauri/<version>`. After a successful package build, older output versions are removed to prevent installer accumulation.
+
+### Generating Distributable Installers
+Local builds display `local`. Release builds display `v.1`, `v.2`, and so on, with the same version in installer filenames and GitHub release titles. Numeric native metadata is `1.0.N` for releases to support installer upgrades; the displayed version stays `v.N`. Local metadata uses `1.0.0`.
+
+Run each command on its matching operating system:
+
+| Operating system | Command | Package |
+|---|---|---|
+| macOS | `npm run dist:mac` | Universal `.dmg` for Intel and Apple Silicon |
+| Windows | `npm run dist:win` | x64 setup `.exe` |
+| Linux | `npm run dist:linux` | x64 `.AppImage` |
+
+Local installers are saved in `release/tauri/local/`. GitHub Actions builds all three platforms and automatically assigns the next `v.N` release version.
 
 ---
 
@@ -155,7 +203,7 @@ npm run dist:linux
 
 The repository includes an automated GitHub Actions workflow defined in [`.github/workflows/build.yml`](.github/workflows/build.yml):
 - The workflow automatically runs on every push to the `main` branch, on version tags (`v*`), and on manual workflow dispatch triggers.
-- It builds binaries concurrently across three operating system runners: `macos-latest`, `windows-latest`, and `ubuntu-latest`.
+- It builds binaries concurrently across three operating system runners: `macos-latest`, `windows-latest`, and `ubuntu-22.04`. Linux uses a fixed runner version for a stable dependency and glibc baseline.
 - Each release contains one universal macOS `.dmg` (Intel and Apple Silicon), one Windows x64 setup `.exe`, and one Linux x64 `.AppImage`, plus a checksum file. ZIP archives, portable Windows builds, and Debian packages are not generated.
 - Every release publishes the next `v.N` tag to the public [`happy-dev-releases`](https://github.com/xcoj027/happy-dev-releases/releases/latest) repository and marks it as latest, including releases triggered by source tags or manual dispatch.
 - Release runs are serialized. The next number is one greater than the highest existing `v.N` tag (starting at `v.1`). Old releases are removed, but their tags are retained as the counter history; do not delete those tags. Failed builds do not consume a number unless a release tag was already created. Pull request builds use `local`.
@@ -168,15 +216,16 @@ The workflow uses `xcoj027/happy-dev-releases` by default. To publish elsewhere,
 
 ### macOS Signing and Notarization
 
-Public macOS distribution requires a **Developer ID Application** certificate and Apple notarization to pass Gatekeeper with normal security settings. Signing is opt-in; builds remain unsigned until the setup below is complete.
+Public macOS distribution requires a **Developer ID Application** certificate and Apple notarization to pass Gatekeeper with normal security settings. Developer ID signing is opt-in; builds use an ad-hoc signature until the setup below is complete. Ad-hoc signing does not remove Gatekeeper warnings.
 
 1. Enroll in the [Apple Developer Program](https://developer.apple.com/programs/enroll/).
 2. Follow Apple's [Developer ID certificate instructions](https://developer.apple.com/help/account/certificates/create-developer-id-certificates/) to create a **Developer ID Application** certificate. Install it on your Mac with its private key. In Keychain Access, export the certificate and private key together as a password-protected `.p12` file.
 3. Base64-encode the `.p12` file (`base64 -i /path/to/certificate.p12 | pbcopy`) and save it as the source repository's `MAC_CSC_LINK` GitHub Actions secret. Save its export password as `MAC_CSC_KEY_PASSWORD`. Keep the certificate, private key, and passwords out of source control and chat.
 4. Add `APPLE_ID` (your Apple account email), `APPLE_TEAM_ID` (your Developer Program membership Team ID), and `APPLE_APP_SPECIFIC_PASSWORD` (an [app-specific password](https://support.apple.com/en-us/102654) generated for your Apple account) as Actions secrets.
-5. Set the Actions variable `MACOS_SIGNING_ENABLED` to `true`, then run **Build and Release**.
+5. Add `APPLE_SIGNING_IDENTITY` as an Actions secret containing the full certificate identity, such as `Developer ID Application: Your Name (TEAMID)`. Find it with `security find-identity -v -p codesigning`.
+6. Set the Actions variable `MACOS_SIGNING_ENABLED` to `true`, then run **Build and Release**.
 
-The macOS release build requires signing, enables Hardened Runtime, and uses electron-builder's built-in notarization and ticket stapling. It verifies the app signature, stapled ticket, and Gatekeeper assessment before uploading artifacts. Pull requests continue to build without signing credentials. An enabled signing build fails if credentials or verification are missing; it does not silently publish an unsigned app.
+The macOS release build requires signing, enables Hardened Runtime, and uses Tauri's built-in notarization and ticket stapling. It verifies the app signature, stapled ticket, and Gatekeeper assessment before uploading artifacts. Pull requests continue to build without signing credentials. An enabled signing build fails if credentials or verification are missing; it does not silently publish an unsigned app.
 
 ---
 

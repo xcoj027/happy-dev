@@ -14,7 +14,7 @@
 
 import React, { useState } from 'react';
 import { CodeEditor } from '../../components/common/CodeEditor';
-import { Table, AlertCircle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 
 export const JsonCsvConverter: React.FC = () => {
   const [direction, setDirection] = useState<'json2csv' | 'csv2json'>('json2csv');

@@ -15,7 +15,7 @@
 import React, { useState } from 'react';
 import { CodeEditor } from '../../components/common/CodeEditor';
 import { CopyButton } from '../../components/common/CopyButton';
-import { KeyRound, ShieldAlert, CheckCircle2, Clock } from 'lucide-react';
+import { KeyRound, Clock } from 'lucide-react';
 
 export const JwtDebugger: React.FC = () => {
   const [token, setToken] = useState('');
@@ -26,7 +26,6 @@ export const JwtDebugger: React.FC = () => {
   let expDate: Date | null = null;
   let isExpired = false;
   let error: string | null = null;
-  let claims: { key: string; val: any }[] = [];
 
   const MAX_TOKEN_LENGTH = 50000;
 
@@ -64,7 +63,6 @@ export const JwtDebugger: React.FC = () => {
           isExpired = expDate.getTime() < Date.now();
         }
 
-        claims = Object.entries(payloadObj).map(([key, val]) => ({ key, val }));
       } else {
         error = 'A valid JWT must contain 3 dot-separated segments (header.payload.signature)';
       }

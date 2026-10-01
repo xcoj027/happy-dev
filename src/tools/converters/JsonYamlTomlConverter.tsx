@@ -15,7 +15,7 @@
 import React, { useState } from 'react';
 import YAML from 'yaml';
 import { CodeEditor } from '../../components/common/CodeEditor';
-import { CheckCircle2, AlertCircle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 
 export const JsonYamlTomlConverter: React.FC = () => {
   const [direction, setDirection] = useState<'json2yaml' | 'yaml2json'>('json2yaml');

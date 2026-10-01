@@ -14,7 +14,7 @@
 
 import React, { useState } from 'react';
 import { CopyButton } from '../../components/common/CopyButton';
-import { Binary, AlertCircle, RefreshCw } from 'lucide-react';
+import { Binary, AlertCircle } from 'lucide-react';
 
 export const NumberBaseConverter: React.FC = () => {
   const [decVal, setDecVal] = useState('1024');

@@ -61,19 +61,26 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       APP_VERSION: ${{ needs.cleanup-old-artifacts.outputs.version || 'local' }}
+      CARGO_TARGET_DIR: ${{ github.workspace }}/src-tauri/target
     strategy:
       fail-fast: false
       matrix:
         include:
           - os: macos-latest
             platform: macos
-            build_flag: --mac
+            package_script: dist:mac
+            rust_targets: aarch64-apple-darwin,x86_64-apple-darwin
+            installer_suffix: mac-universal.dmg
           - os: windows-latest
             platform: windows
-            build_flag: --win
-          - os: ubuntu-latest
+            package_script: dist:win
+            rust_targets: x86_64-pc-windows-msvc
+            installer_suffix: windows-x64-setup.exe
+          - os: ubuntu-22.04
             platform: linux
-            build_flag: --linux
+            package_script: dist:linux
+            rust_targets: x86_64-unknown-linux-gnu
+            installer_suffix: linux-x64.AppImage
 
     steps:
       - name: Checkout repository
@@ -89,17 +96,27 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install --yes libarchive-tools libfuse2
+          sudo apt-get install --yes libwebkit2gtk-4.1-dev build-essential libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev patchelf libfuse2 file xdg-utils
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust_targets }}
+
+      - name: Cache Rust build dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Type-check and build application
-        run: npm run build
+      - name: Type-check application
+        run: npm run lint
 
       - name: Package application
         if: runner.os != 'macOS' || github.event_name == 'pull_request' || vars.MACOS_SIGNING_ENABLED != 'true'
-        run: npx electron-builder ${{ matrix.build_flag }}
+        run: npm run ${{ matrix.package_script }}
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -107,41 +124,57 @@ jobs:
         if: runner.os == 'macOS' && github.event_name != 'pull_request' && vars.MACOS_SIGNING_ENABLED == 'true'
         shell: bash
         env:
-          GH_TOKEN: ${{ github.token }}
-          CSC_LINK: ${{ secrets.MAC_CSC_LINK }}
-          CSC_KEY_PASSWORD: ${{ secrets.MAC_CSC_KEY_PASSWORD }}
+          APPLE_CERTIFICATE: ${{ secrets.MAC_CSC_LINK }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.MAC_CSC_KEY_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
-          for credential in CSC_LINK CSC_KEY_PASSWORD APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID; do
+          for credential in APPLE_CERTIFICATE APPLE_CERTIFICATE_PASSWORD APPLE_SIGNING_IDENTITY APPLE_ID APPLE_PASSWORD APPLE_TEAM_ID; do
             if [[ -z "${!credential}" ]]; then
               echo "::error::Missing macOS signing credential: $credential. See README.md for setup."
               exit 1
             fi
           done
-          npx electron-builder --mac -c.mac.forceCodeSigning=true -c.mac.hardenedRuntime=true -c.mac.notarize=true
-
-          found_app=false
-          while IFS= read -r -d '' app; do
-            found_app=true
-            codesign --verify --deep --strict --verbose=2 "$app"
-            xcrun stapler validate "$app"
-            spctl --assess --type execute --verbose=2 "$app"
-          done < <(find release -maxdepth 3 -type d -name '*.app' -print0)
-          if [[ "$found_app" != true ]]; then
-            echo "::error::No macOS application found for signing verification."
+          if [[ "$APPLE_SIGNING_IDENTITY" != "Developer ID Application:"* ]]; then
+            echo "::error::APPLE_SIGNING_IDENTITY must be a Developer ID Application identity."
             exit 1
+          fi
+          certificate_path="$RUNNER_TEMP/happydev-signing.p12"
+          keychain_path="$RUNNER_TEMP/happydev-signing.keychain-db"
+          keychain_password=$(openssl rand -hex 32)
+          echo "::add-mask::$keychain_password"
+          export CERTIFICATE_PATH="$certificate_path"
+          node -e 'require("node:fs").writeFileSync(process.env.CERTIFICATE_PATH, Buffer.from(process.env.APPLE_CERTIFICATE, "base64"))'
+          security create-keychain -p "$keychain_password" "$keychain_path"
+          security set-keychain-settings -lut 21600 "$keychain_path"
+          security unlock-keychain -p "$keychain_password" "$keychain_path"
+          security import "$certificate_path" -P "$APPLE_CERTIFICATE_PASSWORD" -k "$keychain_path" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$keychain_password" "$keychain_path"
+          security list-keychains -d user -s "$keychain_path" login.keychain-db
+          rm -f "$certificate_path"
+          npm run dist:mac
+
+          app="src-tauri/target/universal-apple-darwin/release/bundle/macos/HappyDev.app"
+          codesign --verify --deep --strict --verbose=2 "$app"
+          xcrun stapler validate "$app"
+          spctl --assess --type execute --verbose=2 "$app"
+
+      - name: Remove temporary signing credentials
+        if: always() && runner.os == 'macOS' && github.event_name != 'pull_request' && vars.MACOS_SIGNING_ENABLED == 'true'
+        shell: bash
+        run: |
+          rm -f "$RUNNER_TEMP/happydev-signing.p12"
+          if [[ -f "$RUNNER_TEMP/happydev-signing.keychain-db" ]]; then
+            security delete-keychain "$RUNNER_TEMP/happydev-signing.keychain-db"
           fi
 
       - name: Upload platform artifacts
         uses: actions/upload-artifact@v4
         with:
           name: happydev-${{ matrix.platform }}
-          path: |
-            release/**/HappyDev-${{ env.APP_VERSION }}-mac-universal.dmg
-            release/**/HappyDev-${{ env.APP_VERSION }}-windows-x64-setup.exe
-            release/**/HappyDev-${{ env.APP_VERSION }}-linux-x64.AppImage
+          path: release/tauri/${{ env.APP_VERSION }}/HappyDev-${{ env.APP_VERSION }}-${{ matrix.installer_suffix }}
           if-no-files-found: error
           retention-days: 1
 
@@ -238,4 +271,5 @@ jobs:
           prerelease: false
           make_latest: true
           files: release-assets/*
+          fail_on_unmatched_files: true
           generate_release_notes: true

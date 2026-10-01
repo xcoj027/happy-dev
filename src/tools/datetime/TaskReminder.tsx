@@ -13,14 +13,13 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
+import { isDesktopApp, showReminderNotification } from '../../lib/desktop';
 import {
   Bell,
   BellRing,
   BellOff,
   Clock,
   Calendar,
-  CheckCircle2,
-  AlertTriangle,
   Plus,
   Trash2,
   RotateCw,
@@ -68,7 +67,7 @@ export const TaskReminder: React.FC = () => {
   });
   const [repeat, setRepeat] = useState<RepeatOption>('none');
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const nativeNotifications = Boolean(window.electronAPI?.showReminderNotification);
+  const nativeNotifications = isDesktopApp();
   const [notificationError, setNotificationError] = useState('');
   const triggeredOccurrences = useRef(new Map<string, string>());
   const [notifPermission, setNotifPermission] = useState<NotificationPermission>(() => {
@@ -97,8 +96,8 @@ export const TaskReminder: React.FC = () => {
 
   const showAlert = async (taskTitle: string, body: string) => {
     try {
-      if (window.electronAPI?.showReminderNotification) {
-        const shown = await window.electronAPI.showReminderNotification({
+      if (nativeNotifications) {
+        const shown = await showReminderNotification({
           title: `Dev Reminder: ${taskTitle}`, body, silent: !soundEnabled,
         });
         setNotificationError(shown ? '' : 'Unable to show OS alert. Check HappyDev notifications in system settings.');
@@ -346,7 +345,7 @@ export const TaskReminder: React.FC = () => {
             className="btn-3d px-2.5 py-1.5 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition cursor-pointer"
             title="Test OS notification"
           >
-            Test Alert
+            Test OS Alert
           </button>
 
           {/* Desktop Notification Request */}

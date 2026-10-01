@@ -15,7 +15,7 @@
 import React, { useState, useEffect } from 'react';
 import CryptoJS from 'crypto-js';
 import { CodeEditor } from '../../components/common/CodeEditor';
-import { Lock, Unlock, AlertCircle, RefreshCw, Key, ShieldCheck } from 'lucide-react';
+import { Lock, Unlock, AlertCircle, RefreshCw } from 'lucide-react';
 
 type AesMode = 'CBC' | 'CTR' | 'CFB' | 'OFB' | 'ECB';
 type AesPadding = 'Pkcs7' | 'Iso97971' | 'AnsiX923' | 'Iso10126' | 'ZeroPadding' | 'NoPadding';

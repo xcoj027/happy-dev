@@ -14,16 +14,16 @@
 
 import React, { useState } from 'react';
 import { CopyButton } from '../../components/common/CopyButton';
-import { Layers } from 'lucide-react';
+
 
 export const CssBoxShadowGenerator: React.FC = () => {
   const [x, setX] = useState(0);
   const [y, setY] = useState(12);
   const [blur, setBlur] = useState(28);
   const [spread, setSpread] = useState(-4);
-  const [color, setColor] = useState('rgba(16, 185, 129, 0.35)');
+  const color = 'rgba(16, 185, 129, 0.35)';
   const [inset, setInset] = useState(false);
-  const [boxColor, setBoxColor] = useState('#111827');
+  const boxColor = '#111827';
   const [borderRadius, setBorderRadius] = useState(16);
 
   const shadowCss = `${inset ? 'inset ' : ''}${x}px ${y}px ${blur}px ${spread}px ${color}`;

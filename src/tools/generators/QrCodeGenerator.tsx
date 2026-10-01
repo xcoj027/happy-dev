@@ -15,7 +15,7 @@
 import React, { useState, useEffect } from 'react';
 import QRCode from 'qrcode';
 import { CopyButton } from '../../components/common/CopyButton';
-import { QrCode, Download, Wifi, User, Mail, Phone, MessageSquare, MapPin, Link2, FileText, CheckCircle2 } from 'lucide-react';
+import { QrCode, Download, Wifi, User, Mail, Phone, MessageSquare, MapPin, Link2, FileText } from 'lucide-react';
 
 type QrType = 'url' | 'text' | 'wifi' | 'vcard' | 'email' | 'phone' | 'sms' | 'geo';
 

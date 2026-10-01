@@ -14,7 +14,7 @@
 
 import React, { useState } from 'react';
 import { CopyButton } from '../../components/common/CopyButton';
-import { RefreshCw, Key, ShieldCheck, Zap } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 
 export const PasswordGenerator: React.FC = () => {
   const [length, setLength] = useState(24);

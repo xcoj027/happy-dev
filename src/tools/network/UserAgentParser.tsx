@@ -14,8 +14,8 @@
 
 import React, { useState } from 'react';
 import { CodeEditor } from '../../components/common/CodeEditor';
-import { CopyButton } from '../../components/common/CopyButton';
-import { Monitor, Cpu, Globe } from 'lucide-react';
+
+
 
 export const UserAgentParser: React.FC = () => {
   const [ua, setUa] = useState('');

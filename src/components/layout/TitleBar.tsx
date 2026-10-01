@@ -13,7 +13,9 @@
  */
 
 import React from 'react';
-import { Search, Minus, Square, X } from 'lucide-react';
+import { Search } from 'lucide-react';
+import { isTauri } from '@tauri-apps/api/core';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import { AppLogo } from '../common/AppLogo';
 
 interface TitleBarProps {
@@ -25,10 +27,17 @@ export const TitleBar: React.FC<TitleBarProps> = ({ onOpenCommandPalette, onGoHo
   const isMac = typeof navigator !== 'undefined' && navigator.userAgent.includes('Mac');
 
   return (
-    <header className="app-drag h-10 w-full bg-[var(--bg-titlebar)] flex items-center justify-between px-3 select-none text-xs text-[var(--text-secondary)] z-40 transition-colors">
+    <header
+      onMouseDown={(event) => {
+        if (event.button === 0 && isTauri() && !(event.target as HTMLElement).closest('.app-no-drag')) {
+          void getCurrentWindow().startDragging().catch(console.error);
+        }
+      }}
+      className="h-10 w-full bg-[var(--bg-titlebar)] flex items-center justify-between px-3 select-none text-xs text-[var(--text-secondary)] z-40 transition-colors"
+    >
       {/* Left side: Mac traffic light spacing or App branding */}
       <div className="flex items-center gap-2">
-        {/* On Mac, electron window provides native traffic lights on the left */}
+        {/* Leave room for the native macOS window controls. */}
         <div className={isMac ? 'w-16' : ''} />
         <div
           onClick={onGoHome}

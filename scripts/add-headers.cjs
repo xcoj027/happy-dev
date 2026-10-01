@@ -16,7 +16,7 @@ const HEADER = `/**
  */
 `;
 
-const TARGET_DIRECTORIES = ['src', 'electron', 'scripts'];
+const TARGET_DIRECTORIES = ['src', 'scripts'];
 const TARGET_EXTENSIONS = ['.ts', '.tsx', '.js', '.cjs', '.mjs', '.css'];
 const STANDALONE_FILES = ['vite.config.ts'];
 

@@ -13,7 +13,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { toolsRegistry } from '../../data/toolsRegistry';
+import { categories, toolsRegistry } from '../../data/toolsRegistry';
 import { DynamicIcon } from '../common/DynamicIcon';
 import { getCategoryColor } from '../../utils/categoryColors';
 import {
@@ -24,6 +24,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   X,
+  ChevronDown,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -40,6 +41,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onToggleTheme,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(() =>
+    toolsRegistry.find((tool) => tool.id === activeToolId)?.category ?? null
+  );
+
+  useEffect(() => {
+    setExpandedCategory(toolsRegistry.find((tool) => tool.id === activeToolId)?.category ?? null);
+  }, [activeToolId]);
   const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
     try {
       return localStorage.getItem('happydev_sidebar_collapsed') === 'true';
@@ -66,9 +74,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
     );
   });
 
-  const sortedFilteredTools = [...filteredTools].sort((a, b) =>
-    a.name.localeCompare(b.name)
-  );
+  const filteredCategories = categories.map((category) => ({
+    ...category,
+    tools: filteredTools.filter((tool) => tool.category === category.id)
+      .sort((a, b) => a.name.localeCompare(b.name)),
+  })).filter((category) => category.tools.length > 0);
 
   return (
     <aside
@@ -165,64 +175,55 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Divider */}
         <div className="my-1 border-t border-black/[0.04] dark:border-white/[0.04]" />
 
-        {/* All Utilities List */}
-        {!isCollapsed && (
-          <div className="flex items-center justify-between px-2 py-1 text-[10px] uppercase font-bold tracking-wider text-[var(--text-muted)]">
-            <span>All Utilities</span>
-            <span className="text-[10px] font-mono">{sortedFilteredTools.length}</span>
-          </div>
-        )}
-
-        {sortedFilteredTools.length === 0 ? (
+        {filteredCategories.length === 0 ? (
           <div className="text-xs text-[var(--text-muted)] px-2 py-6 text-center">
             {!isCollapsed && `No utilities matching "${searchTerm}"`}
           </div>
-        ) : (
-          <div className="space-y-0.5">
-            {sortedFilteredTools.map((tool) => {
-              const isActive = activeToolId === tool.id;
-              const catColor = getCategoryColor(tool.category);
-
-              return (
-                <div
-                  key={tool.id}
-                  onClick={() => onSelectTool(tool.id)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      onSelectTool(tool.id);
-                    }
-                  }}
-                  title={isCollapsed ? tool.name : undefined}
-                  className={`w-full group flex items-center ${
-                    isCollapsed ? 'justify-center p-2.5' : 'justify-between px-2.5 py-1.5'
-                  } rounded-lg text-xs transition cursor-pointer select-none ${
-                    isActive
+        ) : filteredCategories.map((category) => {
+          const isExpanded = !isCollapsed && expandedCategory === category.id;
+          const catColor = getCategoryColor(category.id);
+          return (
+            <div key={category.id}>
+              <button
+                type="button"
+                title={isCollapsed ? category.name : undefined}
+                aria-label={category.name}
+                aria-expanded={isExpanded}
+                aria-controls={`sidebar-category-${category.id}`}
+                onClick={() => {
+                  setExpandedCategory(isExpanded ? null : category.id);
+                  if (isCollapsed) setIsCollapsed(false);
+                }}
+                className={`w-full flex items-center rounded-xl text-xs font-semibold transition cursor-pointer text-[var(--text-secondary)] hover:bg-[var(--control-panel-bg)] ${isCollapsed ? 'justify-center p-2.5' : 'gap-2 px-2.5 py-2.5'}`}
+              >
+                <DynamicIcon name={category.icon} size={16} className={`${catColor.text} shrink-0`} />
+                {!isCollapsed && (
+                  <>
+                    <span className="flex-1 text-left">{category.name}</span>
+                    <span className="text-[10px] text-[var(--text-muted)]">{category.tools.length}</span>
+                    <ChevronDown size={14} className={`shrink-0 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                  </>
+                )}
+              </button>
+              <div id={`sidebar-category-${category.id}`} hidden={!isExpanded} className="ml-3 border-l border-black/[0.06] dark:border-white/[0.06] pl-2 space-y-0.5 pb-2">
+                {category.tools.map((tool) => (
+                  <button
+                    key={tool.id}
+                    type="button"
+                    onClick={() => onSelectTool(tool.id)}
+                    aria-current={activeToolId === tool.id ? 'page' : undefined}
+                    className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs text-left transition cursor-pointer ${activeToolId === tool.id
                       ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-semibold'
-                      : 'text-[var(--text-secondary)] hover:bg-[var(--control-panel-bg)] hover:text-[var(--text-primary)]'
-                  }`}
-                >
-                  <div
-                    className={`flex items-center ${
-                      isCollapsed ? 'justify-center' : 'gap-2 truncate text-left'
-                    } pointer-events-none min-w-0`}
+                      : 'text-[var(--text-secondary)] hover:bg-[var(--control-panel-bg)] hover:text-[var(--text-primary)]'}`}
                   >
-                    <DynamicIcon
-                      name={tool.icon}
-                      size={15}
-                      className={`${catColor.text} shrink-0`}
-                    />
-                    {!isCollapsed && (
-                      <span className="truncate">{tool.name}</span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                    <DynamicIcon name={tool.icon} size={15} className={`${catColor.text} shrink-0`} />
+                    <span className="truncate">{tool.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Bottom Footer: Theme & App Details */}

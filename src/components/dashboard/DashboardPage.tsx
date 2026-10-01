@@ -17,7 +17,7 @@ import { toolsRegistry } from '../../data/toolsRegistry';
 import { getCategoryColor } from '../../utils/categoryColors';
 import { DynamicIcon } from '../common/DynamicIcon';
 import { ErrorBoundary } from '../common/ErrorBoundary';
-import { DashboardWidget, WidgetWidth, DashboardPreset, getWidgetColSpan } from './DashboardTypes';
+import { DashboardWidget, WidgetWidth, getWidgetColSpan } from './DashboardTypes';
 import { AddWidgetModal } from './AddWidgetModal';
 import {
   Plus,

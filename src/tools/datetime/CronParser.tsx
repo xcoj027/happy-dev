@@ -16,7 +16,7 @@ import React, { useState } from 'react';
 import cronstrue from 'cronstrue';
 import { CronExpressionParser } from 'cron-parser';
 import { CopyButton } from '../../components/common/CopyButton';
-import { Clock, Calendar, AlertCircle } from 'lucide-react';
+import { Calendar, AlertCircle } from 'lucide-react';
 
 const PRESETS = [
   { label: 'Every 5m', expr: '*/5 * * * *' },

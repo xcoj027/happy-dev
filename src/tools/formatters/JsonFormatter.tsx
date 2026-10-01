@@ -14,7 +14,7 @@
 
 import React, { useState } from 'react';
 import { CodeEditor } from '../../components/common/CodeEditor';
-import { CheckCircle2, AlertCircle, Search, Filter } from 'lucide-react';
+import { AlertCircle, Filter } from 'lucide-react';
 
 export const JsonFormatter: React.FC = () => {
   const [input, setInput] = useState('');
