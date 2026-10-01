@@ -208,6 +208,8 @@ The repository includes an automated GitHub Actions workflow defined in [`.githu
 - Every release publishes the next `v.N` tag to the public [`happy-dev-releases`](https://github.com/xcoj027/happy-dev-releases/releases/latest) repository and marks it as latest, including releases triggered by source tags or manual dispatch.
 - Release runs are serialized. The next number is one greater than the highest existing `v.N` tag (starting at `v.1`). Old releases are removed, but their tags are retained as the counter history; do not delete those tags. Failed builds do not consume a number unless a release tag was already created. Pull request builds use `local`.
 
+Release builds use ThinLTO and parallel code generation, with Rust pinned to `1.98.1` for stable dependency-cache reuse. Dependency caches are saved even if a later step fails. Artifact cleanup runs alongside builds, and Tauri's frontend build performs the TypeScript check once. The first build after changing Rust or compiler settings repopulates the cache; subsequent builds can reuse it. Installer size checks remain enforced.
+
 ### Release Repository Configuration
 
 The private source repository requires a `RELEASE_TOKEN` Actions secret containing a fine-grained GitHub personal access token. Grant that token **Contents: read and write** access to `xcoj027/happy-dev-releases`.

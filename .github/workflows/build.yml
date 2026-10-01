@@ -21,7 +21,7 @@ concurrency:
 
 jobs:
   cleanup-old-artifacts:
-    name: Prepare release version and clean old artifacts
+    name: Prepare release version
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     outputs:
@@ -44,12 +44,17 @@ jobs:
           next=$(( ${last:-0} + 1 ))
           echo "version=v.$next" >> "$GITHUB_OUTPUT"
 
+  cleanup-artifacts:
+    name: Clean old artifacts in parallel
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
       - name: Delete previous platform artifacts
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh api --paginate "repos/${GITHUB_REPOSITORY}/actions/artifacts?per_page=100" \
-            --jq '.artifacts[] | select(.name | startswith("happydev-")) | .id' |
+            --jq '.artifacts[] | select(.name | startswith("happydev-")) | select(.workflow_run.id != (env.GITHUB_RUN_ID | tonumber)) | .id' |
           while read -r artifact_id; do
             gh api --method DELETE "repos/${GITHUB_REPOSITORY}/actions/artifacts/${artifact_id}"
           done
@@ -99,7 +104,7 @@ jobs:
           sudo apt-get install --yes libwebkit2gtk-4.1-dev build-essential libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev patchelf libfuse2 file xdg-utils
 
       - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@1.98.1
         with:
           targets: ${{ matrix.rust_targets }}
 
@@ -107,12 +112,10 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: src-tauri -> target
+          cache-on-failure: true
 
       - name: Install dependencies
-        run: npm ci
-
-      - name: Type-check application
-        run: npm run lint
+        run: npm ci --no-audit --no-fund
 
       - name: Package application
         if: runner.os != 'macOS' || github.event_name == 'pull_request' || vars.MACOS_SIGNING_ENABLED != 'true'
