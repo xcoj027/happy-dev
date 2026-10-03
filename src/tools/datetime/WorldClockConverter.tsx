@@ -12,6 +12,7 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
+import { TextInput } from '../../components/common/TextInput';
 import React, { useState } from 'react';
 import { CopyButton } from '../../components/common/CopyButton';
 import { Globe, Search, Plus, Trash2 } from 'lucide-react';
@@ -171,7 +172,7 @@ export const WorldClockConverter: React.FC = () => {
             <span className="text-xs font-semibold text-[var(--text-primary)]">Add Timezone to Watchlist</span>
             <div className="relative w-64">
               <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-[var(--text-muted)]" />
-              <input
+              <TextInput
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}

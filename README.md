@@ -12,7 +12,7 @@
 
 ## 📖 Introduction
 
-HappyDev is a comprehensive developer toolbox created as a modern, lightweight, and cross-platform alternative to DevToys. It bundles **38 offline developer utilities** into a unified, responsive interface that helps engineers eliminate repetitive daily friction. Whether you need to format structured data, convert formats, generate cryptographic keys, inspect tokens, or calculate network permissions, HappyDev executes everything instantaneously without sending any data over the internet.
+HappyDev is a comprehensive developer toolbox created as a modern, lightweight, and cross-platform alternative to DevToys. It bundles **40 offline developer utilities** into a unified, responsive interface that helps engineers eliminate repetitive daily friction. Whether you need to format structured data, convert formats, generate cryptographic keys, inspect tokens, or calculate network permissions, HappyDev executes everything instantaneously without sending any data over the internet.
 
 ---
 
@@ -33,7 +33,7 @@ The repository is configured with an automated continuous deployment pipeline po
 
 ## ✨ Key Highlights
 
-- **Over 30+ Built-in Utilities**: HappyDev includes 38 specialized developer tools covering conversions, cryptography, formatting, encoders, datetime calculations, and frontend generators.
+- **Over 30+ Built-in Utilities**: HappyDev includes 40 specialized developer tools covering conversions, cryptography, formatting, encoders, datetime calculations, and generators.
 - **A Modern DevToys Alternative**: This application provides a cohesive, zero-latency desktop environment tailored for macOS, Windows, and Linux developers.
 - **100% Offline and Private**: All data processing runs entirely on your local machine with zero telemetry or remote API calls, ensuring your private keys and sensitive code never leave your computer.
 - **Public Release Packages**: Installers are published from the private source repository to a separate public downloads repository.
@@ -95,10 +95,6 @@ The repository is configured with an automated continuous deployment pipeline po
 - **User-Agent Parser**: It decodes browser versions, operating systems, hardware platforms, and rendering engines from User-Agent strings.
 - **Meta Tags & Social Previewer**: It simulates how social media platforms and search engines will render OpenGraph, Twitter, and Google search metadata.
 
-### 9. Frontend & Visual Design
-- **CSS Box Shadow Generator**: It creates multi-layer smooth box shadows and glassmorphism styling with one-click CSS rule export.
-- **CSS Flexbox & Grid Playground**: It allows developers to test layout behaviors interactively and inspect the resulting CSS rules.
-- **SVG to JSX & Data URI Converter**: It cleans raw SVG vector files and converts them into optimized React TypeScript JSX components or CSS Data URIs.
 
 ---
 

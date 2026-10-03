@@ -12,6 +12,7 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
+import { TextInput } from '../../components/common/TextInput';
 import React, { useState, useEffect } from 'react';
 import { CopyButton } from '../../components/common/CopyButton';
 import { RefreshCw, CheckCircle2, XCircle } from 'lucide-react';
@@ -178,7 +179,7 @@ export const UuidGenerator: React.FC = () => {
       <div className="p-4 card-3d rounded-xl space-y-2">
         <span className="text-xs font-semibold text-[var(--text-primary)]">Validate UUID Format</span>
         <div className="flex items-center gap-2">
-          <input
+          <TextInput
             type="text"
             value={validateInput}
             onChange={(e) => setValidateInput(e.target.value)}

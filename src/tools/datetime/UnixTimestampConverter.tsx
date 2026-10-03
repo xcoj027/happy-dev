@@ -12,6 +12,7 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
+import { TextInput } from '../../components/common/TextInput';
 import React, { useState, useEffect } from 'react';
 import { CopyButton } from '../../components/common/CopyButton';
 import { Clock, Play, Pause, Calendar } from 'lucide-react';
@@ -177,7 +178,7 @@ export const UnixTimestampConverter: React.FC = () => {
           <div className="card-3d p-4 rounded-xl space-y-3">
             <span className="text-xs font-semibold text-[var(--text-primary)]">Timestamp Inspector</span>
             <div className="flex flex-col sm:flex-row items-center gap-3">
-              <input
+              <TextInput
                 type="text"
                 value={inputEpoch}
                 onChange={(e) => setInputEpoch(e.target.value)}

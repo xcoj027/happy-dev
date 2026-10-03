@@ -22,8 +22,7 @@ export type ToolCategory =
   | 'datetime'
   | 'text'
   | 'generators'
-  | 'network'
-  | 'frontend';
+  | 'network';
 
 export type DevRole =
   | 'All'

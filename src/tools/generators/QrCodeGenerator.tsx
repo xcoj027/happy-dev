@@ -12,7 +12,8 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
-import React, { useState, useEffect } from 'react';
+import { TextArea, TextInput } from '../../components/common/TextInput';
+import React, { useState, useEffect, useRef } from 'react';
 import QRCode from 'qrcode';
 import { CopyButton } from '../../components/common/CopyButton';
 import { QrCode, Download, Wifi, User, Mail, Phone, MessageSquare, MapPin, Link2, FileText } from 'lucide-react';
@@ -59,6 +60,48 @@ export const QrCodeGenerator: React.FC = () => {
   const [errorLevel, setErrorLevel] = useState<'L' | 'M' | 'Q' | 'H'>('M');
   const [size, setSize] = useState(300);
   const [margin, setMargin] = useState(2);
+
+  const [logo, setLogo] = useState<{ dataUrl: string; name: string } | null>(null);
+  const [logoSize, setLogoSize] = useState(18);
+  const [logoPadding, setLogoPadding] = useState(2);
+  const [logoError, setLogoError] = useState('');
+  const [renderError, setRenderError] = useState('');
+  const [logoLoading, setLogoLoading] = useState(false);
+  const logoRequest = useRef(0);
+  useEffect(() => () => { logoRequest.current++; }, []);
+
+  const uploadLogo = async (file?: File) => {
+    if (!file) return;
+    const request = ++logoRequest.current;
+    setLogoError('');
+    setLogoLoading(true);
+    try {
+      if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) throw new Error('Choose a PNG, JPEG, or WebP logo.');
+      if (file.size > 5 * 1024 * 1024) throw new Error('Logo must be 5 MB or smaller.');
+      const data = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => reject(new Error('Unable to read the logo.'));
+        reader.readAsDataURL(file);
+      });
+      const image = new Image();
+      image.src = data;
+      await image.decode();
+      if (!image.naturalWidth || !image.naturalHeight || image.naturalWidth * image.naturalHeight > 16000000) throw new Error('Use a logo with at most 16 megapixels.');
+      const scale = Math.min(1, 1024 / Math.max(image.naturalWidth, image.naturalHeight));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+      canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+      const context = canvas.getContext('2d');
+      if (!context) throw new Error('Image rendering is unavailable.');
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      if (request === logoRequest.current) setLogo({ dataUrl: canvas.toDataURL('image/png'), name: file.name });
+    } catch (cause) {
+      if (request === logoRequest.current) setLogoError(cause instanceof Error ? cause.message : 'Unable to load logo.');
+    } finally {
+      if (request === logoRequest.current) setLogoLoading(false);
+    }
+  };
 
   // Output
   const [dataUrl, setDataUrl] = useState('');
@@ -111,50 +154,52 @@ export const QrCodeGenerator: React.FC = () => {
   const payload = getQrPayload();
 
   useEffect(() => {
-    if (!payload.trim()) {
-      setDataUrl('');
-      setSvgString('');
-      return;
-    }
-
-    // Render Data URL (PNG)
-    QRCode.toDataURL(
-      payload,
-      {
-        width: size,
-        margin: margin,
-        errorCorrectionLevel: errorLevel,
-        color: {
-          dark: colorDark,
-          light: colorLight,
-        },
-      },
-      (err, url) => {
-        if (!err && url) {
-          setDataUrl(url);
+    let cancelled = false;
+    setDataUrl('');
+    setSvgString('');
+    setRenderError('');
+    if (!payload.trim()) return;
+    const render = async () => {
+      try {
+        const options = {
+          width: size,
+          margin: logo ? Math.max(4, margin) : margin,
+          errorCorrectionLevel: logo ? 'H' as const : errorLevel,
+          color: { dark: colorDark, light: colorLight },
+        };
+        const canvas = document.createElement('canvas');
+        await QRCode.toCanvas(canvas, payload, options);
+        let svg = await QRCode.toString(payload, { ...options, type: 'svg' });
+        if (logo) {
+          const image = new Image();
+          image.src = logo.dataUrl;
+          await image.decode();
+          const context = canvas.getContext('2d');
+          if (!context) throw new Error('Image rendering is unavailable.');
+          const box = canvas.width * logoSize / 100;
+          const padding = canvas.width * logoPadding / 100;
+          const x = (canvas.width - box) / 2;
+          const available = box - padding * 2;
+          const scale = available / Math.max(image.naturalWidth, image.naturalHeight);
+          const width = image.naturalWidth * scale;
+          const height = image.naturalHeight * scale;
+          context.fillStyle = colorLight;
+          context.fillRect(x, x, box, box);
+          context.drawImage(image, (canvas.width - width) / 2, (canvas.height - height) / 2, width, height);
+          const viewBox = svg.match(/viewBox="0 0 ([\d.]+) ([\d.]+)"/);
+          if (!viewBox) throw new Error('Unable to embed logo in SVG.');
+          const factor = Number(viewBox[1]) / canvas.width;
+          const overlay = `<rect x="${x * factor}" y="${x * factor}" width="${box * factor}" height="${box * factor}" fill="${colorLight}"/><image href="${logo.dataUrl}" x="${(canvas.width - width) / 2 * factor}" y="${(canvas.height - height) / 2 * factor}" width="${width * factor}" height="${height * factor}" preserveAspectRatio="xMidYMid meet"/>`;
+          svg = svg.replace('</svg>', `${overlay}</svg>`);
         }
+        if (!cancelled) { setDataUrl(canvas.toDataURL('image/png')); setSvgString(svg); }
+      } catch (cause) {
+        if (!cancelled) setRenderError(cause instanceof Error ? cause.message : 'Unable to generate QR code.');
       }
-    );
-
-    // Render SVG
-    QRCode.toString(
-      payload,
-      {
-        type: 'svg',
-        margin: margin,
-        errorCorrectionLevel: errorLevel,
-        color: {
-          dark: colorDark,
-          light: colorLight,
-        },
-      },
-      (err, svg) => {
-        if (!err && svg) {
-          setSvgString(svg);
-        }
-      }
-    );
-  }, [payload, colorDark, colorLight, errorLevel, size, margin]);
+    };
+    void render();
+    return () => { cancelled = true; };
+  }, [payload, colorDark, colorLight, errorLevel, size, margin, logo, logoSize, logoPadding]);
 
   const downloadPng = () => {
     if (!dataUrl) return;
@@ -177,6 +222,7 @@ export const QrCodeGenerator: React.FC = () => {
 
   return (
     <div className="flex-1 flex flex-col h-full space-y-4">
+      {renderError && <div role="alert" className="rounded-xl p-3 text-xs bg-rose-500/10 text-rose-600 dark:text-rose-400">{renderError}</div>}
       {/* Payload Type Selector */}
       <div className="flex flex-wrap items-center gap-2 pb-1">
         <button
@@ -272,7 +318,7 @@ export const QrCodeGenerator: React.FC = () => {
             {qrType === 'url' && (
               <div>
                 <label className="text-[var(--text-secondary)] block mb-1 text-xs">Target URL</label>
-                <input
+                <TextInput
                   type="text"
                   value={urlInput}
                   onChange={(e) => setUrlInput(e.target.value)}
@@ -286,7 +332,7 @@ export const QrCodeGenerator: React.FC = () => {
             {qrType === 'text' && (
               <div>
                 <label className="text-[var(--text-secondary)] block mb-1 text-xs">Plain Text Content</label>
-                <textarea
+                <TextArea
                   rows={4}
                   value={textInput}
                   onChange={(e) => setTextInput(e.target.value)}
@@ -301,7 +347,7 @@ export const QrCodeGenerator: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div className="sm:col-span-2">
                   <label className="text-[var(--text-secondary)] block mb-1 font-medium">Network SSID (Name)</label>
-                  <input
+                  <TextInput
                     type="text"
                     value={wifiSsid}
                     onChange={(e) => setWifiSsid(e.target.value)}
@@ -311,7 +357,7 @@ export const QrCodeGenerator: React.FC = () => {
                 </div>
                 <div>
                   <label className="text-[var(--text-secondary)] block mb-1 font-medium">WiFi Password</label>
-                  <input
+                  <TextInput
                     type="text"
                     value={wifiPassword}
                     onChange={(e) => setWifiPassword(e.target.value)}
@@ -351,7 +397,7 @@ export const QrCodeGenerator: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
                   <label className="text-[var(--text-secondary)] block mb-1 font-medium">Full Name *</label>
-                  <input
+                  <TextInput
                     type="text"
                     value={vcardName}
                     onChange={(e) => setVcardName(e.target.value)}
@@ -361,7 +407,7 @@ export const QrCodeGenerator: React.FC = () => {
                 </div>
                 <div>
                   <label className="text-[var(--text-secondary)] block mb-1 font-medium">Organization / Company</label>
-                  <input
+                  <TextInput
                     type="text"
                     value={vcardOrg}
                     onChange={(e) => setVcardOrg(e.target.value)}
@@ -371,7 +417,7 @@ export const QrCodeGenerator: React.FC = () => {
                 </div>
                 <div>
                   <label className="text-[var(--text-secondary)] block mb-1 font-medium">Job Title</label>
-                  <input
+                  <TextInput
                     type="text"
                     value={vcardTitle}
                     onChange={(e) => setVcardTitle(e.target.value)}
@@ -381,7 +427,7 @@ export const QrCodeGenerator: React.FC = () => {
                 </div>
                 <div>
                   <label className="text-[var(--text-secondary)] block mb-1 font-medium">Phone Number</label>
-                  <input
+                  <TextInput
                     type="tel"
                     value={vcardPhone}
                     onChange={(e) => setVcardPhone(e.target.value)}
@@ -391,7 +437,7 @@ export const QrCodeGenerator: React.FC = () => {
                 </div>
                 <div>
                   <label className="text-[var(--text-secondary)] block mb-1 font-medium">Email Address</label>
-                  <input
+                  <TextInput
                     type="email"
                     value={vcardEmail}
                     onChange={(e) => setVcardEmail(e.target.value)}
@@ -401,7 +447,7 @@ export const QrCodeGenerator: React.FC = () => {
                 </div>
                 <div>
                   <label className="text-[var(--text-secondary)] block mb-1 font-medium">Website</label>
-                  <input
+                  <TextInput
                     type="url"
                     value={vcardUrl}
                     onChange={(e) => setVcardUrl(e.target.value)}
@@ -417,7 +463,7 @@ export const QrCodeGenerator: React.FC = () => {
               <div className="space-y-3 text-xs">
                 <div>
                   <label className="text-[var(--text-secondary)] block mb-1 font-medium">Recipient Email</label>
-                  <input
+                  <TextInput
                     type="email"
                     value={emailTo}
                     onChange={(e) => setEmailTo(e.target.value)}
@@ -427,7 +473,7 @@ export const QrCodeGenerator: React.FC = () => {
                 </div>
                 <div>
                   <label className="text-[var(--text-secondary)] block mb-1 font-medium">Subject Line</label>
-                  <input
+                  <TextInput
                     type="text"
                     value={emailSubject}
                     onChange={(e) => setEmailSubject(e.target.value)}
@@ -437,7 +483,7 @@ export const QrCodeGenerator: React.FC = () => {
                 </div>
                 <div>
                   <label className="text-[var(--text-secondary)] block mb-1 font-medium">Message Body</label>
-                  <textarea
+                  <TextArea
                     rows={2}
                     value={emailBody}
                     onChange={(e) => setEmailBody(e.target.value)}
@@ -452,7 +498,7 @@ export const QrCodeGenerator: React.FC = () => {
             {qrType === 'phone' && (
               <div>
                 <label className="text-[var(--text-secondary)] block mb-1 text-xs">Phone Number</label>
-                <input
+                <TextInput
                   type="tel"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
@@ -467,7 +513,7 @@ export const QrCodeGenerator: React.FC = () => {
               <div className="space-y-3 text-xs">
                 <div>
                   <label className="text-[var(--text-secondary)] block mb-1 font-medium">Phone Number</label>
-                  <input
+                  <TextInput
                     type="tel"
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
@@ -477,7 +523,7 @@ export const QrCodeGenerator: React.FC = () => {
                 </div>
                 <div>
                   <label className="text-[var(--text-secondary)] block mb-1 font-medium">SMS Message</label>
-                  <textarea
+                  <TextArea
                     rows={2}
                     value={smsMessage}
                     onChange={(e) => setSmsMessage(e.target.value)}
@@ -493,7 +539,7 @@ export const QrCodeGenerator: React.FC = () => {
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div>
                   <label className="text-[var(--text-secondary)] block mb-1 font-medium">Latitude</label>
-                  <input
+                  <TextInput
                     type="text"
                     value={latitude}
                     onChange={(e) => setLatitude(e.target.value)}
@@ -503,7 +549,7 @@ export const QrCodeGenerator: React.FC = () => {
                 </div>
                 <div>
                   <label className="text-[var(--text-secondary)] block mb-1 font-medium">Longitude</label>
-                  <input
+                  <TextInput
                     type="text"
                     value={longitude}
                     onChange={(e) => setLongitude(e.target.value)}
@@ -515,6 +561,30 @@ export const QrCodeGenerator: React.FC = () => {
             )}
           </div>
 
+          <div className="card-3d p-4 rounded-xl space-y-3">
+            <label htmlFor="qr-logo-upload" className="block text-xs font-semibold text-[var(--text-primary)]">Center logo</label>
+            <input id="qr-logo-upload" type="file" accept="image/png,image/jpeg,image/webp" className="input-3d w-full p-2 rounded-lg text-xs text-[var(--text-secondary)]" onChange={e => { void uploadLogo(e.target.files?.[0]); e.target.value = ''; }} />
+            {logoLoading && <p role="status" className="text-xs text-[var(--text-secondary)]">Loading logo…</p>}
+            {logoError && <p role="alert" className="text-xs text-rose-600 dark:text-rose-400">{logoError}</p>}
+            {logo && <>
+              <div className="flex items-center gap-3">
+                <img src={logo.dataUrl} alt="Uploaded logo" className="w-12 h-12 object-contain rounded bg-white" data-theme-island data-keep-white />
+                <span className="flex-1 min-w-0 truncate text-xs text-[var(--text-secondary)]">{logo.name}</span>
+                <button type="button" onClick={() => { logoRequest.current++; setLogo(null); setLogoError(''); setLogoLoading(false); }} className="btn-3d rounded-lg px-3 py-1.5 text-xs cursor-pointer">Remove logo</button>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-[var(--text-secondary)]">
+                <label className="space-y-1">Logo area: {logoSize}%
+                  <input aria-label="Logo size" type="range" min="10" max="25" value={logoSize} onChange={e => setLogoSize(Number(e.target.value))} className="block w-full" />
+                </label>
+                <label className="space-y-1">Logo padding: {logoPadding}%
+                  <input aria-label="Logo padding" type="range" min="0" max="4" value={logoPadding} onChange={e => setLogoPadding(Number(e.target.value))} className="block w-full" />
+                </label>
+              </div>
+              <p className="text-xs text-[var(--text-muted)]">High error correction and a standard quiet zone are enabled for logos. Keep the logo small and scan-test your final QR code.</p>
+            </>}
+            <p className="text-xs text-[var(--text-muted)]">PNG, JPEG, or WebP, up to 5 MB. Logos stay on your device and are embedded in PNG and SVG exports.</p>
+          </div>
+
           {/* QR Design & Style Card */}
           <div className="card-3d p-4 rounded-xl space-y-3">
             <span className="text-xs font-semibold text-[var(--text-primary)]">Visual Style & Error Correction</span>
@@ -522,7 +592,8 @@ export const QrCodeGenerator: React.FC = () => {
               <div>
                 <label className="text-[var(--text-secondary)] block mb-1">Error Correction</label>
                 <select
-                  value={errorLevel}
+                  value={logo ? 'H' : errorLevel}
+                  disabled={!!logo}
                   onChange={(e) => setErrorLevel(e.target.value as any)}
                   className="input-3d w-full px-2 py-1.5 rounded text-xs text-[var(--text-primary)] outline-none"
                 >
@@ -548,7 +619,8 @@ export const QrCodeGenerator: React.FC = () => {
               <div>
                 <label className="text-[var(--text-secondary)] block mb-1">Quiet Zone (Margin)</label>
                 <select
-                  value={margin}
+                  value={logo ? Math.max(4, margin) : margin}
+                  disabled={!!logo}
                   onChange={(e) => setMargin(Number(e.target.value))}
                   className="input-3d w-full px-2 py-1.5 rounded text-xs text-[var(--text-primary)] outline-none"
                 >

@@ -12,6 +12,7 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
+import { AnimatedCollapse } from '../common/AnimatedCollapse';
 import React, { useState, useEffect, useRef } from 'react';
 import { toolsRegistry } from '../../data/toolsRegistry';
 import { getCategoryColor } from '../../utils/categoryColors';
@@ -134,7 +135,6 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
       'markdown-editor',
       'curl-to-code',
       'hash-generator',
-      'css-flex-grid',
       'regex-tester',
     ];
 
@@ -636,7 +636,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
                   </div>
 
                   {/* Section Content Area */}
-                  {!widget.isCollapsed && (
+                  <AnimatedCollapse expanded={!widget.isCollapsed} disableAnimation={isBeingResized}>
                     <div
                       data-widget-content
                       style={{
@@ -668,7 +668,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
                         />
                       </ErrorBoundary>
                     </div>
-                  )}
+                  </AnimatedCollapse>
 
                   {/* DYNAMIC RESIZE HANDLE 1: RIGHT EDGE (DRAG WIDTH HORIZONTALLY) */}
                   {hasTwoColumns && <div

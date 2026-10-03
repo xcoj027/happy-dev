@@ -12,6 +12,7 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
+import { AnimatedCollapse } from '../common/AnimatedCollapse';
 import React, { useState, useEffect } from 'react';
 import { categories, toolsRegistry } from '../../data/toolsRegistry';
 import { DynamicIcon } from '../common/DynamicIcon';
@@ -205,12 +206,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   </>
                 )}
               </button>
-              <div
-                id={`sidebar-category-${category.id}`}
-                aria-hidden={!isExpanded}
-                inert={!isExpanded}
-                className={`grid transition-[grid-template-rows,opacity] duration-250 ease-in-out motion-reduce:transition-none ${isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
-              >
+              <AnimatedCollapse id={`sidebar-category-${category.id}`} expanded={isExpanded} keepMounted>
                 <div className="min-h-0 overflow-hidden">
                   <div className="ml-3 border-l border-black/[0.06] dark:border-white/[0.06] pl-2 space-y-0.5 pb-2">
                     {category.tools.map((tool) => (
@@ -229,7 +225,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     ))}
                   </div>
                 </div>
-              </div>
+              </AnimatedCollapse>
             </div>
           );
         })}

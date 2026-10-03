@@ -12,6 +12,7 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
+import { TextInput } from '../../components/common/TextInput';
 import React, { useState } from 'react';
 import { CopyButton } from '../../components/common/CopyButton';
 import { Binary, AlertCircle } from 'lucide-react';
@@ -126,7 +127,7 @@ export const NumberBaseConverter: React.FC = () => {
               <span className="font-semibold text-emerald-600 dark:text-emerald-400">Decimal (Base 10)</span>
               <CopyButton text={dec} />
             </div>
-            <input
+            <TextInput
               type="text"
               value={dec}
               onChange={(e) => handleUpdate(e.target.value, 10)}
@@ -143,7 +144,7 @@ export const NumberBaseConverter: React.FC = () => {
             </div>
             <div className="relative flex items-center">
               <span className="absolute left-3 text-xs text-[var(--text-muted)] font-mono pointer-events-none">0x</span>
-              <input
+              <TextInput
                 type="text"
                 value={hex}
                 onChange={(e) => handleUpdate(e.target.value, 16)}
@@ -159,7 +160,7 @@ export const NumberBaseConverter: React.FC = () => {
               <span className="font-semibold text-indigo-600 dark:text-indigo-400">Binary (Base 2)</span>
               <CopyButton text={bin} />
             </div>
-            <input
+            <TextInput
               type="text"
               value={bin}
               onChange={(e) => handleUpdate(e.target.value, 2)}
@@ -181,7 +182,7 @@ export const NumberBaseConverter: React.FC = () => {
             </div>
             <div className="relative flex items-center">
               <span className="absolute left-3 text-xs text-[var(--text-muted)] font-mono pointer-events-none">0o</span>
-              <input
+              <TextInput
                 type="text"
                 value={oct}
                 onChange={(e) => handleUpdate(e.target.value, 8)}

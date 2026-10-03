@@ -12,6 +12,7 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
+import { TextInput } from '../../components/common/TextInput';
 import React, { useState, useEffect, useRef } from 'react';
 import { isDesktopApp, showReminderNotification } from '../../lib/desktop';
 import {
@@ -382,7 +383,7 @@ export const TaskReminder: React.FC = () => {
           </div>
 
           <div className="space-y-2">
-            <input
+            <TextInput
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}

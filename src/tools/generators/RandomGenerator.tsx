@@ -12,6 +12,7 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
+import { TextInput } from '../../components/common/TextInput';
 import React, { useState, useEffect } from 'react';
 import { CopyButton } from '../../components/common/CopyButton';
 import { RefreshCw, Key, Shield, Hash, Network, Calendar, Palette } from 'lucide-react';
@@ -287,7 +288,7 @@ export const RandomGenerator: React.FC = () => {
             {tokenType === 'custom' && (
               <div>
                 <label className="text-[var(--text-secondary)] block mb-1">Custom Characters</label>
-                <input
+                <TextInput
                   type="text"
                   value={customChars}
                   onChange={(e) => setCustomChars(e.target.value)}

@@ -12,6 +12,7 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
+import { IdeEditor } from './IdeEditor';
 import React, { useState } from 'react';
 import { CopyButton } from './CopyButton';
 import { Terminal, WrapText, CheckCircle2 } from 'lucide-react';
@@ -42,6 +43,7 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
   label = 'Result',
   placeholder = 'Result will appear here automatically...',
   minHeight = '480px',
+  maxHeight = '600px',
   language,
   showStats = true,
   actions,
@@ -57,10 +59,10 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
 
   return (
     <div
-      className={`well-3d flex flex-col flex-1 h-full min-h-[460px] rounded-xl overflow-hidden transition-all border border-[var(--border-default)] select-text ${className}`}
+      className={`card-3d code-result flex flex-col flex-1 h-full min-h-[460px] rounded-xl overflow-hidden transition-all border border-[var(--border-default)] select-text ${className}`}
     >
       {/* Result Panel Header Bar */}
-      <div className="flex items-center justify-between px-3.5 py-2 bg-[var(--well-header-bg)] border-b border-[var(--border-color)] text-xs select-none">
+      <div className="shrink-0 flex items-center justify-between px-3.5 py-2 bg-[var(--well-header-bg)] border-b border-[var(--border-color)] text-xs select-none">
         <div className="flex items-center gap-2 font-medium text-[var(--text-secondary)]">
           <div className="w-5 h-5 rounded-md bg-emerald-500/10 flex items-center justify-center text-emerald-500">
             <Terminal className="w-3.5 h-3.5" />
@@ -100,17 +102,11 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
 
       {/* Result Panel Content Area */}
       <div
-        className="relative flex flex-1 h-full overflow-auto bg-[var(--surface-recessed)]/50"
+        className="relative flex flex-1 min-h-0 overflow-auto bg-[var(--surface-panel)]"
         style={{ minHeight }}
       >
         {value ? (
-          <pre
-            className={`w-full h-full p-4 font-mono text-xs leading-relaxed text-[var(--text-primary)] select-text m-0 ${
-              wrap ? 'whitespace-pre-wrap break-words' : 'whitespace-pre overflow-x-auto'
-            }`}
-          >
-            {value}
-          </pre>
+          <IdeEditor value={value} label={label} language={language} readOnly wrap={wrap} minHeight={minHeight} maxHeight={maxHeight} />
         ) : (
           <div className="flex flex-col items-center justify-center flex-1 h-full min-h-[340px] p-6 text-[var(--text-muted)] select-none">
             <div className="w-10 h-10 rounded-xl bg-black/5 dark:bg-white/5 flex items-center justify-center mb-3 text-[var(--text-muted)] border border-[var(--border-subtle)]">
@@ -130,7 +126,7 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
 
       {/* Result Panel Footer / Stats */}
       {showStats && (
-        <div className="flex items-center justify-between px-3.5 py-1.5 bg-[var(--well-header-bg)] border-t border-[var(--border-color)] text-[11px] text-[var(--text-muted)] font-mono select-none">
+        <div className="shrink-0 flex items-center justify-between px-3.5 py-1.5 bg-[var(--well-header-bg)] border-t border-[var(--border-color)] text-[11px] text-[var(--text-muted)] font-mono select-none">
           <div className="flex items-center gap-3">
             <span>{lineCount} lines</span>
             <span>•</span>
@@ -141,7 +137,7 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
 
           <div className="flex items-center gap-1.5 text-[10px] text-emerald-600 dark:text-emerald-400 font-sans font-medium">
             <CheckCircle2 className="w-3 h-3" />
-            <span>Output ready</span>
+            <span>Read-only code</span>
           </div>
         </div>
       )}

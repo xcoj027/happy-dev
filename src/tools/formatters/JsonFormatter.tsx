@@ -12,6 +12,7 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
+import { TextInput } from '../../components/common/TextInput';
 import React, { useState } from 'react';
 import { CodeEditor } from '../../components/common/CodeEditor';
 import { AlertCircle, Filter } from 'lucide-react';
@@ -131,7 +132,7 @@ export const JsonFormatter: React.FC = () => {
       <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[var(--control-panel-bg)] border border-[var(--border-color)]">
         <Filter className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
         <span className="text-xs text-[var(--text-secondary)] whitespace-nowrap">Filter Path:</span>
-        <input
+        <TextInput
           type="text"
           value={queryPath}
           onChange={(e) => setQueryPath(e.target.value)}

@@ -731,3 +731,11 @@ body {
   .search-field:focus-within .search-icon { transform: none; }
   .search-backdrop, .search-palette { animation: none; }
 }
+
+/* Expanded editors retain native modal focus and match both application themes. */
+.text-input-editor-dialog::backdrop {
+  background: rgb(15 23 42 / 45%);
+}
+.code-result .cm-content {
+  cursor: text;
+}

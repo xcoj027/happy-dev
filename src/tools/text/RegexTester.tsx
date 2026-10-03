@@ -12,6 +12,7 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
+import { TextInput } from '../../components/common/TextInput';
 import React, { useState } from 'react';
 import { CodeEditor } from '../../components/common/CodeEditor';
 import { CopyButton } from '../../components/common/CopyButton';
@@ -20,7 +21,7 @@ import { AlertCircle } from 'lucide-react';
 export const RegexTester: React.FC = () => {
   const [pattern, setPattern] = useState('[A-Za-z0-9_]+');
   const [flags, setFlags] = useState({ g: true, i: true, m: false, s: false });
-  const [testText, setTestText] = useState('HappyDev - 38+ modern offline developer utilities (built in 2026).');
+  const [testText, setTestText] = useState('HappyDev - modern offline developer utilities (built in 2026).');
 
   const flagStr = Object.entries(flags)
     .filter(([_, active]) => active)
@@ -75,7 +76,7 @@ export const RegexTester: React.FC = () => {
         <label className="text-xs text-[var(--text-secondary)] font-medium">Regular Expression Pattern</label>
         <div className="flex items-center gap-2">
           <span className="text-emerald-500 font-mono text-base font-bold">/</span>
-          <input
+          <TextInput
             type="text"
             value={pattern}
             onChange={(e) => setPattern(e.target.value)}

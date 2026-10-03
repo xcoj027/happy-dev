@@ -70,12 +70,6 @@ export const categoryColors: Record<ToolCategory, CategoryColorTheme> = {
     colorHex: '#0ea5e9',
     gradient: 'from-sky-500/20 to-blue-500/20',
   },
-  frontend: {
-    text: 'text-rose-500 dark:text-rose-400',
-    bg: 'bg-rose-500/15',
-    colorHex: '#f43f5e',
-    gradient: 'from-rose-500/20 to-pink-500/20',
-  },
 };
 
 export const getCategoryColor = (category: ToolCategory): CategoryColorTheme => {

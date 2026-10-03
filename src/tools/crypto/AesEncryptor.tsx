@@ -12,6 +12,7 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
+import { TextInput } from '../../components/common/TextInput';
 import React, { useState, useEffect } from 'react';
 import CryptoJS from 'crypto-js';
 import { CodeEditor } from '../../components/common/CodeEditor';
@@ -291,7 +292,7 @@ export const AesEncryptor: React.FC = () => {
                 </button>
               </div>
             </div>
-            <input
+            <TextInput
               type="text"
               value={key}
               onChange={(e) => setKey(e.target.value)}
@@ -326,7 +327,7 @@ export const AesEncryptor: React.FC = () => {
                   </button>
                 </div>
               </div>
-              <input
+              <TextInput
                 type="text"
                 value={iv}
                 onChange={(e) => setIv(e.target.value)}

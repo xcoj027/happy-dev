@@ -12,6 +12,7 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
+import { TextInput } from '../../components/common/TextInput';
 import React, { useState } from 'react';
 import { CodeEditor } from '../../components/common/CodeEditor';
 import { Globe, Plus, Trash2, AlertCircle } from 'lucide-react';
@@ -201,7 +202,7 @@ export const UrlEncoder: React.FC = () => {
           <div className="space-y-2">
             {queryParams.map((param, idx) => (
               <div key={idx} className="flex items-center gap-2">
-                <input
+                <TextInput
                   type="text"
                   value={param.key}
                   onChange={(e) => updateParam(idx, e.target.value, param.value)}
@@ -209,7 +210,7 @@ export const UrlEncoder: React.FC = () => {
                   className="w-1/3 input-3d rounded px-2.5 py-1.5 text-xs font-mono text-[var(--text-primary)] outline-none"
                 />
                 <span className="text-[var(--text-secondary)]">=</span>
-                <input
+                <TextInput
                   type="text"
                   value={param.value}
                   onChange={(e) => updateParam(idx, param.key, e.target.value)}

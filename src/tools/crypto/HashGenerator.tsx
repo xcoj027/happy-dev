@@ -12,6 +12,7 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
+import { TextInput } from '../../components/common/TextInput';
 import React, { useState } from 'react';
 import CryptoJS from 'crypto-js';
 import { CodeEditor } from '../../components/common/CodeEditor';
@@ -96,7 +97,7 @@ export const HashGenerator: React.FC = () => {
       {useHmac && (
         <div className="p-3 card-3d rounded-xl">
           <label className="text-xs text-[var(--text-secondary)] block mb-1">HMAC Secret Key</label>
-          <input
+          <TextInput
             type="text"
             value={hmacKey}
             onChange={(e) => setHmacKey(e.target.value)}

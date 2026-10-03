@@ -58,7 +58,7 @@ export const TitleBar: React.FC<TitleBarProps> = ({ onOpenCommandPalette, onGoHo
         >
           <div className="flex items-center gap-2 text-xs">
             <Search className="search-icon w-3.5 h-3.5 text-[var(--text-muted)] group-hover:text-emerald-500 transition" />
-            <span>Search 38+ dev utilities...</span>
+            <span>Search dev utilities...</span>
           </div>
           <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--control-input-bg)] text-[var(--text-secondary)]">
             {isMac ? '⌘K' : 'Ctrl+K'}

@@ -12,6 +12,8 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
+import { IdeEditor } from '../../components/common/IdeEditor';
+import { TextArea, TextInput } from '../../components/common/TextInput';
 import React, { useState } from 'react';
 import { CopyButton } from '../../components/common/CopyButton';
 
@@ -142,7 +144,7 @@ export const metadata: Metadata = {
                 {titleLen} chars • {getTitleStatus().text}
               </span>
             </div>
-            <input
+            <TextInput
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -154,7 +156,7 @@ export const metadata: Metadata = {
           {/* Canonical URL */}
           <div>
             <label className="text-[var(--text-secondary)] block mb-1 font-medium">Canonical URL</label>
-            <input
+            <TextInput
               type="text"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
@@ -171,7 +173,7 @@ export const metadata: Metadata = {
                 {descLen} chars • {getDescStatus().text}
               </span>
             </div>
-            <textarea
+            <TextArea
               rows={2}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -183,7 +185,7 @@ export const metadata: Metadata = {
           {/* Social Image URL */}
           <div>
             <label className="text-[var(--text-secondary)] block mb-1 font-medium">Social Image (OG/Twitter)</label>
-            <input
+            <TextInput
               type="text"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
@@ -195,7 +197,7 @@ export const metadata: Metadata = {
           {/* Site Name */}
           <div>
             <label className="text-[var(--text-secondary)] block mb-1 font-medium">Site Name</label>
-            <input
+            <TextInput
               type="text"
               value={siteName}
               onChange={(e) => setSiteName(e.target.value)}
@@ -207,7 +209,7 @@ export const metadata: Metadata = {
           {/* Twitter Handle */}
           <div>
             <label className="text-[var(--text-secondary)] block mb-1 font-medium">Twitter Handle</label>
-            <input
+            <TextInput
               type="text"
               value={twitterHandle}
               onChange={(e) => setTwitterHandle(e.target.value)}
@@ -430,9 +432,9 @@ export const metadata: Metadata = {
                 label="Copy Code"
               />
             </div>
-            <pre className="well-3d p-3 rounded-xl flex-1 overflow-auto max-h-[340px] text-xs font-mono text-[var(--well-text)] select-all leading-relaxed">
-              {codeTab === 'html' ? metaHtml : codeTab === 'nextjs' ? nextJsMetadata : jsonLdSchema}
-            </pre>
+            <div className="card-3d rounded-xl overflow-hidden">
+              <IdeEditor readOnly label="Generated metadata code" value={codeTab === 'html' ? metaHtml : codeTab === 'nextjs' ? nextJsMetadata : jsonLdSchema} language={codeTab === 'html' ? 'html' : codeTab === 'nextjs' ? 'typescript' : 'json'} minHeight="240px" maxHeight="340px" />
+            </div>
           </div>
         </div>
       </div>

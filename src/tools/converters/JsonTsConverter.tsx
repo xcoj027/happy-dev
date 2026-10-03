@@ -12,6 +12,7 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
+import { TextInput } from '../../components/common/TextInput';
 import React, { useState } from 'react';
 import { CodeEditor } from '../../components/common/CodeEditor';
 import { Settings, AlertCircle } from 'lucide-react';
@@ -305,7 +306,7 @@ export const JsonTsConverter: React.FC = () => {
         <div className="card-3d p-3.5 rounded-xl grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs animate-in fade-in duration-200">
           <div>
             <label className="text-[var(--text-secondary)] block mb-1">Root Name</label>
-            <input
+            <TextInput
               type="text"
               value={options.rootName}
               onChange={(e) => setOptions({ ...options, rootName: e.target.value })}
@@ -387,6 +388,7 @@ export const JsonTsConverter: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1 min-h-[460px]">
         <CodeEditor
           label={direction === 'json2ts' ? 'JSON Input' : 'TypeScript Interface Input'}
+          language={direction === 'json2ts' ? 'json' : 'typescript'}
           value={input}
           onChange={setInput}
           placeholder={
@@ -397,6 +399,7 @@ export const JsonTsConverter: React.FC = () => {
         />
         <CodeEditor
           label={direction === 'json2ts' ? 'Generated TypeScript Types' : 'Generated JSON Mock'}
+          language={direction === 'json2ts' ? 'typescript' : 'json'}
           value={output}
           readOnly
           placeholder="Converted output will appear here automatically..."

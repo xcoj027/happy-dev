@@ -12,6 +12,7 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
+import { TextInput } from '../../components/common/TextInput';
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 
@@ -57,7 +58,7 @@ export const HttpStatusLookup: React.FC = () => {
       <div className="flex flex-wrap items-center justify-between gap-3 p-3 card-3d rounded-xl">
         <div className="relative flex-1 max-w-sm">
           <Search className="w-4 h-4 absolute left-3 top-2.5 text-[var(--text-secondary)]" />
-          <input
+          <TextInput
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}

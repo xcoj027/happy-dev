@@ -17,6 +17,8 @@ import { ToolDefinition, CategoryInfo } from '../types';
 // Converters
 import { JsonYamlTomlConverter } from '../tools/converters/JsonYamlTomlConverter';
 import { JsonCsvConverter } from '../tools/converters/JsonCsvConverter';
+import { JsonPythonConverter } from '../tools/converters/JsonPythonConverter';
+import { JsonJavaConverter } from '../tools/converters/JsonJavaConverter';
 import { JsonTsConverter } from '../tools/converters/JsonTsConverter';
 import { NumberBaseConverter } from '../tools/converters/NumberBaseConverter';
 import { CaseConverter } from '../tools/converters/CaseConverter';
@@ -37,6 +39,7 @@ import { PasswordGenerator } from '../tools/crypto/PasswordGenerator';
 import { UuidGenerator } from '../tools/crypto/UuidGenerator';
 
 // Formatters
+import { JavaFormatter } from '../tools/formatters/JavaFormatter';
 import { JsonFormatter } from '../tools/formatters/JsonFormatter';
 import { XmlFormatter } from '../tools/formatters/XmlFormatter';
 import { YamlFormatter } from '../tools/formatters/YamlFormatter';
@@ -67,11 +70,6 @@ import { ChmodCalculator } from '../tools/network/ChmodCalculator';
 import { UserAgentParser } from '../tools/network/UserAgentParser';
 import { MetaTagsPreviewer } from '../tools/network/MetaTagsPreviewer';
 
-// Frontend
-import { CssBoxShadowGenerator } from '../tools/frontend/CssBoxShadowGenerator';
-import { CssFlexGridPlayground } from '../tools/frontend/CssFlexGridPlayground';
-import { SvgToJsxConverter } from '../tools/frontend/SvgToJsxConverter';
-
 export const categories: CategoryInfo[] = [
   { id: 'converters', name: 'Converters', description: 'JSON, TypeScript, YAML, CSV, bases, case, curl', icon: 'ArrowLeftRight' },
   { id: 'encoders', name: 'Encoders & Decoders', description: 'Base64, URL params, HTML entities, Gzip', icon: 'Binary' },
@@ -81,7 +79,6 @@ export const categories: CategoryInfo[] = [
   { id: 'text', name: 'Text & Regex & Diff', description: 'Diff checker, regex, markdown, inspector, escape', icon: 'FileText' },
   { id: 'generators', name: 'Generators & QR', description: 'QR codes, random secrets & tokens, lorem ipsum', icon: 'Sparkles' },
   { id: 'network', name: 'Web & System Tools', description: 'HTTP codes, chmod permissions, UA parser, meta tags', icon: 'Globe' },
-  { id: 'frontend', name: 'CSS & Frontend', description: 'Box shadow, flexbox, grid, SVG to JSX', icon: 'Palette' },
 ];
 
 export const toolsRegistry: ToolDefinition[] = [
@@ -117,6 +114,26 @@ export const toolsRegistry: ToolDefinition[] = [
     icon: 'Binary',
     tags: ['binary', 'hex', 'octal', 'decimal', 'base', 'radix', 'bigint'],
     component: NumberBaseConverter,
+  },
+  {
+    id: 'json-python-converter',
+    name: 'JSON ⇄ Python DTO Converter',
+    description: 'Generate Python dataclasses or Pydantic DTOs from JSON, and sample JSON from annotated Python classes.',
+    category: 'converters',
+    roles: ['Backend', 'Fullstack', 'QA', 'SA'],
+    icon: 'FileCode',
+    tags: ['json', 'python', 'dto', 'dataclass', 'pydantic', 'typing', 'convert'],
+    component: JsonPythonConverter,
+  },
+  {
+    id: 'json-java-converter',
+    name: 'JSON ⇄ Java DTO Converter',
+    description: 'Generate Java DTOs from JSON and sample JSON from Java classes or records, with nested objects and collections.',
+    category: 'converters',
+    roles: ['Backend', 'Fullstack', 'QA', 'SA'],
+    icon: 'FileCode',
+    tags: ['json', 'java', 'dto', 'pojo', 'record', 'jackson', 'convert'],
+    component: JsonJavaConverter,
   },
   {
     id: 'json-ts-converter',
@@ -263,6 +280,16 @@ export const toolsRegistry: ToolDefinition[] = [
 
   // 4. Formatters & Minifiers
   {
+    id: 'java-formatter',
+    name: 'Java Formatter & Beautifier',
+    description: 'Format Java source with configurable indentation, tabs, and line width, entirely offline.',
+    category: 'formatters',
+    roles: ['Backend', 'Fullstack', 'QA', 'SA'],
+    icon: 'FileCode',
+    tags: ['java', 'format', 'formatter', 'prettify', 'beautify', 'dto', 'pojo'],
+    component: JavaFormatter,
+  },
+  {
     id: 'json-formatter',
     name: 'JSON Formatter & Key Sorter',
     description: 'Beautify, minify, alphabetically sort keys, and query paths in JSON.',
@@ -340,12 +367,12 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'cron-parser',
-    name: 'Cron Expression Parser & Schedule',
-    description: 'Translates cron syntax to plain English and computes the next upcoming executions.',
+    name: 'Cron Builder, Parser & Job Generator',
+    description: 'Build cron jobs with visual schedules, field controls and presets, preview runs by timezone, and generate crontab entries.',
     category: 'datetime',
     roles: ['Backend', 'QA', 'SA'],
     icon: 'Calendar',
-    tags: ['cron', 'schedule', 'quartz', 'job', 'timer'],
+    tags: ['cron', 'crontab', 'builder', 'schedule', 'job', 'timer', 'timezone', 'generator'],
     isPopular: true,
     component: CronParser,
   },
@@ -430,11 +457,11 @@ export const toolsRegistry: ToolDefinition[] = [
   {
     id: 'qr-code-generator',
     name: 'Offline QR Code Generator',
-    description: 'Generate customizable QR codes for WiFi, vCard, URLs, email, text with SVG/PNG download.',
+    description: 'Generate customizable QR codes with center logos for WiFi, vCard, URLs, email, and text, with SVG/PNG download.',
     category: 'generators',
     roles: ['Frontend', 'QA', 'All'],
     icon: 'QrCode',
-    tags: ['qr', 'qrcode', 'barcode', 'generator', 'wifi', 'vcard', 'svg'],
+    tags: ['qr', 'qrcode', 'barcode', 'generator', 'wifi', 'vcard', 'svg', 'logo', 'branding'],
     isPopular: true,
     component: QrCodeGenerator,
   },
@@ -491,35 +518,4 @@ export const toolsRegistry: ToolDefinition[] = [
     component: MetaTagsPreviewer,
   },
 
-  // 9. Frontend & Visual Design Tools
-  {
-    id: 'css-box-shadow',
-    name: 'CSS Box Shadow Generator',
-    description: 'Visual shadow layers and glassmorphism builder with direct CSS export.',
-    category: 'frontend',
-    roles: ['Frontend'],
-    icon: 'Layers',
-    tags: ['css', 'shadow', 'boxshadow', 'glassmorphism', 'ui'],
-    component: CssBoxShadowGenerator,
-  },
-  {
-    id: 'css-flex-grid',
-    name: 'CSS Flexbox & Grid Playground',
-    description: 'Interactive playground to test flex and grid alignments, gaps, and generated CSS.',
-    category: 'frontend',
-    roles: ['Frontend'],
-    icon: 'LayoutGrid',
-    tags: ['css', 'flexbox', 'grid', 'layout', 'alignment'],
-    component: CssFlexGridPlayground,
-  },
-  {
-    id: 'svg-to-jsx',
-    name: 'SVG to JSX & Data URI',
-    description: 'Convert SVG markup into clean React TypeScript JSX components and CSS Data URIs.',
-    category: 'frontend',
-    roles: ['Frontend'],
-    icon: 'Code2',
-    tags: ['svg', 'jsx', 'react', 'datauri', 'vector'],
-    component: SvgToJsxConverter,
-  },
 ];

@@ -213,7 +213,7 @@ echo $response;`;
           label={`Generated ${targetLang.toUpperCase()} Code`}
           value={generateCode()}
           readOnly
-          language={targetLang === 'python' ? 'python' : targetLang === 'go' ? 'go' : 'javascript'}
+          language={targetLang === 'python' ? 'python' : targetLang === 'go' ? 'go' : targetLang === 'php' ? 'php' : 'javascript'}
         />
       </div>
     </div>

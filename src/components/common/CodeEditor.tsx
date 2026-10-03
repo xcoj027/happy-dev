@@ -12,6 +12,7 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
+import { IdeEditor } from './IdeEditor';
 import React, { useRef } from 'react';
 import { CopyButton } from './CopyButton';
 import { Trash2, Upload, FileEdit } from 'lucide-react';
@@ -30,6 +31,7 @@ export interface CodeEditorProps {
   maxHeight?: string;
   language?: string;
   showStats?: boolean;
+  singleLine?: boolean;
   actions?: React.ReactNode;
 }
 
@@ -47,6 +49,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
   placeholder = 'Type or paste content here...',
   readOnly = false,
   minHeight = '480px',
+  maxHeight = '600px',
+  singleLine = false,
   language,
   showStats = true,
   actions,
@@ -61,6 +65,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
         label={label || 'Output Result'}
         placeholder={placeholder}
         minHeight={minHeight}
+        maxHeight={maxHeight}
         language={language}
         showStats={showStats}
         actions={actions}
@@ -87,7 +92,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
   return (
     <div className="well-3d flex flex-col flex-1 h-full min-h-[460px] rounded-xl overflow-hidden transition-all border border-[var(--border-default)] focus-within:ring-2 focus-within:ring-emerald-500/30 focus-within:border-emerald-500/40">
       {/* Input Editor Header Bar */}
-      <div className="flex items-center justify-between px-3.5 py-2 bg-[var(--well-header-bg)] border-b border-[var(--border-color)] text-xs select-none">
+      <div className="shrink-0 flex items-center justify-between px-3.5 py-2 bg-[var(--well-header-bg)] border-b border-[var(--border-color)] text-xs select-none">
         <div className="flex items-center gap-2 font-medium text-[var(--text-secondary)]">
           <div className="w-5 h-5 rounded-md bg-sky-500/10 flex items-center justify-center text-sky-500 dark:text-sky-400">
             <FileEdit className="w-3.5 h-3.5" />
@@ -138,20 +143,13 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
       </div>
 
       {/* Editor Textarea */}
-      <div className="relative flex flex-1 h-full">
-        <textarea
-          value={value}
-          onChange={(e) => onChange && onChange(e.target.value)}
-          placeholder={placeholder}
-          spellCheck={false}
-          style={{ minHeight }}
-          className="w-full h-full min-h-[440px] flex-1 p-3.5 font-mono text-xs leading-relaxed resize-y outline-none transition-colors text-[var(--well-text)] bg-transparent placeholder:text-[var(--text-muted)] cursor-text"
-        />
+      <div className="relative flex flex-1 min-h-0">
+        <IdeEditor value={value} onChange={onChange} label={label || 'Input'} placeholder={placeholder} language={language} minHeight={minHeight} maxHeight={maxHeight} singleLine={singleLine} />
       </div>
 
       {/* Editor Footer / Stats */}
       {showStats && (
-        <div className="flex items-center justify-between px-3.5 py-1.5 bg-[var(--well-header-bg)] border-t border-[var(--border-color)] text-[11px] text-[var(--text-muted)] font-mono select-none">
+        <div className="shrink-0 flex items-center justify-between px-3.5 py-1.5 bg-[var(--well-header-bg)] border-t border-[var(--border-color)] text-[11px] text-[var(--text-muted)] font-mono select-none">
           <div className="flex items-center gap-3">
             <span>{lineCount} lines</span>
             <span>•</span>
@@ -160,7 +158,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             <span>{formatBytes(byteCount)}</span>
           </div>
 
-          <span className="text-[10px] text-[var(--text-muted)]">Editable text input</span>
+          <span className="text-[10px] text-[var(--text-muted)]">Tab to indent · Ctrl/Cmd+F to search</span>
         </div>
       )}
     </div>
