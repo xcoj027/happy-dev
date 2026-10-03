@@ -103,12 +103,7 @@ export const Splash: React.FC<SplashProps> = ({ onFinish }) => {
         </h1>
 
         <p className="mt-4 text-sm font-medium tracking-[0.015em] text-[#a9bad0]">
-          Your local-first developer workspace
-        </p>
-
-        <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#69dbc6]">
-          Free <span className="mx-1.5 text-[#3b586d]">•</span> Offline{' '}
-          <span className="mx-1.5 text-[#3b586d]">•</span> Private
+          Free, lightweight, and offline developer tools
         </p>
       </div>
     </div>

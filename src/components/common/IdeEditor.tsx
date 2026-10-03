@@ -3,13 +3,33 @@
  * @license MIT (with Trademark Retention Notice)
  * Copyright (c) 2026 TNQSW. Retain TNQ trademark, author credits and notices.
  */
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { basicSetup, EditorView } from 'codemirror';
-import { Annotation, Compartment, EditorState } from '@codemirror/state';
+import { Annotation, Compartment, EditorState, Prec } from '@codemirror/state';
 import { keymap, placeholder as placeholderExtension } from '@codemirror/view';
 import { indentWithTab } from '@codemirror/commands';
 import { StreamLanguage, indentUnit } from '@codemirror/language';
 import { oneDark } from '@codemirror/theme-one-dark';
+
+const detectLanguage = (value: string): string => {
+  const text = value.trimStart().slice(0, 4000);
+  if (/^[{[]/.test(text)) {
+    try { JSON.parse(value); return 'json'; } catch { /* Allow incomplete code while typing. */ }
+    if (/^[{[]\s*(?:[}\]]|"[^"\n]*"\s*:)/.test(text)) return 'json';
+  }
+  if (/^<\?xml\b/.test(text)) return 'xml';
+  if (/^<(?:!doctype html|html|head|body|div|span|p|a)\b/i.test(text)) return 'html';
+  if (/^<[\w:-]+(?:\s|>)/.test(text)) return 'xml';
+  if (/^(?:SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|WITH)\b/i.test(text)) return 'sql';
+  if (/^(?:package\s+[\w.]+;|import\s+java\.|public\s+(?:class|interface|record))/.test(text)) return 'java';
+  if (/^(?:from\s+\w+\s+import|def\s+\w+\(|class\s+\w+.*:|import\s+\w+\s*$)/m.test(text)) return 'python';
+  if (/^(?:interface|type|enum)\s+\w+/.test(text)) return 'typescript';
+  if (/^(?:const|let|var|function|export|import)\b/.test(text)) return 'javascript';
+  if (/^[.#]?[\w-]+[^\n]*\{\s*[\w-]+\s*:/.test(text)) return 'css';
+  if (/^(?:---\s*\n)?[\w-]+:\s+/.test(text)) return 'yaml';
+  if (/^#{1,6}\s/.test(text)) return 'markdown';
+  return '';
+};
 
 const externalChange = Annotation.define<boolean>();
 const languages: Record<string, () => Promise<unknown>> = {
@@ -47,6 +67,9 @@ export interface IdeEditorProps {
 }
 
 export const IdeEditor: React.FC<IdeEditorProps> = ({ value, onChange, language, label = 'Text editor', placeholder = '', minHeight = '160px', maxHeight = '600px', readOnly = false, wrap = true, singleLine = false, maxLength }) => {
+  const [selectedLanguage, setSelectedLanguage] = useState('auto');
+  const detectedLanguage = !language && selectedLanguage === 'auto' ? detectLanguage(value) : '';
+  const effectiveLanguage = language || (selectedLanguage === 'auto' ? detectedLanguage : selectedLanguage);
   const host = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const changeRef = useRef(onChange);
@@ -60,7 +83,7 @@ export const IdeEditor: React.FC<IdeEditorProps> = ({ value, onChange, language,
     const view = new EditorView({
       parent: host.current,
       doc: initialValue.current,
-      extensions: [basicSetup, keymap.of([indentWithTab]), indentUnit.of('    '), EditorState.tabSize.of(4),
+      extensions: [basicSetup, Prec.highest(keymap.of([indentWithTab])), indentUnit.of('    '), EditorState.tabSize.of(4),
         configuration.current.of([]), languageSlot.current.of([]),
         EditorView.updateListener.of(update => {
           if (update.docChanged && !update.transactions.some(transaction => transaction.annotation(externalChange))) changeRef.current?.(update.state.doc.toString());
@@ -111,17 +134,29 @@ export const IdeEditor: React.FC<IdeEditorProps> = ({ value, onChange, language,
     let cancelled = false;
     const view = viewRef.current;
     view?.dispatch({ effects: languageSlot.current.reconfigure([]) });
-    const loader = languages[language?.toLowerCase() || ''];
+    const loader = languages[effectiveLanguage.toLowerCase()];
     if (loader) void loader().then(extension => {
       if (!cancelled && viewRef.current === view) view?.dispatch({ effects: languageSlot.current.reconfigure(extension as import('@codemirror/state').Extension) });
     }).catch(() => { /* Plain text editing remains available if a language chunk fails to load. */ });
     return () => { cancelled = true; };
-  }, [language]);
+  }, [effectiveLanguage]);
 
   useEffect(() => {
     const view = viewRef.current;
     if (!view || view.state.doc.toString() === value) return;
     view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: value }, annotations: externalChange.of(true) });
   }, [value]);
-  return <div ref={host} className="ide-editor flex-1 min-w-0 w-full h-full" />;
+  return <div className="flex flex-col flex-1 min-w-0 w-full h-full">
+    {!language && <div className="flex items-center justify-between gap-2 px-2 py-1 border-b border-[var(--border-color)] text-[11px] text-[var(--text-muted)]">
+      <label className="flex items-center gap-2">Syntax
+        <select aria-label={`${label} syntax language`} value={selectedLanguage} onChange={event => setSelectedLanguage(event.target.value)} className="bg-[var(--well-header-bg)] rounded px-1 py-0.5">
+          <option value="auto">Auto{detectedLanguage ? ` (${detectedLanguage})` : ''}</option>
+          <option value="">Plain text</option>
+          {Object.keys(languages).filter(name => name !== 'js' && name !== 'ts').map(name => <option key={name} value={name}>{name}</option>)}
+        </select>
+      </label>
+      {!readOnly && <span>Tab / Shift+Tab to indent</span>}
+    </div>}
+    <div ref={host} className="ide-editor flex-1 min-w-0 w-full min-h-0" />
+  </div>;
 };

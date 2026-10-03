@@ -22,8 +22,8 @@ You can download the latest pre-compiled installers directly from the official G
 
 👉 **[Download Latest Version from GitHub Releases](https://github.com/xcoj027/happy-dev-releases/releases/latest)**
 
-### Automated Builds on Main Branch
-The repository is configured with an automated continuous deployment pipeline powered by GitHub Actions. Every push to the `main` branch automatically triggers a multi-platform compilation matrix that builds and publishes updated installers for all supported operating systems:
+### Automated Builds on Release Branch
+The repository is configured with an automated continuous deployment pipeline powered by GitHub Actions. Every push to the `release` branch automatically triggers a multi-platform compilation matrix that builds and publishes updated installers for all supported operating systems:
 
 - **macOS (Apple Silicon & Intel)**: Download the universal `.dmg` installer.
 - **Windows (x64)**: Download the `.exe` setup installer.
@@ -198,7 +198,7 @@ Local installers are saved in `release/tauri/local/`. GitHub Actions builds all 
 ## 🤖 Continuous Integration and Deployment
 
 The repository includes an automated GitHub Actions workflow defined in [`.github/workflows/build.yml`](.github/workflows/build.yml):
-- The workflow automatically runs on every push to the `main` branch, on version tags (`v*`), and on manual workflow dispatch triggers.
+- The workflow automatically runs on every push to the `release` branch and on manual workflow dispatch triggers.
 - It builds binaries concurrently across three operating system runners: `macos-latest`, `windows-latest`, and `ubuntu-22.04`. Linux uses a fixed runner version for a stable dependency and glibc baseline.
 - Each release contains one universal macOS `.dmg` (Intel and Apple Silicon), one Windows x64 setup `.exe`, and one Linux x64 `.AppImage`, plus a checksum file. ZIP archives, portable Windows builds, and Debian packages are not generated.
 - Every release publishes the next `v.N` tag to the public [`happy-dev-releases`](https://github.com/xcoj027/happy-dev-releases/releases/latest) repository and marks it as latest, including releases triggered by source tags or manual dispatch.

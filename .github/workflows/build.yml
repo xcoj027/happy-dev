@@ -3,12 +3,10 @@ name: Build and Release
 on:
   push:
     branches:
-      - main
-    tags:
-      - 'v*'
+      - release
   pull_request:
     branches:
-      - main
+      - release
   workflow_dispatch:
 
 permissions:
