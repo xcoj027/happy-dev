@@ -77,8 +77,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const filteredCategories = categories.map((category) => ({
     ...category,
-    tools: filteredTools.filter((tool) => tool.category === category.id)
-      .sort((a, b) => a.name.localeCompare(b.name)),
+    tools: filteredTools.filter((tool) => tool.category === category.id),
   })).filter((category) => category.tools.length > 0);
 
   return (

@@ -41,7 +41,7 @@ const DEFAULT_WIDGETS: DashboardWidget[] = [
   {
     id: 'w_b64_default',
     toolId: 'base64-converter',
-    title: 'Base64 Text & File Converter',
+    title: 'Base64 Text and File',
     colSpan: 12,
   },
 ];

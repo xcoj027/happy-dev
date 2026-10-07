@@ -85,7 +85,7 @@ export const toolsRegistry: ToolDefinition[] = [
   // 1. Converters
   {
     id: 'json-yaml-converter',
-    name: 'JSON ⇄ YAML Converter',
+    name: 'JSON to YAML',
     description: 'Convert between JSON and YAML with syntax validation and indentation control.',
     category: 'converters',
     roles: ['Backend', 'Fullstack', 'SA'],
@@ -96,7 +96,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'json-csv-converter',
-    name: 'JSON ⇄ CSV / TSV Converter',
+    name: 'JSON to CSV',
     description: 'Convert JSON arrays to tabular CSV/TSV and parse spreadsheets back to JSON.',
     category: 'converters',
     roles: ['DBA', 'BA', 'QA', 'Backend'],
@@ -107,7 +107,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'number-base-converter',
-    name: 'Number Base Converter',
+    name: 'Number Base',
     description: 'Convert numbers across Binary, Octal, Decimal, and Hex with arbitrary precision.',
     category: 'converters',
     roles: ['Backend', 'Fullstack'],
@@ -117,7 +117,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'json-python-converter',
-    name: 'JSON ⇄ Python DTO Converter',
+    name: 'JSON to Python',
     description: 'Generate Python dataclasses or Pydantic DTOs from JSON, and sample JSON from annotated Python classes.',
     category: 'converters',
     roles: ['Backend', 'Fullstack', 'QA', 'SA'],
@@ -127,7 +127,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'json-java-converter',
-    name: 'JSON ⇄ Java DTO Converter',
+    name: 'JSON to Java',
     description: 'Generate Java DTOs from JSON and sample JSON from Java classes or records, with nested objects and collections.',
     category: 'converters',
     roles: ['Backend', 'Fullstack', 'QA', 'SA'],
@@ -137,7 +137,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'json-ts-converter',
-    name: 'JSON ⇄ TypeScript Converter',
+    name: 'JSON to TypeScript',
     description: 'Two-way conversion between JSON objects and TypeScript types or interfaces.',
     category: 'converters',
     roles: ['Frontend', 'Backend', 'Fullstack'],
@@ -148,7 +148,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'case-converter',
-    name: 'String Case Converter',
+    name: 'Case Converter',
     description: 'Transform identifiers into camelCase, PascalCase, snake_case, kebab-case, CONSTANT_CASE.',
     category: 'converters',
     roles: ['Frontend', 'Backend', 'DBA'],
@@ -158,7 +158,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'curl-to-code',
-    name: 'cURL to Code Converter',
+    name: 'cURL to Code',
     description: 'Convert cURL terminal commands into JavaScript Fetch, Axios, Python, Go, and PHP.',
     category: 'converters',
     roles: ['Backend', 'Frontend', 'QA', 'SA'],
@@ -169,7 +169,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'properties-yaml-converter',
-    name: 'Properties ⇄ YAML Converter',
+    name: 'Properties to YAML',
     description: 'Bidirectional conversion between Java .properties files and structured YAML with indentation & array options.',
     category: 'converters',
     roles: ['Backend', 'Fullstack', 'SA'],
@@ -182,7 +182,7 @@ export const toolsRegistry: ToolDefinition[] = [
   // 2. Encoders & Decoders
   {
     id: 'base64-converter',
-    name: 'Base64 Text & File Encoder',
+    name: 'Base64 Text and File',
     description: 'Encode and decode strings and images to/from standard and URL-safe Base64.',
     category: 'encoders',
     roles: ['All'],
@@ -193,7 +193,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'url-encoder',
-    name: 'URL Encoder & Query Inspector',
+    name: 'URL Encoder',
     description: 'Percent-encode/decode URLs and inspect query parameters in an interactive table.',
     category: 'encoders',
     roles: ['Backend', 'Frontend', 'QA'],
@@ -203,7 +203,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'html-entity-encoder',
-    name: 'HTML Entity Encoder / Decoder',
+    name: 'HTML Entities',
     description: 'Escape and unescape special HTML characters and reserved XML entities.',
     category: 'encoders',
     roles: ['Frontend', 'Fullstack'],
@@ -213,7 +213,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'gzip-compressor',
-    name: 'Gzip & Deflate Streamer',
+    name: 'Gzip and Deflate',
     description: 'Compress and decompress text to Base64 with compression ratio telemetry.',
     category: 'encoders',
     roles: ['Backend', 'SA'],
@@ -225,7 +225,7 @@ export const toolsRegistry: ToolDefinition[] = [
   // 3. Cryptography & Security
   {
     id: 'hash-generator',
-    name: 'Hash & HMAC Generator',
+    name: 'Hash and HMAC',
     description: 'Calculate MD5, SHA-1, SHA-256, SHA-512, and RIPEMD hashes with secret HMAC keys.',
     category: 'crypto',
     roles: ['Backend', 'SA', 'QA'],
@@ -236,7 +236,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'aes-encryptor',
-    name: 'AES Symmetric Encryption',
+    name: 'AES Encryption',
     description: 'Encrypt and decrypt plaintext with AES-256 using customizable passphrases.',
     category: 'crypto',
     roles: ['Backend', 'QA'],
@@ -246,7 +246,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'jwt-debugger',
-    name: 'JWT Debugger & Inspector',
+    name: 'JWT Debugger',
     description: 'Decode and inspect JWT headers, claims payloads, signature, and expiration times.',
     category: 'crypto',
     roles: ['Backend', 'Frontend', 'QA', 'SA'],
@@ -257,7 +257,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'password-generator',
-    name: 'Secure Password Generator',
+    name: 'Password Generator',
     description: 'Generate entropy-scored cryptographically secure passwords and API secrets.',
     category: 'crypto',
     roles: ['All'],
@@ -268,7 +268,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'uuid-generator',
-    name: 'UUID / NanoID / ULID Generator',
+    name: 'UUID Generator',
     description: 'Generate cryptographically secure UUID v4, time-ordered UUID v7, NanoID, and ULID with format validator.',
     category: 'crypto',
     roles: ['Backend', 'DBA', 'Fullstack'],
@@ -281,7 +281,7 @@ export const toolsRegistry: ToolDefinition[] = [
   // 4. Formatters & Minifiers
   {
     id: 'java-formatter',
-    name: 'Java Formatter & Beautifier',
+    name: 'Java Formatter',
     description: 'Format Java source with configurable indentation, tabs, and line width, entirely offline.',
     category: 'formatters',
     roles: ['Backend', 'Fullstack', 'QA', 'SA'],
@@ -291,7 +291,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'json-formatter',
-    name: 'JSON Formatter & Key Sorter',
+    name: 'JSON Formatter',
     description: 'Beautify, minify, alphabetically sort keys, and query paths in JSON.',
     category: 'formatters',
     roles: ['All'],
@@ -302,7 +302,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'xml-formatter',
-    name: 'XML Formatter & Minifier',
+    name: 'XML Formatter',
     description: 'Format, indent, fold tags, and minify XML/SOAP payloads.',
     category: 'formatters',
     roles: ['Backend', 'BA', 'SA'],
@@ -312,7 +312,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'yaml-formatter',
-    name: 'YAML Formatter & Validator',
+    name: 'YAML Formatter',
     description: 'Validate and beautify YAML syntax with customizable indentation.',
     category: 'formatters',
     roles: ['Backend', 'SA'],
@@ -322,7 +322,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'sql-formatter',
-    name: 'SQL Formatter & Beautifier',
+    name: 'SQL Formatter',
     description: 'Format PostgreSQL, MySQL, SQLite, and T-SQL queries with keyword casing control.',
     category: 'formatters',
     roles: ['DBA', 'Backend', 'BA'],
@@ -333,7 +333,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'code-minifier',
-    name: 'HTML / CSS / JS Minifier',
+    name: 'Code Minifier',
     description: 'Rapidly strip comments, whitespaces, and compress web assets on-the-fly.',
     category: 'formatters',
     roles: ['Frontend', 'Fullstack'],
@@ -345,7 +345,7 @@ export const toolsRegistry: ToolDefinition[] = [
   // 5. Date, Time & Timezones
   {
     id: 'unix-timestamp',
-    name: 'Unix Epoch & Timestamp Converter',
+    name: 'Unix Timestamp',
     description: 'Convert between Unix epoch (s, ms, µs, ns) and human-readable dates with timezone inspector.',
     category: 'datetime',
     roles: ['Backend', 'DBA', 'QA', 'All'],
@@ -356,7 +356,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'world-clock',
-    name: 'Timezone Converter & Team Planner',
+    name: 'World Clock',
     description: 'Interactive timezone converter with 24-hour team slider, search across global cities, and working hours.',
     category: 'datetime',
     roles: ['SA', 'BA', 'Fullstack', 'All'],
@@ -367,7 +367,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'cron-parser',
-    name: 'Cron Builder, Parser & Job Generator',
+    name: 'Cron Parser',
     description: 'Build cron jobs with visual schedules, field controls and presets, preview runs by timezone, and generate crontab entries.',
     category: 'datetime',
     roles: ['Backend', 'QA', 'SA'],
@@ -378,7 +378,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'task-reminder',
-    name: 'Dev Task Reminder & Alarm',
+    name: 'Task Reminder',
     description: 'Set developer task reminders with native OS alerts, repeatable schedules (daily, weekdays), and up to 10 tasks.',
     category: 'datetime',
     roles: ['All', 'Backend', 'Frontend', 'Fullstack'],
@@ -391,7 +391,7 @@ export const toolsRegistry: ToolDefinition[] = [
   // 6. Text & Regex & Diff
   {
     id: 'text-diff',
-    name: 'Text & Code Diff Checker',
+    name: 'Diff Checker',
     description: 'Compare two text snippets side-by-side with line and word-level change highlighting.',
     category: 'text',
     roles: ['All'],
@@ -402,7 +402,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'regex-tester',
-    name: 'Regex Tester & Match Inspector',
+    name: 'Regex Tester',
     description: 'Test regular expressions with flags (g, i, m, s) and detailed capture group breakdown.',
     category: 'text',
     roles: ['All'],
@@ -413,7 +413,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'markdown-editor',
-    name: 'Markdown Live Preview & Editor',
+    name: 'Markdown Editor',
     description: 'Live split-screen Markdown editor with GitHub-flavored table and HTML export.',
     category: 'text',
     roles: ['All', 'BA'],
@@ -423,7 +423,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'text-inspector',
-    name: 'Text Inspector & Hidden Chars',
+    name: 'Text Inspector',
     description: 'Counts words, characters, byte sizes, and detects rogue zero-width Unicode characters.',
     category: 'text',
     roles: ['QA', 'BA', 'Frontend'],
@@ -433,7 +433,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'string-escaper',
-    name: 'String Escaper / Unescaper',
+    name: 'String Escaper',
     description: 'Escape and unescape quotes, tabs, and special characters for JSON, Java, C#, and SQL.',
     category: 'text',
     roles: ['Backend', 'DBA', 'Frontend'],
@@ -445,7 +445,7 @@ export const toolsRegistry: ToolDefinition[] = [
   // 7. Generators & QR Tools
   {
     id: 'random-generator',
-    name: 'Random Utils & Secrets Generator',
+    name: 'Random Generator',
     description: 'Cryptographic tokens, passphrases, random bytes, numbers, IP/MAC, ports, and colors.',
     category: 'generators',
     roles: ['All', 'QA', 'Backend', 'Frontend'],
@@ -456,7 +456,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'qr-code-generator',
-    name: 'Offline QR Code Generator',
+    name: 'QR Code Generator',
     description: 'Generate customizable QR codes with center logos for WiFi, vCard, URLs, email, and text, with SVG/PNG download.',
     category: 'generators',
     roles: ['Frontend', 'QA', 'All'],
@@ -467,7 +467,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'lorem-ipsum-generator',
-    name: 'Lorem Ipsum Dummy Text',
+    name: 'Lorem Ipsum',
     description: 'Generate customized dummy placeholder paragraphs, sentences, and words.',
     category: 'generators',
     roles: ['Frontend', 'BA'],
@@ -479,7 +479,7 @@ export const toolsRegistry: ToolDefinition[] = [
   // 8. Web & Network Utilities
   {
     id: 'http-status-lookup',
-    name: 'HTTP Status Codes Reference',
+    name: 'HTTP Status Codes',
     description: 'Complete offline guide to 1xx-5xx HTTP status codes, headers, and RFC specs.',
     category: 'network',
     roles: ['Backend', 'Frontend', 'QA', 'SA'],
@@ -489,7 +489,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'chmod-calculator',
-    name: 'UNIX Chmod Permission Calculator',
+    name: 'Chmod Calculator',
     description: 'Interactive permission matrix builder (rwxr-xr-x, 755, 644) and command generator.',
     category: 'network',
     roles: ['Backend', 'SA'],
@@ -499,7 +499,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'user-agent-parser',
-    name: 'User-Agent & Device Inspector',
+    name: 'User Agent Parser',
     description: 'Offline parsing of browser version, OS, device form factor, and rendering engine.',
     category: 'network',
     roles: ['Frontend', 'QA'],
@@ -509,7 +509,7 @@ export const toolsRegistry: ToolDefinition[] = [
   },
   {
     id: 'meta-tags-previewer',
-    name: 'Meta Tags & OpenGraph Preview',
+    name: 'Meta Tags Preview',
     description: 'Preview Twitter cards, Facebook OpenGraph, and Google search SERPs with code export.',
     category: 'network',
     roles: ['Frontend', 'QA'],
@@ -517,5 +517,4 @@ export const toolsRegistry: ToolDefinition[] = [
     tags: ['seo', 'meta', 'opengraph', 'twitter', 'social', 'preview'],
     component: MetaTagsPreviewer,
   },
-
 ];
