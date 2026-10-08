@@ -69,6 +69,7 @@ import { HttpStatusLookup } from '../tools/network/HttpStatusLookup';
 import { ChmodCalculator } from '../tools/network/ChmodCalculator';
 import { UserAgentParser } from '../tools/network/UserAgentParser';
 import { MetaTagsPreviewer } from '../tools/network/MetaTagsPreviewer';
+import { ScreenCapture } from '../tools/network/ScreenCapture';
 
 export const categories: CategoryInfo[] = [
   { id: 'converters', name: 'Converters', description: 'JSON, TypeScript, YAML, CSV, bases, case, curl', icon: 'ArrowLeftRight' },
@@ -78,7 +79,7 @@ export const categories: CategoryInfo[] = [
   { id: 'datetime', name: 'Date, Time & Cron', description: 'Epoch timestamps, world clock, cron schedules', icon: 'Clock' },
   { id: 'text', name: 'Text & Regex & Diff', description: 'Diff checker, regex, markdown, inspector, escape', icon: 'FileText' },
   { id: 'generators', name: 'Generators & QR', description: 'QR codes, random secrets & tokens, lorem ipsum', icon: 'Sparkles' },
-  { id: 'network', name: 'Web & System Tools', description: 'HTTP codes, chmod permissions, UA parser, meta tags', icon: 'Globe' },
+  { id: 'network', name: 'Web & System Tools', description: 'Screen capture, HTTP codes, chmod permissions, UA parser, meta tags', icon: 'Globe' },
 ];
 
 export const toolsRegistry: ToolDefinition[] = [
@@ -516,5 +517,16 @@ export const toolsRegistry: ToolDefinition[] = [
     icon: 'Share2',
     tags: ['seo', 'meta', 'opengraph', 'twitter', 'social', 'preview'],
     component: MetaTagsPreviewer,
+  },
+  {
+    id: 'screen-capture',
+    name: 'Screen Capture & Annotate',
+    description: 'Capture screen, window, or tab with lightweight annotation tools (draw, blur, arrow, crop, text).',
+    category: 'network',
+    roles: ['All', 'QA', 'Frontend', 'Backend'],
+    icon: 'Camera',
+    tags: ['screen', 'capture', 'screenshot', 'annotate', 'crop', 'blur', 'draw', 'arrow', 'text', 'redact'],
+    isPopular: true,
+    component: ScreenCapture,
   },
 ];
