@@ -28,17 +28,17 @@ export const Header: React.FC<HeaderProps> = ({ tool, isFavorite, onToggleFavori
   const catColor = getCategoryColor(tool.category);
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-[var(--bg-header)] backdrop-blur-sm select-none transition-colors border-b border-black/5 dark:border-white/5">
-      <div className="flex items-center gap-3">
-        <div className={`w-10 h-10 rounded-xl bg-gradient-to-tr ${catColor.gradient} flex items-center justify-center ${catColor.text} shrink-0`}>
-          <DynamicIcon name={tool.icon} size={20} />
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-[var(--bg-header)] backdrop-blur-xl select-none transition-colors border-b border-transparent [border-image:linear-gradient(to_right,transparent,rgba(16,185,129,0.35)_20%,rgba(6,182,212,0.3)_50%,rgba(99,102,241,0.25)_80%,transparent)_1]">
+      <div className="flex items-center gap-3.5">
+        <div className={`w-11 h-11 rounded-2xl bg-gradient-to-tr ${catColor.gradient} border border-emerald-500/25 flex items-center justify-center ${catColor.text} shrink-0 shadow-xs transition-transform hover:scale-105`}>
+          <DynamicIcon name={tool.icon} size={22} />
         </div>
         <div>
-          <div className="flex items-center gap-2 flex-wrap">
-            <h2 className="text-base font-bold text-[var(--text-primary)] tracking-tight">
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <h2 className="text-base font-extrabold text-[var(--text-primary)] tracking-tight">
               {tool.name}
             </h2>
-            <span className={`text-[10px] font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${catColor.bg} ${catColor.text}`}>
+            <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-0.5 rounded-full ${catColor.bg} ${catColor.text} border border-emerald-500/25 shadow-xs`}>
               {tool.category}
             </span>
 
@@ -47,18 +47,18 @@ export const Header: React.FC<HeaderProps> = ({ tool, isFavorite, onToggleFavori
                 <button
                   type="button"
                   aria-label="Tool description"
-                  className="p-1 rounded-md text-[var(--text-muted)] hover:text-emerald-500 dark:hover:text-emerald-400 hover:bg-black/5 dark:hover:bg-white/10 transition cursor-help flex items-center justify-center"
+                  className="p-1 rounded-xl text-[var(--text-muted)] hover:text-emerald-500 dark:hover:text-emerald-400 hover:bg-[var(--surface-hover)] transition cursor-help flex items-center justify-center"
                 >
                   <HelpCircle className="w-4 h-4" />
                 </button>
 
                 {/* Tooltip */}
-                <div className="pointer-events-none absolute left-0 top-full mt-2 z-50 opacity-0 group-hover/help:opacity-100 group-focus-within/help:opacity-100 transition-all duration-150 transform scale-95 group-hover/help:scale-100 group-focus-within/help:scale-100 min-w-[240px] max-w-sm p-3 rounded-xl bg-[var(--control-panel-bg)] text-[var(--text-secondary)] text-xs leading-relaxed border-0">
-                  <div className="font-semibold text-[var(--text-primary)] mb-1 flex items-center gap-1.5 text-xs">
+                <div className="pointer-events-none absolute left-0 top-full mt-2.5 z-50 opacity-0 group-hover/help:opacity-100 group-focus-within/help:opacity-100 transition-all duration-200 transform scale-95 group-hover/help:scale-100 group-focus-within/help:scale-100 min-w-[260px] max-w-sm p-3.5 rounded-2xl glass-panel text-[var(--text-secondary)] text-xs leading-relaxed shadow-xl">
+                  <div className="font-bold text-[var(--text-primary)] mb-1.5 flex items-center gap-1.5 text-xs">
                     <HelpCircle className="w-3.5 h-3.5 text-emerald-500" />
                     <span>Tool Information</span>
                   </div>
-                  <p>{tool.description}</p>
+                  <p className="text-[11px] leading-relaxed text-[var(--text-muted)]">{tool.description}</p>
                 </div>
               </div>
             )}
@@ -71,7 +71,7 @@ export const Header: React.FC<HeaderProps> = ({ tool, isFavorite, onToggleFavori
           <button
             type="button"
             onClick={() => onToggleFavorite(tool.id)}
-            className={`btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+            className={`btn-3d flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer shadow-xs ${
               isFavorite
                 ? 'text-amber-500'
                 : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'

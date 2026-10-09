@@ -59,54 +59,54 @@ export const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-3xl bg-white dark:bg-[#232835] rounded-2xl overflow-hidden flex flex-col max-h-[85vh] border border-black/10 dark:border-white/10"
+        className="w-full max-w-3xl glass-panel rounded-3xl overflow-hidden flex flex-col max-h-[85vh] shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-black/5 dark:border-white/5">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-emerald-500/15 flex items-center justify-center text-emerald-500">
-              <Plus className="w-4 h-4" />
+        <div className="flex items-center justify-between px-6 py-4.5 border-b border-transparent [border-image:linear-gradient(to_right,transparent,rgba(16,185,129,0.35)_20%,rgba(6,182,212,0.3)_50%,rgba(99,102,241,0.25)_80%,transparent)_1]">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-500 shadow-xs">
+              <Plus className="w-4.5 h-4.5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-[var(--text-primary)]">
-                Add Utility Section to Dashboard
+              <h2 className="text-base font-extrabold text-[var(--text-primary)] tracking-tight">
+                Add Utility Section
               </h2>
-              <p className="text-xs text-[var(--text-muted)]">
-                Select any offline developer utility to add as a live interactive widget.
+              <p className="text-xs text-[var(--text-muted)] font-medium">
+                Select any offline developer utility to add as an interactive widget.
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 text-xs text-[var(--text-secondary)]">
-              <span>Default Width:</span>
+            <div className="flex items-center gap-1.5 text-xs text-[var(--text-secondary)] font-medium">
+              <span>Width:</span>
               <select
                 value={defaultCols}
                 onChange={(e) => setDefaultCols(Number(e.target.value))}
-                className="bg-black/5 dark:bg-[#1a1d26] border border-black/5 dark:border-white/10 rounded-md px-2 py-1 text-xs text-[var(--text-primary)] outline-none cursor-pointer"
+                className="bg-[var(--surface-control)] border border-emerald-500/25 rounded-xl px-2.5 py-1 text-xs text-[var(--text-primary)] outline-none cursor-pointer font-semibold shadow-xs"
               >
-                <option value={6}>1/2 (Half Width)</option>
-                <option value={12}>Full Width</option>
+                <option value={6}>Half Width (1/2)</option>
+                <option value={12}>Full Width (1/1)</option>
               </select>
             </div>
 
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-black/5 dark:hover:bg-white/10 transition cursor-pointer"
+              className="p-1.5 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] transition cursor-pointer"
             >
-              <X className="w-4 h-4" />
+              <X className="w-4.5 h-4.5" />
             </button>
           </div>
         </div>
 
         {/* Search & Category Filter Bar */}
-        <div className="p-4 border-b border-black/5 dark:border-white/5 space-y-3 bg-[var(--control-input-bg)]">
+        <div className="p-4 border-b border-transparent [border-image:linear-gradient(to_right,transparent,rgba(16,185,129,0.25)_30%,transparent)_1] space-y-3 bg-transparent">
           <div className="relative">
             <Search className="w-4 h-4 absolute left-3.5 top-3 text-[var(--text-muted)]" />
             <input
@@ -115,7 +115,7 @@ export const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search 39+ utilities by name, category, or keyword..."
-              className="w-full bg-[var(--control-panel-bg)] rounded-xl pl-10 pr-4 py-2 text-xs text-[var(--text-primary)] outline-none border border-black/5 dark:border-white/10 placeholder:text-[var(--text-muted)]"
+              className="w-full bg-[var(--surface-control)] rounded-xl pl-10 pr-4 py-2 text-xs text-[var(--text-primary)] outline-none border border-emerald-500/25 placeholder:text-[var(--text-muted)] shadow-xs focus:ring-1 focus:ring-emerald-500"
             />
           </div>
 
@@ -124,10 +124,10 @@ export const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
             <button
               type="button"
               onClick={() => setSelectedCat('all')}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition shrink-0 cursor-pointer ${
+              className={`px-3 py-1 rounded-full text-[11px] font-semibold transition shrink-0 cursor-pointer shadow-xs ${
                 selectedCat === 'all'
-                  ? 'bg-emerald-500 text-white font-bold'
-                  : 'bg-[var(--control-panel-bg)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                  ? 'btn-3d-active'
+                  : 'btn-3d text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
               }`}
             >
               All Categories ({toolsRegistry.length})
@@ -139,10 +139,10 @@ export const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
                   key={cat.id}
                   type="button"
                   onClick={() => setSelectedCat(cat.id)}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition shrink-0 cursor-pointer ${
+                  className={`px-3 py-1 rounded-full text-[11px] font-semibold transition shrink-0 cursor-pointer shadow-xs ${
                     isSelected
-                      ? 'bg-emerald-500 text-white font-bold'
-                      : 'bg-[var(--control-panel-bg)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                      ? 'btn-3d-active'
+                      : 'btn-3d text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
                   {cat.name}
@@ -159,7 +159,7 @@ export const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
               No developer utility found matching "{search}"
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               {filteredTools.map((tool) => {
                 const catColor = getCategoryColor(tool.category);
                 return (
@@ -174,11 +174,11 @@ export const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
                         handleSelectTool(tool);
                       }
                     }}
-                    className="group flex items-center justify-between p-3 rounded-xl bg-[var(--control-input-bg)] hover:bg-emerald-500/10 hover:border-emerald-500/30 border border-transparent transition cursor-pointer select-none text-left"
+                    className="card-3d group flex items-center justify-between p-3 rounded-2xl transition-all duration-200 cursor-pointer select-none text-left hover:-translate-y-0.5 hover:shadow-md"
                   >
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                       <div
-                        className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${catColor.bg} ${catColor.text} group-hover:scale-105 transition`}
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border border-emerald-500/20 ${catColor.bg} ${catColor.text} group-hover:scale-110 transition`}
                       >
                         <DynamicIcon name={tool.icon} size={18} />
                       </div>
@@ -186,14 +186,14 @@ export const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
                         <h4 className="text-xs font-bold text-[var(--text-primary)] group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition truncate">
                           {tool.name}
                         </h4>
-                        <span className={`text-[10px] font-medium ${catColor.text} block truncate`}>
+                        <span className={`text-[10px] font-medium ${catColor.text} block truncate mt-0.5`}>
                           {tool.category}
                         </span>
                       </div>
                     </div>
 
                     <div className="shrink-0 ml-2">
-                      <span className="p-1 rounded-md text-emerald-500 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                      <span className="p-1 rounded-lg text-emerald-500 opacity-0 group-hover:opacity-100 transition flex items-center justify-center bg-emerald-500/10">
                         <Plus className="w-4 h-4" />
                       </span>
                     </div>
@@ -205,9 +205,9 @@ export const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
         </div>
 
         {/* Footer info */}
-        <div className="px-5 py-3 bg-[var(--control-input-bg)] border-t border-black/5 dark:border-white/5 flex items-center justify-between text-xs text-[var(--text-muted)]">
+        <div className="px-6 py-3.5 bg-transparent border-t border-transparent [border-image:linear-gradient(to_right,transparent,rgba(16,185,129,0.3)_20%,transparent)_1] flex items-center justify-between text-xs text-[var(--text-muted)]">
           <span>Click any utility card to immediately add it to your dashboard.</span>
-          <span className="font-mono">{filteredTools.length} utilities available</span>
+          <span className="font-mono text-emerald-600 dark:text-emerald-400 font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">{filteredTools.length} utilities available</span>
         </div>
       </div>
     </div>

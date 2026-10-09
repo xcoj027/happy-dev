@@ -59,20 +59,20 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
 
   return (
     <div
-      className={`card-3d code-result flex flex-col flex-1 h-full min-h-[460px] rounded-xl overflow-hidden transition-all border border-[var(--border-default)] select-text ${className}`}
+      className={`card-3d code-result flex flex-col flex-1 h-full min-h-[460px] rounded-2xl overflow-hidden transition-all select-text ${className}`}
     >
       {/* Result Panel Header Bar */}
-      <div className="shrink-0 flex items-center justify-between px-3.5 py-2 bg-[var(--well-header-bg)] border-b border-[var(--border-color)] text-xs select-none">
-        <div className="flex items-center gap-2 font-medium text-[var(--text-secondary)]">
-          <div className="w-5 h-5 rounded-md bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+      <div className="shrink-0 flex items-center justify-between px-4 py-2.5 bg-[var(--well-header-bg)] border-b border-transparent [border-image:linear-gradient(to_right,transparent,rgba(16,185,129,0.3)_20%,rgba(6,182,212,0.3)_50%,rgba(99,102,241,0.25)_80%,transparent)_1] text-xs select-none">
+        <div className="flex items-center gap-2.5 font-medium text-[var(--text-secondary)]">
+          <div className="w-6 h-6 rounded-lg bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center text-emerald-500 shadow-xs">
             <Terminal className="w-3.5 h-3.5" />
           </div>
-          <span className="font-semibold text-[var(--text-primary)]">{label}</span>
-          <span className="text-[10px] uppercase font-mono font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+          <span className="font-bold text-[var(--text-primary)]">{label}</span>
+          <span className="text-[10px] uppercase font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 shadow-xs">
             {badgeText}
           </span>
           {language && (
-            <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-black/10 dark:bg-black/40 text-[var(--text-secondary)] border border-[var(--border-color)]">
+            <span className="text-[10px] uppercase font-mono font-semibold px-2 py-0.5 rounded-full bg-[var(--surface-control)] text-[var(--text-secondary)] border border-emerald-500/20">
               {language}
             </span>
           )}
@@ -83,10 +83,10 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
           <button
             type="button"
             onClick={() => setWrap(!wrap)}
-            className={`p-1.5 rounded-lg text-xs transition cursor-pointer flex items-center gap-1.5 ${
+            className={`px-2.5 py-1.5 rounded-xl text-xs transition cursor-pointer flex items-center gap-1.5 shadow-xs ${
               wrap
-                ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-medium'
-                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--control-panel-bg)]'
+                ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-semibold border border-emerald-500/25'
+                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)]'
             }`}
             title={wrap ? 'Line wrapping enabled (click to disable)' : 'Line wrapping disabled (click to enable)'}
           >

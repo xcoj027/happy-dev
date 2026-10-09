@@ -97,13 +97,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="search-backdrop fixed inset-0 z-50 flex items-start justify-center pt-20 bg-black/60 backdrop-blur-sm p-4">
+    <div className="search-backdrop fixed inset-0 z-50 flex items-start justify-center pt-20 bg-black/60 backdrop-blur-md p-4">
       <div
-        className="search-palette w-full max-w-xl bg-[var(--control-panel-bg)] rounded-2xl overflow-hidden flex flex-col"
+        className="search-palette w-full max-w-xl glass-panel rounded-3xl overflow-hidden flex flex-col shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input Bar */}
-        <div className="search-field flex items-center px-4 py-3 bg-[var(--control-input-bg)]">
+        <div className="search-field flex items-center px-4.5 py-3.5 bg-transparent border-b border-transparent [border-image:linear-gradient(to_right,transparent,rgba(16,185,129,0.35)_20%,rgba(6,182,212,0.3)_50%,rgba(99,102,241,0.25)_80%,transparent)_1]">
           <Search className="search-icon w-5 h-5 text-emerald-500 dark:text-emerald-400 mr-3 shrink-0" />
           <input
             ref={inputRef}
@@ -124,13 +124,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               <X className="w-4 h-4" />
             </button>
           )}
-          <kbd className="text-[10px] font-mono px-2 py-0.5 rounded bg-[var(--control-panel-bg)] border border-black/5 dark:border-white/10 text-[var(--text-secondary)]">
+          <kbd className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[var(--surface-control)] border border-emerald-500/20 text-[var(--text-secondary)] shadow-xs">
             ESC
           </kbd>
         </div>
 
         {/* Results List */}
-        <div className="max-h-[380px] overflow-y-auto p-2 space-y-1">
+        <div className="max-h-[380px] overflow-y-auto p-2.5 space-y-1.5">
           {filtered.length === 0 ? (
             <div className="py-8 text-center text-xs text-[var(--text-muted)]">
               No developer utility matching "{query}"
@@ -148,15 +148,15 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                     onClose();
                   }}
                   onMouseEnter={() => setSelectedIndex(idx)}
-                  className={`w-full flex items-center justify-between p-2.5 rounded-xl text-left transition cursor-pointer ${
+                  className={`w-full flex items-center justify-between p-2.5 rounded-2xl text-left transition-all duration-150 cursor-pointer ${
                     isSelected
-                      ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 font-semibold'
-                      : 'hover:bg-black/5 dark:hover:bg-white/5 text-[var(--text-secondary)]'
+                      ? 'bg-gradient-to-r from-emerald-500/20 via-teal-500/10 to-transparent border border-emerald-500/35 text-emerald-600 dark:text-emerald-300 font-semibold shadow-xs translate-x-1'
+                      : 'hover:bg-[var(--surface-hover)] text-[var(--text-secondary)]'
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <div
-                      className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${catColor.bg} ${catColor.text}`}
+                      className={`w-8.5 h-8.5 rounded-xl flex items-center justify-center shrink-0 border border-emerald-500/20 ${catColor.bg} ${catColor.text}`}
                     >
                       <DynamicIcon name={tool.icon} size={16} />
                     </div>
@@ -183,17 +183,17 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         </div>
 
         {/* Footer shortcuts */}
-        <div className="px-4 py-2.5 bg-[var(--control-input-bg)] flex items-center justify-between text-[11px] text-[var(--text-muted)]">
+        <div className="px-4.5 py-3 bg-transparent border-t border-transparent [border-image:linear-gradient(to_right,transparent,rgba(16,185,129,0.3)_20%,rgba(6,182,212,0.3)_50%,rgba(99,102,241,0.25)_80%,transparent)_1] flex items-center justify-between text-[11px] text-[var(--text-muted)]">
           <div className="flex items-center gap-3">
             <span>
-              <kbd className="px-1.5 py-0.5 rounded bg-[var(--control-panel-bg)] border border-black/5 dark:border-white/10 text-[var(--text-secondary)]">↑</kbd>{' '}
-              <kbd className="px-1.5 py-0.5 rounded bg-[var(--control-panel-bg)] border border-black/5 dark:border-white/10 text-[var(--text-secondary)]">↓</kbd> to navigate
+              <kbd className="px-1.5 py-0.5 rounded-md bg-[var(--surface-control)] border border-black/5 dark:border-white/10 text-[var(--text-secondary)] font-mono text-[10px]">↑</kbd>{' '}
+              <kbd className="px-1.5 py-0.5 rounded-md bg-[var(--surface-control)] border border-black/5 dark:border-white/10 text-[var(--text-secondary)] font-mono text-[10px]">↓</kbd> to navigate
             </span>
             <span>
-              <kbd className="px-1.5 py-0.5 rounded bg-[var(--control-panel-bg)] border border-black/5 dark:border-white/10 text-[var(--text-secondary)]">↵</kbd> to open
+              <kbd className="px-1.5 py-0.5 rounded-md bg-[var(--surface-control)] border border-black/5 dark:border-white/10 text-[var(--text-secondary)] font-mono text-[10px]">↵</kbd> to open
             </span>
           </div>
-          <span className="font-mono">{toolsRegistry.length} Offline Tools</span>
+          <span className="font-mono text-emerald-600 dark:text-emerald-400 font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">{toolsRegistry.length} Offline Tools</span>
         </div>
       </div>
     </div>

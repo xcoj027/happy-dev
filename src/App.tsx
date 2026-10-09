@@ -16,6 +16,7 @@ import React, { useState, useEffect } from 'react';
 import { toolsRegistry } from './data/toolsRegistry';
 import { ToolCategory } from './types';
 import { Splash } from './components/Splash';
+import { BackgroundArtwork } from './components/common/BackgroundArtwork';
 import { TitleBar } from './components/layout/TitleBar';
 import { Sidebar } from './components/layout/Sidebar';
 import { Header } from './components/layout/Header';
@@ -105,7 +106,10 @@ export const App: React.FC = () => {
   const ActiveComponent = activeTool.component;
 
   return (
-    <div className={`h-screen w-screen flex flex-col bg-[var(--bg-main)] overflow-hidden font-sans select-none ${isDark ? 'dark text-gray-100' : 'light text-gray-800'}`}>
+    <div className={`relative h-screen w-screen flex flex-col bg-transparent overflow-hidden font-sans select-none ${isDark ? 'dark text-gray-100' : 'light text-gray-800'}`}>
+      {/* Dynamic Ambient Background & Developer Artwork Layer */}
+      <BackgroundArtwork isDark={isDark} />
+
       {/* Splash Screen */}
       {showSplash && <Splash onFinish={() => setShowSplash(false)} />}
 
@@ -115,8 +119,8 @@ export const App: React.FC = () => {
         onGoHome={() => setActiveToolId('dashboard')}
       />
 
-      {/* Main Workspace */}
-      <div className="app-no-drag flex-1 flex overflow-hidden min-h-0">
+      {/* Main Workspace with Glassmorphic Floating Panes */}
+      <div className="relative z-10 app-no-drag flex-1 flex overflow-hidden min-h-0">
         {/* Left Sidebar */}
         <Sidebar
           activeToolId={activeToolId}
@@ -126,14 +130,14 @@ export const App: React.FC = () => {
         />
 
         {/* Center Content Stage */}
-        <main className="flex-1 h-full min-h-0 min-w-0 overflow-hidden p-4 bg-transparent flex flex-col">
+        <main className="flex-1 h-full min-h-0 min-w-0 overflow-hidden p-3.5 bg-transparent flex flex-col">
           {isDashboard ? (
             /* Dashboard: Pure borderless canvas without enclosing background box */
             <div className="flex-1 flex flex-col min-h-0 overflow-y-auto px-1 py-0.5 bg-transparent">
               <DashboardPage onSelectTool={(id) => setActiveToolId(id)} />
             </div>
           ) : (
-            <div className="flex-1 flex flex-col overflow-hidden min-h-0 bg-transparent">
+            <div className="flex-1 flex flex-col overflow-hidden min-h-0 glass-panel rounded-3xl">
               <Header
                 tool={activeTool}
                 isFavorite={favorites.includes(activeTool.id)}
