@@ -82,12 +82,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`app-no-drag h-full min-h-0 bg-[var(--bg-sidebar)] backdrop-blur-xl border-gradient-v flex flex-col justify-between select-none transition-[width] duration-300 ease-in-out motion-reduce:transition-none shrink-0 z-20 ${
+      className={`app-no-drag h-full min-h-0 bg-[var(--bg-sidebar)] backdrop-blur-xl border-r border-[var(--border-subtle)] flex flex-col justify-between select-none transition-[width] duration-300 ease-in-out motion-reduce:transition-none shrink-0 z-20 ${
         isCollapsed ? 'w-16' : 'w-64'
       }`}
     >
       {/* Top Header / Search / Collapse Toggle */}
-      <div className="p-3 space-y-2.5 border-b border-transparent [border-image:linear-gradient(to_right,transparent,rgba(16,185,129,0.3)_30%,rgba(6,182,212,0.3)_70%,transparent)_1]">
+      <div className="p-3 space-y-2.5 border-b border-[var(--border-subtle)]">
         {isCollapsed ? (
           <div className="flex flex-col items-center justify-center pt-1">
             <button
@@ -124,7 +124,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search utilities (A-Z)..."
-                className="w-full bg-[var(--control-input-bg)] rounded-xl pl-8.5 pr-7 py-1.5 text-xs text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:ring-1 focus:ring-emerald-500 shadow-xs"
+                className="w-full bg-[var(--control-input-bg)] rounded-xl pl-8.5 pr-7 py-1.5 text-xs text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:ring-1 focus:ring-emerald-500"
               />
               {searchTerm && (
                 <button
@@ -159,7 +159,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             isCollapsed ? 'justify-center p-2.5' : 'justify-between px-3 py-2'
           } rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer select-none ${
             activeToolId === 'dashboard'
-              ? 'bg-gradient-to-r from-emerald-500/20 via-teal-500/15 to-transparent border border-emerald-500/35 text-emerald-600 dark:text-emerald-400 font-bold shadow-xs'
+              ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-bold'
               : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] hover:translate-x-1 hover:text-[var(--text-primary)]'
           }`}
         >
@@ -174,7 +174,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         {/* Divider */}
-        <div className="h-px w-full bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent my-1.5" />
+        <div className="h-px w-full bg-[var(--border-subtle)] my-1.5" />
 
         {filteredCategories.length === 0 ? (
           <div className="text-xs text-[var(--text-muted)] px-2 py-6 text-center">
@@ -197,20 +197,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 }}
                 className={`w-full flex items-center rounded-xl text-xs font-semibold transition cursor-pointer text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] ${isCollapsed ? 'justify-center p-2.5' : 'gap-2 px-2.5 py-2.5'}`}
               >
-                <div className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 ${catColor.bg} border border-emerald-500/15`}>
+                <div className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 ${catColor.bg}`}>
                   <DynamicIcon name={category.icon} size={14} className={`${catColor.text} shrink-0`} />
                 </div>
                 {!isCollapsed && (
                   <>
                     <span className="flex-1 text-left">{category.name}</span>
-                    <span className="text-[10px] text-[var(--text-muted)] font-mono px-1.5 py-0.5 rounded-full bg-[var(--surface-control)]">{category.tools.length}</span>
                     <ChevronDown size={14} className={`shrink-0 transition-transform duration-250 ease-in-out motion-reduce:transition-none ${isExpanded ? 'rotate-180' : ''}`} />
                   </>
                 )}
               </button>
               <AnimatedCollapse id={`sidebar-category-${category.id}`} expanded={isExpanded} keepMounted>
                 <div className="min-h-0 overflow-hidden">
-                  <div className="ml-3.5 border-l border-emerald-500/25 pl-2 space-y-1 pb-2">
+                  <div className="ml-3.5 border-l border-[var(--border-subtle)] pl-2 space-y-1 pb-2">
                     {category.tools.map((tool) => (
                       <button
                         key={tool.id}
@@ -218,7 +217,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         onClick={() => onSelectTool(tool.id)}
                         aria-current={activeToolId === tool.id ? 'page' : undefined}
                         className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-xs text-left transition-all duration-150 cursor-pointer ${activeToolId === tool.id
-                          ? 'bg-gradient-to-r from-emerald-500/20 via-teal-500/15 to-transparent border border-emerald-500/35 text-emerald-600 dark:text-emerald-400 font-semibold shadow-xs translate-x-0.5'
+                          ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-semibold translate-x-0.5'
                           : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] hover:translate-x-1 hover:text-[var(--text-primary)]'}`}
                       >
                         <DynamicIcon name={tool.icon} size={14} className={`${catColor.text} shrink-0`} />
@@ -235,7 +234,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Bottom Footer: Theme & App Details */}
       <div
-        className={`p-3 border-t border-transparent [border-image:linear-gradient(to_right,transparent,rgba(16,185,129,0.3)_30%,rgba(6,182,212,0.3)_70%,transparent)_1] flex items-center ${
+        className={`p-3 border-t border-[var(--border-subtle)] flex items-center ${
           isCollapsed ? 'justify-center' : 'justify-between'
         } text-xs text-[var(--text-secondary)]`}
       >
@@ -244,7 +243,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           onClick={onToggleTheme}
           className={`btn-3d flex items-center ${
             isCollapsed ? 'p-2 justify-center' : 'gap-1.5 px-3 py-1.5'
-          } rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition cursor-pointer shadow-xs`}
+          } rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition cursor-pointer`}
           title={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
         >
           {isDark ? (
@@ -260,7 +259,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </button>
 
         {!isCollapsed && (
-          <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 shadow-xs">
+          <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10">
             {toolsRegistry.length} Tools
           </span>
         )}

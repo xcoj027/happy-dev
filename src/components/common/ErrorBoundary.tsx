@@ -50,8 +50,8 @@ export class ErrorBoundary extends Component<Props, State> {
   public render() {
     if (this.state.hasError) {
       return (
-        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-[var(--control-panel-bg)] rounded-xl border border-rose-500/20 m-4">
-          <div className="w-12 h-12 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-500 mb-4">
+        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-[var(--control-panel-bg)] rounded-xl m-4">
+          <div className="w-12 h-12 rounded-xl bg-rose-500/15 flex items-center justify-center text-rose-500 mb-4">
             <AlertTriangle className="w-6 h-6" />
           </div>
           <h2 className="text-base font-bold text-[var(--text-primary)] mb-1">
@@ -62,7 +62,7 @@ export class ErrorBoundary extends Component<Props, State> {
             You can still select other utilities from the sidebar.
           </p>
           {this.state.error && (
-            <pre className="text-[11px] font-mono text-rose-400 bg-black/40 border border-rose-500/20 rounded-lg p-3 max-w-lg overflow-x-auto text-left mb-4">
+            <pre className="text-[11px] font-mono text-rose-400 bg-black/40 rounded-lg p-3 max-w-lg overflow-x-auto text-left mb-4">
               {this.state.error.message || String(this.state.error)}
             </pre>
           )}

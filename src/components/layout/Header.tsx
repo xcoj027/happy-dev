@@ -24,13 +24,29 @@ interface HeaderProps {
   onToggleFavorite: (id: string) => void;
 }
 
+const getCategoryLabel = (toolId: string, category: string): string => {
+  if (toolId === 'screen-capture') return 'System & Media';
+  if (toolId === 'chmod-calculator') return 'System & Linux';
+  switch (category) {
+    case 'converters': return 'Converters';
+    case 'encoders': return 'Encoders & Decoders';
+    case 'crypto': return 'Crypto & Security';
+    case 'formatters': return 'Formatters & Minify';
+    case 'datetime': return 'Date & Time';
+    case 'text': return 'Text & Diff';
+    case 'generators': return 'Generators';
+    case 'network': return 'Web & System';
+    default: return category;
+  }
+};
+
 export const Header: React.FC<HeaderProps> = ({ tool, isFavorite, onToggleFavorite }) => {
   const catColor = getCategoryColor(tool.category);
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-[var(--bg-header)] backdrop-blur-xl select-none transition-colors border-b border-transparent [border-image:linear-gradient(to_right,transparent,rgba(16,185,129,0.35)_20%,rgba(6,182,212,0.3)_50%,rgba(99,102,241,0.25)_80%,transparent)_1]">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-6 py-4.5 bg-[var(--bg-header)] backdrop-blur-xl select-none transition-colors border-b border-[var(--border-subtle)]">
       <div className="flex items-center gap-3.5">
-        <div className={`w-11 h-11 rounded-2xl bg-gradient-to-tr ${catColor.gradient} border border-emerald-500/25 flex items-center justify-center ${catColor.text} shrink-0 shadow-xs transition-transform hover:scale-105`}>
+        <div className={`w-11 h-11 rounded-2xl bg-gradient-to-tr ${catColor.gradient} flex items-center justify-center ${catColor.text} shrink-0 transition-transform hover:scale-105`}>
           <DynamicIcon name={tool.icon} size={22} />
         </div>
         <div>
@@ -38,8 +54,8 @@ export const Header: React.FC<HeaderProps> = ({ tool, isFavorite, onToggleFavori
             <h2 className="text-base font-extrabold text-[var(--text-primary)] tracking-tight">
               {tool.name}
             </h2>
-            <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-0.5 rounded-full ${catColor.bg} ${catColor.text} border border-emerald-500/25 shadow-xs`}>
-              {tool.category}
+            <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-0.5 rounded-full ${catColor.bg} ${catColor.text}`}>
+              {getCategoryLabel(tool.id, tool.category)}
             </span>
 
             {tool.description && (

@@ -42,8 +42,8 @@ export const CopyButton: React.FC<CopyButtonProps> = ({ text, className = '', la
       type="button"
       className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg transition-all duration-150 cursor-pointer ${
         copied
-          ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
-          : 'bg-black/5 hover:bg-black/10 text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-300 dark:hover:text-white border border-black/5 dark:border-gray-700/60'
+          ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+          : 'bg-black/5 hover:bg-black/10 text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:bg-white/5 dark:hover:bg-white/10 dark:text-gray-300 dark:hover:text-white'
       } ${className}`}
       title={copied ? 'Copied!' : 'Copy to clipboard'}
     >

@@ -387,7 +387,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
       {/* Top Dashboard Controls Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 pb-2.5">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-emerald-500/20 via-teal-500/15 to-cyan-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-500 shrink-0 shadow-xs">
+          <div className="w-9 h-9 rounded-2xl bg-emerald-500/15 flex items-center justify-center text-emerald-500 shrink-0">
             <LayoutDashboard className="w-4.5 h-4.5" />
           </div>
           <div>
@@ -404,7 +404,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
           <button
             type="button"
             onClick={handleResetDefault}
-            className="btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer shadow-xs"
+            className="btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer"
             title="Reset to one full-width Base64 section"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -415,7 +415,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
           <button
             type="button"
             onClick={() => setIsAddModalOpen(true)}
-            className="btn-3d-active flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold cursor-pointer shadow-sm transition hover:scale-105"
+            className="btn-3d-active flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition hover:scale-105"
           >
             <Plus className="w-4 h-4" />
             <span>Add Section</span>
@@ -426,7 +426,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
       {/* Empty State */}
       {widgets.length === 0 ? (
         <div className="p-12 text-center rounded-3xl glass-panel space-y-3">
-          <div className="w-14 h-14 rounded-3xl bg-gradient-to-tr from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 text-emerald-500 flex items-center justify-center mx-auto shadow-sm">
+          <div className="w-14 h-14 rounded-3xl bg-emerald-500/15 text-emerald-500 flex items-center justify-center mx-auto">
             <LayoutDashboard className="w-7 h-7" />
           </div>
           <h3 className="text-base font-bold text-[var(--text-primary)]">
@@ -507,7 +507,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
 
                   {/* Section Header Bar - Draggable for Dynamic Repositioning */}
                   <div
-                    className="flex items-center justify-between px-4 py-3 bg-transparent border-b border-transparent [border-image:linear-gradient(to_right,transparent,rgba(16,185,129,0.3)_20%,rgba(6,182,212,0.3)_50%,rgba(99,102,241,0.25)_80%,transparent)_1] select-none cursor-grab active:cursor-grabbing group/header"
+                    className="flex items-center justify-between px-4 py-3 bg-transparent border-b border-[var(--border-subtle)] select-none cursor-grab active:cursor-grabbing group/header"
                     title="Use the grip to reorder; double-click the title to rename"
                   >
                     {/* Left: Drag Handle, Tool Icon, and Editable Title */}
@@ -536,7 +536,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
                       </button>
 
                       <div
-                        className={`w-7.5 h-7.5 rounded-xl flex items-center justify-center shrink-0 border border-emerald-500/20 ${catColor.bg} ${catColor.text}`}
+                        className={`w-7.5 h-7.5 rounded-xl flex items-center justify-center shrink-0 ${catColor.bg} ${catColor.text}`}
                       >
                         <DynamicIcon name={tool.icon} size={15} />
                       </div>
@@ -558,7 +558,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
                               if (e.key === 'Enter') handleSaveRename(widget.id);
                               if (e.key === 'Escape') setEditingTitleId(null);
                             }}
-                            className="w-full bg-[var(--control-panel-bg)] rounded-xl px-2.5 py-1 text-sm font-bold text-[var(--text-primary)] outline-none border border-emerald-500"
+                            className="w-full bg-[var(--control-panel-bg)] rounded-xl px-2.5 py-1 text-sm font-bold text-[var(--text-primary)] outline-none focus:ring-1 focus:ring-emerald-500"
                           />
                           <button
                             type="button"

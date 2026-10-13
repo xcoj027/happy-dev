@@ -26,7 +26,7 @@ export const TextInput: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = 
         <Code2 className="w-3.5 h-3.5" />
       </button>
     </span>
-    {createPortal(<dialog aria-label={title} ref={dialog} className="text-input-editor-dialog rounded-xl p-0 border border-[var(--border-color)] bg-[var(--surface-card)] text-[var(--text-primary)] w-[min(800px,90vw)]" onCancel={close}>
+    {createPortal(<dialog aria-label={title} ref={dialog} className="text-input-editor-dialog rounded-xl p-0 border-none shadow-2xl bg-[var(--surface-card)] text-[var(--text-primary)] w-[min(800px,90vw)]" onCancel={close}>
       <div className="p-4 space-y-3">
         <div className="flex items-center justify-between gap-3"><span className="font-medium text-sm truncate">{title}</span><button type="button" className="btn-3d rounded-lg px-3 py-1.5 text-xs" onClick={close}>Close</button></div>
         {open && <IdeEditor value={draft} onChange={setDraft} label="Expanded text editor" minHeight="240px" maxHeight="50vh" singleLine maxLength={props.maxLength} readOnly={props.readOnly} />}

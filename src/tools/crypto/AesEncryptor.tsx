@@ -166,14 +166,14 @@ export const AesEncryptor: React.FC = () => {
   }, [direction, cipherMode, padding, outputFormat, key, keyEncoding, iv, ivEncoding, input]);
 
   return (
-    <div className="flex-1 flex flex-col h-full space-y-3 min-h-[540px]">
+    <div className="flex-1 flex flex-col h-full space-y-4 min-h-[540px]">
       {/* Top Action & Mode Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-2">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-1">
+        <div className="flex items-center gap-2.5">
           <button
             type="button"
             onClick={() => setDirection('encrypt')}
-            className={`btn-3d flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium cursor-pointer ${
+            className={`btn-3d flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium cursor-pointer ${
               direction === 'encrypt' ? 'btn-3d-active' : 'text-[var(--text-secondary)]'
             }`}
           >
@@ -183,7 +183,7 @@ export const AesEncryptor: React.FC = () => {
           <button
             type="button"
             onClick={() => setDirection('decrypt')}
-            className={`btn-3d flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium cursor-pointer ${
+            className={`btn-3d flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium cursor-pointer ${
               direction === 'decrypt' ? 'btn-3d-active' : 'text-[var(--text-secondary)]'
             }`}
           >
@@ -200,7 +200,7 @@ export const AesEncryptor: React.FC = () => {
               setOutput('');
               setError(null);
             }}
-            className="btn-3d px-3 py-1.5 rounded-lg text-xs font-medium text-[var(--text-muted)] hover:text-rose-400 cursor-pointer transition"
+            className="btn-3d px-3.5 py-2 rounded-xl text-xs font-medium text-[var(--text-muted)] hover:text-rose-400 cursor-pointer transition"
           >
             Clear
           </button>
@@ -208,15 +208,15 @@ export const AesEncryptor: React.FC = () => {
       </div>
 
       {/* Advanced Cipher Settings Card */}
-      <div className="card-3d p-4 rounded-xl space-y-3">
+      <div className="card-3d p-5 sm:p-6 rounded-2xl space-y-5">
         {/* Cipher Mode & Output Format */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
           <div>
-            <label className="text-[var(--text-secondary)] block mb-1">Cipher Mode</label>
+            <label className="text-[var(--text-secondary)] font-medium block mb-1.5">Cipher Mode</label>
             <select
               value={cipherMode}
               onChange={(e) => setCipherMode(e.target.value as AesMode)}
-              className="input-3d w-full px-2.5 py-1.5 rounded text-xs text-[var(--text-primary)] outline-none"
+              className="input-3d w-full px-3 py-2 rounded-lg text-xs text-[var(--text-primary)] outline-none"
             >
               <option value="CBC">CBC (Cipher Block Chaining)</option>
               <option value="CTR">CTR (Counter Mode)</option>
@@ -226,11 +226,11 @@ export const AesEncryptor: React.FC = () => {
             </select>
           </div>
           <div>
-            <label className="text-[var(--text-secondary)] block mb-1">Padding Scheme</label>
+            <label className="text-[var(--text-secondary)] font-medium block mb-1.5">Padding Scheme</label>
             <select
               value={padding}
               onChange={(e) => setPadding(e.target.value as AesPadding)}
-              className="input-3d w-full px-2.5 py-1.5 rounded text-xs text-[var(--text-primary)] outline-none"
+              className="input-3d w-full px-3 py-2 rounded-lg text-xs text-[var(--text-primary)] outline-none"
             >
               <option value="Pkcs7">PKCS #7 (Default standard)</option>
               <option value="Iso97971">ISO / IEC 9797-1</option>
@@ -241,11 +241,11 @@ export const AesEncryptor: React.FC = () => {
             </select>
           </div>
           <div>
-            <label className="text-[var(--text-secondary)] block mb-1">Key Size</label>
+            <label className="text-[var(--text-secondary)] font-medium block mb-1.5">Key Size</label>
             <select
               value={keyBits}
               onChange={(e) => setKeyBits(Number(e.target.value) as any)}
-              className="input-3d w-full px-2.5 py-1.5 rounded text-xs text-[var(--text-primary)] outline-none"
+              className="input-3d w-full px-3 py-2 rounded-lg text-xs text-[var(--text-primary)] outline-none"
             >
               <option value={128}>AES-128 (16 Bytes / 128 Bits)</option>
               <option value={192}>AES-192 (24 Bytes / 192 Bits)</option>
@@ -253,11 +253,11 @@ export const AesEncryptor: React.FC = () => {
             </select>
           </div>
           <div>
-            <label className="text-[var(--text-secondary)] block mb-1">Output / Cipher Format</label>
+            <label className="text-[var(--text-secondary)] font-medium block mb-1.5">Output / Cipher Format</label>
             <select
               value={outputFormat}
               onChange={(e) => setOutputFormat(e.target.value as OutputFormat)}
-              className="input-3d w-full px-2.5 py-1.5 rounded text-xs text-[var(--text-primary)] outline-none"
+              className="input-3d w-full px-3 py-2 rounded-lg text-xs text-[var(--text-primary)] outline-none"
             >
               <option value="base64">Base64 (Standard)</option>
               <option value="hex">Hexadecimal</option>
@@ -266,16 +266,16 @@ export const AesEncryptor: React.FC = () => {
         </div>
 
         {/* Key and IV Inputs */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
           {/* Secret Key Input */}
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <span className="text-[var(--text-secondary)] font-medium">Secret Key</span>
               <div className="flex items-center gap-2">
                 <select
                   value={keyEncoding}
                   onChange={(e) => setKeyEncoding(e.target.value as KeyEncoding)}
-                  className="input-3d px-1.5 py-0.5 rounded text-[10px] text-[var(--text-secondary)] outline-none"
+                  className="input-3d px-2 py-1 rounded text-[11px] text-[var(--text-secondary)] outline-none"
                 >
                   <option value="utf8">UTF-8 / Passphrase</option>
                   <option value="hex">Hex</option>
@@ -284,7 +284,7 @@ export const AesEncryptor: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => generateRandomKey(keyBits)}
-                  className="text-amber-400 hover:text-amber-300 text-[10px] flex items-center gap-1 cursor-pointer"
+                  className="text-amber-500 hover:text-amber-400 font-medium text-[11px] flex items-center gap-1 cursor-pointer transition"
                   title="Generate Cryptographic Random Key"
                 >
                   <RefreshCw className="w-3 h-3" />
@@ -297,20 +297,20 @@ export const AesEncryptor: React.FC = () => {
               value={key}
               onChange={(e) => setKey(e.target.value)}
               placeholder={`Enter or generate ${keyBits}-bit secret key...`}
-              className="input-3d w-full px-3 py-1.5 rounded-lg text-xs font-mono text-[var(--text-primary)] outline-none"
+              className="input-3d w-full px-3.5 py-2.5 rounded-lg text-xs font-mono text-[var(--text-primary)] outline-none"
             />
           </div>
 
           {/* IV Input */}
           {cipherMode !== 'ECB' ? (
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <span className="text-[var(--text-secondary)] font-medium">Initialization Vector (IV - 16 bytes)</span>
                 <div className="flex items-center gap-2">
                   <select
                     value={ivEncoding}
                     onChange={(e) => setIvEncoding(e.target.value as KeyEncoding)}
-                    className="input-3d px-1.5 py-0.5 rounded text-[10px] text-[var(--text-secondary)] outline-none"
+                    className="input-3d px-2 py-1 rounded text-[11px] text-[var(--text-secondary)] outline-none"
                   >
                     <option value="hex">Hex (32 chars)</option>
                     <option value="base64">Base64 (24 chars)</option>
@@ -319,7 +319,7 @@ export const AesEncryptor: React.FC = () => {
                   <button
                     type="button"
                     onClick={generateRandomIv}
-                    className="text-amber-400 hover:text-amber-300 text-[10px] flex items-center gap-1 cursor-pointer"
+                    className="text-amber-500 hover:text-amber-400 font-medium text-[11px] flex items-center gap-1 cursor-pointer transition"
                     title="Generate Random 16-byte IV"
                   >
                     <RefreshCw className="w-3 h-3" />
@@ -332,11 +332,11 @@ export const AesEncryptor: React.FC = () => {
                 value={iv}
                 onChange={(e) => setIv(e.target.value)}
                 placeholder="Enter or generate 16-byte initialization vector..."
-                className="input-3d w-full px-3 py-1.5 rounded-lg text-xs font-mono text-[var(--text-primary)] outline-none"
+                className="input-3d w-full px-3.5 py-2.5 rounded-lg text-xs font-mono text-[var(--text-primary)] outline-none"
               />
             </div>
           ) : (
-            <div className="flex items-center justify-center p-3 rounded-lg bg-[var(--control-panel-bg)] text-xs text-[var(--text-muted)] italic">
+            <div className="flex items-center justify-center p-4 rounded-xl bg-[var(--control-panel-bg)] text-xs text-[var(--text-muted)] italic">
               ECB mode does not utilize an Initialization Vector (IV).
             </div>
           )}
@@ -345,14 +345,14 @@ export const AesEncryptor: React.FC = () => {
 
       {/* Error alert */}
       {error && (
-        <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-rose-500/10 text-rose-400 text-xs font-mono">
+        <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-rose-500/10 text-rose-500 text-xs font-mono">
           <AlertCircle className="w-4 h-4 flex-shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Code Editor Split View */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1 min-h-[420px]">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-[420px]">
         <CodeEditor
           label={direction === 'encrypt' ? 'Plaintext to Encrypt' : `Ciphertext to Decrypt (${outputFormat.toUpperCase()})`}
           value={input}
@@ -369,3 +369,4 @@ export const AesEncryptor: React.FC = () => {
     </div>
   );
 };
+

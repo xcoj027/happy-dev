@@ -66,15 +66,15 @@ export const Base64Converter: React.FC<Base64ConverterProps> = ({ initialMode = 
   return (
     <div className="base64-layout space-y-4 min-w-0">
       {/* Mode Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3 card-3d rounded-xl">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-4 sm:p-4.5 card-3d rounded-2xl">
+        <div className="flex items-center gap-2.5">
           <button
             type="button"
             onClick={() => setMode('encode')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+            className={`btn-3d px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer transition ${
               mode === 'encode'
-                ? 'bg-emerald-600 text-white font-semibold shadow-md'
-                : 'btn-3d text-[var(--text-secondary)]'
+                ? 'btn-3d-active'
+                : 'text-[var(--text-secondary)]'
             }`}
           >
             Text → Base64 (Encode)
@@ -82,10 +82,10 @@ export const Base64Converter: React.FC<Base64ConverterProps> = ({ initialMode = 
           <button
             type="button"
             onClick={() => setMode('decode')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+            className={`btn-3d px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer transition ${
               mode === 'decode'
-                ? 'bg-emerald-600 text-white font-semibold shadow-md'
-                : 'btn-3d text-[var(--text-secondary)]'
+                ? 'btn-3d-active'
+                : 'text-[var(--text-secondary)]'
             }`}
           >
             Base64 → Text (Decode)
@@ -104,7 +104,7 @@ export const Base64Converter: React.FC<Base64ConverterProps> = ({ initialMode = 
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-500 dark:text-rose-400 text-xs font-mono">
+        <div className="flex items-center gap-2 p-3 bg-rose-500/10 rounded-xl text-rose-500 dark:text-rose-400 text-xs font-mono">
           <AlertCircle className="w-4 h-4 flex-shrink-0" />
           <span>{error}</span>
         </div>

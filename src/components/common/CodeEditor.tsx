@@ -90,19 +90,19 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
   const byteCount = value ? new TextEncoder().encode(value).length : 0;
 
   return (
-    <div className="well-3d flex flex-col flex-1 h-full min-h-[460px] rounded-xl overflow-hidden transition-all border border-[var(--border-default)] focus-within:ring-2 focus-within:ring-emerald-500/30 focus-within:border-emerald-500/40">
+    <div className="well-3d flex flex-col flex-1 h-full min-h-[460px] rounded-2xl overflow-hidden shadow-sm transition-all focus-within:ring-2 focus-within:ring-sky-500/40">
       {/* Input Editor Header Bar */}
-      <div className="shrink-0 flex items-center justify-between px-3.5 py-2 bg-[var(--well-header-bg)] border-b border-[var(--border-color)] text-xs select-none">
-        <div className="flex items-center gap-2 font-medium text-[var(--text-secondary)]">
-          <div className="w-5 h-5 rounded-md bg-sky-500/10 flex items-center justify-center text-sky-500 dark:text-sky-400">
+      <div className="shrink-0 flex items-center justify-between px-4 py-2.5 bg-[var(--well-header-bg)] border-b border-[var(--border-color)] text-xs select-none">
+        <div className="flex items-center gap-2.5 font-medium text-[var(--text-secondary)]">
+          <div className="w-6 h-6 rounded-lg bg-sky-500/15 flex items-center justify-center text-sky-500 dark:text-sky-400">
             <FileEdit className="w-3.5 h-3.5" />
           </div>
-          <span className="font-semibold text-[var(--text-primary)]">{label || 'Input'}</span>
-          <span className="text-[10px] uppercase font-mono font-semibold px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
+          <span className="font-bold text-[var(--text-primary)]">{label || 'Input'}</span>
+          <span className="text-[10px] uppercase font-mono font-bold px-2 py-0.5 rounded bg-sky-500 text-white dark:bg-sky-500/20 dark:text-sky-300 shadow-xs">
             Input
           </span>
           {language && (
-            <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-black/10 dark:bg-black/40 text-[var(--text-secondary)] border border-[var(--border-color)]">
+            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-black/5 dark:bg-black/40 text-[var(--text-secondary)]">
               {language}
             </span>
           )}
@@ -122,7 +122,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="p-1 rounded text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--control-panel-bg)] transition cursor-pointer"
+                className="p-1.5 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] transition cursor-pointer"
                 title="Upload file"
               >
                 <Upload className="w-3.5 h-3.5" />
@@ -130,7 +130,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
               <button
                 type="button"
                 onClick={() => onChange('')}
-                className="p-1 rounded text-[var(--text-secondary)] hover:text-rose-500 hover:bg-[var(--control-panel-bg)] transition cursor-pointer"
+                className="p-1.5 rounded-lg text-[var(--text-secondary)] hover:text-rose-500 hover:bg-[var(--surface-hover)] transition cursor-pointer"
                 title="Clear input"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -149,7 +149,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
 
       {/* Editor Footer / Stats */}
       {showStats && (
-        <div className="shrink-0 flex items-center justify-between px-3.5 py-1.5 bg-[var(--well-header-bg)] border-t border-[var(--border-color)] text-[11px] text-[var(--text-muted)] font-mono select-none">
+        <div className="shrink-0 flex items-center justify-between px-4 py-2 bg-[var(--well-header-bg)] border-t border-[var(--border-color)] text-[11px] text-[var(--text-muted)] font-mono select-none">
           <div className="flex items-center gap-3">
             <span>{lineCount} lines</span>
             <span>•</span>

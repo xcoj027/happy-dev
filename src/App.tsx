@@ -130,7 +130,7 @@ export const App: React.FC = () => {
         />
 
         {/* Center Content Stage */}
-        <main className="flex-1 h-full min-h-0 min-w-0 overflow-hidden p-3.5 bg-transparent flex flex-col">
+        <main className="flex-1 h-full min-h-0 min-w-0 overflow-hidden p-4 sm:p-5 bg-transparent flex flex-col">
           {isDashboard ? (
             /* Dashboard: Pure borderless canvas without enclosing background box */
             <div className="flex-1 flex flex-col min-h-0 overflow-y-auto px-1 py-0.5 bg-transparent">
@@ -145,7 +145,7 @@ export const App: React.FC = () => {
               />
 
               {/* Active Tool View */}
-              <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 bg-transparent">
+              <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-5 sm:p-6 bg-transparent">
                 <ErrorBoundary key={activeToolId} fallbackToolName={activeTool.name}>
                   <ActiveComponent />
                 </ErrorBoundary>

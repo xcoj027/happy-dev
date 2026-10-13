@@ -27,7 +27,7 @@ export const TitleBar: React.FC<TitleBarProps> = ({ onOpenCommandPalette, onGoHo
   return (
     <header
       data-tauri-drag-region="deep"
-      className="h-11 w-full bg-[var(--bg-titlebar)] backdrop-blur-xl border-gradient-h flex items-center justify-between px-3.5 select-none text-xs text-[var(--text-secondary)] z-40 transition-colors"
+      className="h-11 w-full bg-[var(--bg-titlebar)] backdrop-blur-xl border-b border-[var(--border-subtle)] flex items-center justify-between px-3.5 select-none text-xs text-[var(--text-secondary)] z-40 transition-colors"
     >
       {/* Left side: Mac traffic light spacing or App branding */}
       <div className="flex items-center gap-2">
@@ -39,13 +39,13 @@ export const TitleBar: React.FC<TitleBarProps> = ({ onOpenCommandPalette, onGoHo
           className="app-no-drag flex items-center gap-2.5 font-semibold text-[var(--text-primary)] cursor-pointer group transition"
           title="Go to Homepage"
         >
-          <div className="p-1 rounded-xl bg-gradient-to-tr from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 group-hover:scale-110 transition-transform">
+          <div className="p-1 rounded-xl bg-gradient-to-tr from-emerald-500/20 to-cyan-500/20 group-hover:scale-110 transition-transform">
             <AppLogo size={18} className="w-4.5 h-4.5" />
           </div>
           <span className="bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent font-extrabold tracking-tight text-sm">
             HappyDev
           </span>
-          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 shadow-xs">
+          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/10">
             {__APP_VERSION__}
           </span>
         </div>
@@ -56,13 +56,13 @@ export const TitleBar: React.FC<TitleBarProps> = ({ onOpenCommandPalette, onGoHo
         <button
           type="button"
           onClick={onOpenCommandPalette}
-          className="search-trigger btn-3d w-full flex items-center justify-between px-3.5 py-1.5 rounded-full text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition group cursor-pointer shadow-xs"
+          className="search-trigger btn-3d w-full flex items-center justify-between px-3.5 py-1.5 rounded-full text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition group cursor-pointer"
         >
           <div className="flex items-center gap-2 text-xs">
             <Search className="search-icon w-3.5 h-3.5 text-[var(--text-muted)] group-hover:text-emerald-500 transition" />
             <span className="text-[11px] font-medium">Search developer utilities...</span>
           </div>
-          <kbd className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[var(--control-input-bg)] text-[var(--text-secondary)] border border-[var(--border-default)]">
+          <kbd className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[var(--control-input-bg)] text-[var(--text-secondary)]">
             {isMac ? '⌘K' : 'Ctrl+K'}
           </kbd>
         </button>
@@ -74,7 +74,7 @@ export const TitleBar: React.FC<TitleBarProps> = ({ onOpenCommandPalette, onGoHo
           By <span className="font-bold text-[var(--text-primary)]">TNQ</span>
         </span>
         <div
-          className="flex items-center gap-1.5 text-[10px] text-emerald-600 dark:text-emerald-400 font-mono font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 shadow-xs"
+          className="flex items-center gap-1.5 text-[10px] text-emerald-600 dark:text-emerald-400 font-mono font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10"
           title="100% Offline Mode Active"
         >
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />

@@ -38,6 +38,7 @@ import {
   RotateCcw,
   X,
   Crosshair,
+  Camera,
 } from 'lucide-react';
 
 type ToolMode = 'draw' | 'highlighter' | 'arrow' | 'rect' | 'blur' | 'text' | 'crop';
@@ -194,7 +195,11 @@ export const ScreenCapture: React.FC = () => {
   const [countdownTarget, setCountdownTarget] = useState<'area' | 'full' | null>(null);
   const [isCapturing, setIsCapturing] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showUnsupportedModal, setShowUnsupportedModal] = useState<boolean>(false);
   const [copiedNotice, setCopiedNotice] = useState<boolean>(false);
+
+  const isDisplayMediaSupported = typeof navigator !== 'undefined' && Boolean(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia);
+  const isMac = typeof navigator !== 'undefined' && navigator.userAgent.includes('Mac');
 
   // Drawing in progress
   const [isDrawing, setIsDrawing] = useState<boolean>(false);
@@ -273,8 +278,8 @@ export const ScreenCapture: React.FC = () => {
 
   // Start capture with optional countdown
   const startCapture = (mode: 'area' | 'full') => {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-      setErrorMessage('Screen Capture API is not supported in this browser. You can paste or upload images.');
+    if (!isDisplayMediaSupported) {
+      setShowUnsupportedModal(true);
       return;
     }
 
@@ -1357,6 +1362,75 @@ export const ScreenCapture: React.FC = () => {
         </div>
       )}
 
+      {/* Desktop Screen Capture Guide Modal */}
+      {showUnsupportedModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+          <div className="card-3d p-6 rounded-2xl flex flex-col gap-4 max-w-md w-full shadow-2xl border-b border-[var(--border-subtle)]">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5 font-bold text-sm text-[var(--text-primary)]">
+                <div className="w-8 h-8 rounded-xl bg-sky-500/15 text-sky-500 flex items-center justify-center">
+                  <Camera className="w-4 h-4" />
+                </div>
+                <span>Chụp màn hình trên Desktop</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowUnsupportedModal(false)}
+                className="p-1 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] transition cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="text-xs text-[var(--text-secondary)] space-y-3 leading-relaxed">
+              <p>
+                Trên ứng dụng Desktop (do cơ chế bảo mật hệ thống sandbox), tính năng ghi màn hình Web API bị hạn chế.
+                Bạn có thể chụp màn hình siêu nhanh bằng phím tắt hệ thống:
+              </p>
+
+              <div className="p-3.5 rounded-xl bg-[var(--surface-recessed)] space-y-2.5 font-sans">
+                <div className="flex items-start gap-2.5">
+                  <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-500 font-bold flex items-center justify-center shrink-0 text-[11px]">1</span>
+                  <span>
+                    Nhấn <strong className="text-[var(--text-primary)] font-mono">{isMac ? 'Cmd + Ctrl + Shift + 4' : 'Win + Shift + S'}</strong> để chọn vùng chụp thẳng vào Clipboard (hoặc <strong className="text-[var(--text-primary)] font-mono">{isMac ? 'Cmd + Shift + 4' : 'Print Screen'}</strong>).
+                  </span>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-500 font-bold flex items-center justify-center shrink-0 text-[11px]">2</span>
+                  <span>
+                    Quay lại HappyDev và nhấn <strong className="text-[var(--text-primary)] font-mono">{isMac ? 'Cmd + V' : 'Ctrl + V'}</strong> (hoặc bấm nút "Dán ảnh" bên dưới) để chỉnh sửa & chú thích ngay!
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[var(--border-subtle)]">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowUnsupportedModal(false);
+                  handlePasteFromClipboard();
+                }}
+                className="btn-3d flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 transition cursor-pointer shadow-sm"
+              >
+                <Clipboard className="w-3.5 h-3.5" />
+                <span>Dán ngay từ Clipboard</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowUnsupportedModal(false);
+                  fileInputRef.current?.click();
+                }}
+                className="btn-3d px-3.5 py-2 rounded-xl text-xs font-medium cursor-pointer"
+              >
+                Mở tệp ảnh
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Floating Active Countdown Modal */}
       {countdown !== null && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs">
@@ -1442,29 +1516,55 @@ export const ScreenCapture: React.FC = () => {
       <div className="card-3d p-2.5 rounded-xl flex flex-wrap items-center justify-between gap-2.5">
         {/* Left: Capture Action Triggers */}
         <div className="flex items-center gap-1.5 flex-wrap">
-          {/* Primary Action 1: Capture Area (Chụp 1 vùng nhỏ) */}
-          <button
-            type="button"
-            onClick={() => startCapture('area')}
-            disabled={isCapturing}
-            className="btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 dark:bg-emerald-600 dark:hover:bg-emerald-500 transition cursor-pointer shadow-sm disabled:opacity-50"
-            title="Chụp 1 vùng nhỏ màn hình (Kéo chuột chọn vùng)"
-          >
-            <Crosshair className="w-3.5 h-3.5" />
-            <span>Chụp vùng (Area)</span>
-          </button>
+          {isDisplayMediaSupported ? (
+            <>
+              {/* Primary Action 1: Capture Area (Chụp 1 vùng nhỏ) */}
+              <button
+                type="button"
+                onClick={() => startCapture('area')}
+                disabled={isCapturing}
+                className="btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 dark:bg-emerald-600 dark:hover:bg-emerald-500 transition cursor-pointer shadow-sm disabled:opacity-50"
+                title="Chụp 1 vùng nhỏ màn hình (Kéo chuột chọn vùng)"
+              >
+                <Crosshair className="w-3.5 h-3.5" />
+                <span>Chụp vùng (Area)</span>
+              </button>
 
-          {/* Primary Action 2: Capture Full Screen */}
-          <button
-            type="button"
-            onClick={() => startCapture('full')}
-            disabled={isCapturing}
-            className="btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 transition cursor-pointer disabled:opacity-50"
-            title="Chụp toàn bộ cửa sổ hoặc màn hình"
-          >
-            <Monitor className="w-3.5 h-3.5" />
-            <span>Toàn màn hình</span>
-          </button>
+              {/* Primary Action 2: Capture Full Screen */}
+              <button
+                type="button"
+                onClick={() => startCapture('full')}
+                disabled={isCapturing}
+                className="btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 transition cursor-pointer disabled:opacity-50"
+                title="Chụp toàn bộ cửa sổ hoặc màn hình"
+              >
+                <Monitor className="w-3.5 h-3.5" />
+                <span>Toàn màn hình</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={handlePasteFromClipboard}
+                className="btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 transition cursor-pointer shadow-sm"
+                title={`Dán ảnh chụp màn hình từ Clipboard (${isMac ? 'Cmd+V' : 'Ctrl+V'})`}
+              >
+                <Clipboard className="w-3.5 h-3.5" />
+                <span>Dán ảnh ({isMac ? 'Cmd+V' : 'Ctrl+V'})</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowUnsupportedModal(true)}
+                className="btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-sky-600 dark:text-sky-400 hover:bg-sky-500/10 transition cursor-pointer"
+                title="Xem phím tắt chụp màn hình trên máy"
+              >
+                <Camera className="w-3.5 h-3.5" />
+                <span>Phím tắt chụp</span>
+              </button>
+            </>
+          )}
 
           {/* Countdown Selector */}
           <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--surface-recessed)] text-[11px] text-[var(--text-secondary)] border border-black/5 dark:border-white/5">
@@ -1899,42 +1999,68 @@ export const ScreenCapture: React.FC = () => {
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => startCapture('area')}
-                className="btn-3d flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 transition shadow-md cursor-pointer"
-              >
-                <Crosshair className="w-4 h-4" />
-                <span>Chụp 1 vùng nhỏ (Capture Area)</span>
-              </button>
+            {!isDisplayMediaSupported && (
+              <div className="px-4 py-2.5 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 text-xs flex items-center gap-2 max-w-md border-b border-sky-500/20 text-left">
+                <span className="font-bold shrink-0">💡 Phím tắt chụp nhanh:</span>
+                <span>Nhấn <strong className="font-mono font-bold text-[var(--text-primary)]">{isMac ? 'Cmd + Ctrl + Shift + 4' : 'Win + Shift + S'}</strong> để chụp vào Clipboard, rồi nhấn <strong className="font-mono font-bold text-[var(--text-primary)]">{isMac ? 'Cmd + V' : 'Ctrl + V'}</strong> để dán ảnh vào chỉnh sửa ngay lập tức!</span>
+              </div>
+            )}
 
-              <button
-                type="button"
-                onClick={() => startCapture('full')}
-                className="btn-3d flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold cursor-pointer text-emerald-600 dark:text-emerald-400"
-              >
-                <Monitor className="w-4 h-4" />
-                <span>Toàn màn hình</span>
-              </button>
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+              {isDisplayMediaSupported ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => startCapture('area')}
+                    className="btn-3d flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 transition shadow-md cursor-pointer"
+                  >
+                    <Crosshair className="w-4 h-4" />
+                    <span>Chụp 1 vùng nhỏ (Capture Area)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => startCapture('full')}
+                    className="btn-3d flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold cursor-pointer text-emerald-600 dark:text-emerald-400"
+                  >
+                    <Monitor className="w-4 h-4" />
+                    <span>Toàn màn hình</span>
+                  </button>
+                </>
+              ) : null}
 
               <button
                 type="button"
                 onClick={handlePasteFromClipboard}
-                className="btn-3d flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold cursor-pointer"
+                className={`btn-3d flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold cursor-pointer transition shadow-md ${
+                  !isDisplayMediaSupported
+                    ? 'text-white bg-emerald-600 hover:bg-emerald-500'
+                    : ''
+                }`}
               >
                 <Clipboard className="w-4 h-4 text-sky-400" />
-                <span>Dán từ bộ nhớ tạm (Cmd+V)</span>
+                <span>Dán từ bộ nhớ tạm ({isMac ? 'Cmd+V' : 'Ctrl+V'})</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="btn-3d flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold cursor-pointer"
+                className="btn-3d flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold cursor-pointer text-purple-600 dark:text-purple-400"
               >
-                <Upload className="w-4 h-4 text-purple-400" />
+                <Upload className="w-4 h-4" />
                 <span>Mở tệp ảnh</span>
               </button>
+
+              {!isDisplayMediaSupported && (
+                <button
+                  type="button"
+                  onClick={() => setShowUnsupportedModal(true)}
+                  className="btn-3d flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-sky-600 dark:text-sky-400 hover:bg-sky-500/10 cursor-pointer"
+                >
+                  <Camera className="w-4 h-4" />
+                  <span>Hướng dẫn phím tắt</span>
+                </button>
+              )}
             </div>
 
             <div className="pt-4 text-[11px] text-[var(--text-muted)] flex items-center gap-4 flex-wrap justify-center">
