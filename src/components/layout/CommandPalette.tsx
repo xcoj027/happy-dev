@@ -23,12 +23,14 @@ interface CommandPaletteProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectTool: (id: string) => void;
+  onCheckForUpdates?: () => void;
 }
 
 export const CommandPalette: React.FC<CommandPaletteProps> = ({
   isOpen,
   onClose,
   onSelectTool,
+  onCheckForUpdates,
 }) => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -45,6 +47,16 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       tags: ['dashboard', 'workspace', 'modular', 'widgets'],
       component: null as any,
     },
+    {
+      id: 'action-check-updates',
+      name: 'Check for Updates',
+      description: 'Check GitHub releases for new HappyDev updates.',
+      category: 'network',
+      roles: ['All' as any],
+      icon: 'RefreshCw',
+      tags: ['update', 'version', 'upgrade', 'github', 'release', 'download', 'latest'],
+      component: null as any,
+    },
   ], []);
 
   const filtered = useMemo(() => {
@@ -59,6 +71,16 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         tool.tags.some((t) => t.toLowerCase().includes(q))
     );
   }, [query, specialPages]);
+
+  const handleItemSelect = (toolId: string) => {
+    if (toolId === 'action-check-updates') {
+      onClose();
+      onCheckForUpdates?.();
+      return;
+    }
+    onSelectTool(toolId);
+    onClose();
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -84,15 +106,15 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       } else if (e.key === 'Enter') {
         e.preventDefault();
         if (filtered[selectedIndex]) {
-          onSelectTool(filtered[selectedIndex].id);
-          onClose();
+          handleItemSelect(filtered[selectedIndex].id);
         }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, filtered, selectedIndex, onClose, onSelectTool]);
+  }, [isOpen, filtered, selectedIndex, onClose, onSelectTool, onCheckForUpdates]);
+
 
   if (!isOpen) return null;
 
@@ -143,10 +165,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               return (
                 <button
                   key={tool.id}
-                  onClick={() => {
-                    onSelectTool(tool.id);
-                    onClose();
-                  }}
+                  onClick={() => handleItemSelect(tool.id)}
                   onMouseEnter={() => setSelectedIndex(idx)}
                   className={`w-full flex items-center justify-between p-2.5 rounded-xl text-left transition-all duration-150 cursor-pointer ${
                     isSelected

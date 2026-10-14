@@ -23,11 +23,23 @@ import { Header } from './components/layout/Header';
 import { CommandPalette } from './components/layout/CommandPalette';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { DashboardPage } from './components/dashboard/DashboardPage';
+import { UpdateModal } from './components/common/UpdateModal';
+import {
+  checkForUpdates,
+  getDismissedVersion,
+  isAutoCheckEnabled,
+  UpdateCheckResult,
+} from './services/updateChecker';
+import { isDesktopApp, showReminderNotification } from './lib/desktop';
 
 export const App: React.FC = () => {
   const [showSplash, setShowSplash] = useState(true);
   const [activeToolId, setActiveToolId] = useState<string>('dashboard');
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [updateInfo, setUpdateInfo] = useState<UpdateCheckResult | null>(null);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
+  const [hasPromptedUpdate, setHasPromptedUpdate] = useState(false);
   const [favorites, setFavorites] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem('happydev_favorites');
@@ -36,6 +48,56 @@ export const App: React.FC = () => {
       return ['base64-converter', 'json-yaml-converter', 'jwt-debugger', 'hash-generator'];
     }
   });
+
+  // Auto check for updates from GitHub releases on open app
+  useEffect(() => {
+    let isCancelled = false;
+    if (!isAutoCheckEnabled()) return;
+
+    checkForUpdates()
+      .then((res) => {
+        if (isCancelled) return;
+        setUpdateInfo(res);
+      })
+      .catch((err) => {
+        console.warn('Auto update check failed silently:', err);
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
+
+  // Show update modal when splash ends if an update is found and not dismissed
+  useEffect(() => {
+    if (showSplash || hasPromptedUpdate || !updateInfo?.hasUpdate) return;
+    const dismissed = getDismissedVersion() === updateInfo.latestVersion;
+    if (!dismissed) {
+      setHasPromptedUpdate(true);
+      setIsUpdateModalOpen(true);
+      if (isDesktopApp()) {
+        showReminderNotification({
+          title: `HappyDev Update Available (${updateInfo.latestVersion})`,
+          body: `A new version of HappyDev is available for download.`,
+          silent: false,
+        }).catch(() => {});
+      }
+    }
+  }, [showSplash, updateInfo, hasPromptedUpdate]);
+
+  const handleManualCheckForUpdates = async () => {
+    setIsUpdateModalOpen(true);
+    setIsCheckingUpdate(true);
+    try {
+      const res = await checkForUpdates({ force: true });
+      setUpdateInfo(res);
+    } catch (err) {
+      console.error('Manual update check error:', err);
+    } finally {
+      setIsCheckingUpdate(false);
+    }
+  };
+
 
   // Ensure root HTML document is strictly light-themed
   useEffect(() => {
@@ -101,6 +163,8 @@ export const App: React.FC = () => {
       <TitleBar
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
         onGoHome={() => setActiveToolId('dashboard')}
+        updateInfo={updateInfo}
+        onOpenUpdateModal={() => setIsUpdateModalOpen(true)}
       />
 
       {/* Main Workspace with Clean Panes */}
@@ -142,8 +206,19 @@ export const App: React.FC = () => {
         isOpen={isCommandPaletteOpen}
         onClose={() => setIsCommandPaletteOpen(false)}
         onSelectTool={(id) => setActiveToolId(id)}
+        onCheckForUpdates={handleManualCheckForUpdates}
+      />
+
+      {/* Software Update Modal */}
+      <UpdateModal
+        isOpen={isUpdateModalOpen}
+        onClose={() => setIsUpdateModalOpen(false)}
+        updateInfo={updateInfo}
+        isChecking={isCheckingUpdate}
+        onCheckAgain={handleManualCheckForUpdates}
       />
     </div>
   );
 };
+
 export default App;

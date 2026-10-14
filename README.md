@@ -216,6 +216,13 @@ The workflow uses `xcoj027/happy-dev-releases` by default. To publish elsewhere,
 
 Public macOS distribution requires a **Developer ID Application** certificate and Apple notarization to pass Gatekeeper with normal security settings. Developer ID signing is opt-in; builds use an ad-hoc signature until the setup below is complete. Ad-hoc signing does not remove Gatekeeper warnings.
 
+> [!NOTE]
+> If macOS blocks opening or bounces the app icon on the Dock due to Gatekeeper quarantine on downloaded DMG releases (prior to Developer ID notarization setup), run this one-time command in Terminal to clear the quarantine attribute:
+> ```bash
+> xattr -cr /Applications/HappyDev.app
+> ```
+> Or Control-click (Right-click) the application in Finder and select **Open**.
+
 1. Enroll in the [Apple Developer Program](https://developer.apple.com/programs/enroll/).
 2. Follow Apple's [Developer ID certificate instructions](https://developer.apple.com/help/account/certificates/create-developer-id-certificates/) to create a **Developer ID Application** certificate. Install it on your Mac with its private key. In Keychain Access, export the certificate and private key together as a password-protected `.p12` file.
 3. Base64-encode the `.p12` file (`base64 -i /path/to/certificate.p12 | pbcopy`) and save it as the source repository's `MAC_CSC_LINK` GitHub Actions secret. Save its export password as `MAC_CSC_KEY_PASSWORD`. Keep the certificate, private key, and passwords out of source control and chat.

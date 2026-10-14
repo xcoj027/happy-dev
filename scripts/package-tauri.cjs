@@ -29,8 +29,12 @@ if (version !== 'local') {
   if (!Number.isSafeInteger(number) || number > 65535) throw new Error('Release number exceeds native installer limits.');
   overrides.version = `1.0.${number}`;
 }
-if (platform === 'macos' && process.env.APPLE_SIGNING_IDENTITY) {
-  overrides.bundle = { macOS: { signingIdentity: process.env.APPLE_SIGNING_IDENTITY } };
+if (platform === 'macos') {
+  if (process.env.APPLE_SIGNING_IDENTITY) {
+    overrides.bundle = { macOS: { signingIdentity: process.env.APPLE_SIGNING_IDENTITY, hardenedRuntime: true } };
+  } else {
+    overrides.bundle = { macOS: { signingIdentity: '-', hardenedRuntime: false } };
+  }
 }
 if (Object.keys(overrides).length) args.push('--config', JSON.stringify(overrides));
 args.push('--', '--locked');

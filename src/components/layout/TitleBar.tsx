@@ -13,15 +13,23 @@
  */
 
 import React from 'react';
-import { Search } from 'lucide-react';
+import { Search, Sparkles } from 'lucide-react';
 import { AppLogo } from '../common/AppLogo';
+import { UpdateCheckResult } from '../../services/updateChecker';
 
 interface TitleBarProps {
   onOpenCommandPalette: () => void;
   onGoHome?: () => void;
+  updateInfo?: UpdateCheckResult | null;
+  onOpenUpdateModal?: () => void;
 }
 
-export const TitleBar: React.FC<TitleBarProps> = ({ onOpenCommandPalette, onGoHome }) => {
+export const TitleBar: React.FC<TitleBarProps> = ({
+  onOpenCommandPalette,
+  onGoHome,
+  updateInfo,
+  onOpenUpdateModal,
+}) => {
   const isMac = typeof navigator !== 'undefined' && navigator.userAgent.includes('Mac');
 
   return (
@@ -45,11 +53,40 @@ export const TitleBar: React.FC<TitleBarProps> = ({ onOpenCommandPalette, onGoHo
           <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent font-extrabold tracking-tight text-sm">
             HappyDev
           </span>
-          <span className="text-[10px] text-emerald-700 font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/60">
+          <button
+            type="button"
+            onClick={(e) => {
+              if (onOpenUpdateModal) {
+                e.stopPropagation();
+                onOpenUpdateModal();
+              }
+            }}
+            title="HappyDev Version (Click to check for updates)"
+            className="text-[10px] text-emerald-700 font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200/60 cursor-pointer transition"
+          >
             {__APP_VERSION__}
-          </span>
+          </button>
         </div>
+
+        {/* Update available pill */}
+        {updateInfo?.hasUpdate && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenUpdateModal?.();
+            }}
+            data-tauri-drag-region="false"
+            className="app-no-drag flex items-center gap-1.5 text-[10px] text-amber-800 font-semibold px-2.5 py-0.5 rounded-full bg-amber-50 hover:bg-amber-100 border border-amber-300 transition cursor-pointer shadow-2xs group"
+            title={`Update available: ${updateInfo.latestVersion}. Click to view details and download.`}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping" />
+            <Sparkles className="w-3 h-3 text-amber-600 group-hover:rotate-12 transition-transform" />
+            <span>Update {updateInfo.latestVersion}</span>
+          </button>
+        )}
       </div>
+
 
       {/* Center: Command Palette Trigger */}
       <div data-tauri-drag-region="false" className="app-no-drag flex-1 max-w-sm mx-4">
