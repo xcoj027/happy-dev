@@ -118,8 +118,8 @@ export const XmlFormatter: React.FC = () => {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-600 dark:text-rose-400 text-xs font-mono">
-          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+        <div className="flex items-center gap-2 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-mono">
+          <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-600" />
           <span>{error}</span>
         </div>
       )}

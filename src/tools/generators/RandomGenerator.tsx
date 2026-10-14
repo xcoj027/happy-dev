@@ -457,7 +457,7 @@ export const RandomGenerator: React.FC = () => {
           <CopyButton text={result} />
         </div>
         <div className="flex items-center justify-between p-3.5 well-3d rounded-xl">
-          <span className="text-sm sm:text-base font-mono font-bold text-emerald-600 dark:text-emerald-400 select-all break-all pr-2">
+          <span className="text-sm sm:text-base font-mono font-bold text-emerald-700 select-all break-all pr-2">
             {result}
           </span>
         </div>

@@ -82,8 +82,8 @@ export const CodeMinifier: React.FC = () => {
           ))}
         </div>
 
-        <div className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400 font-mono">
-          <Gauge className="w-4 h-4" />
+        <div className="flex items-center gap-2 text-xs text-emerald-700 font-mono font-medium">
+          <Gauge className="w-4 h-4 text-emerald-600" />
           <span>Saved {savings}% ({origSize.toLocaleString()}B → {minSize.toLocaleString()}B)</span>
         </div>
       </div>

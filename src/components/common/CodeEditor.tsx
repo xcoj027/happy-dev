@@ -90,19 +90,19 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
   const byteCount = value ? new TextEncoder().encode(value).length : 0;
 
   return (
-    <div className="well-3d flex flex-col flex-1 h-full min-h-[460px] rounded-2xl overflow-hidden shadow-sm transition-all focus-within:ring-2 focus-within:ring-sky-500/40">
+    <div className="flex flex-col flex-1 h-full min-h-[460px] rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden transition-all duration-150 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/15">
       {/* Input Editor Header Bar */}
-      <div className="shrink-0 flex items-center justify-between px-4 py-2.5 bg-[var(--well-header-bg)] border-b border-[var(--border-color)] text-xs select-none">
-        <div className="flex items-center gap-2.5 font-medium text-[var(--text-secondary)]">
-          <div className="w-6 h-6 rounded-lg bg-sky-500/15 flex items-center justify-center text-sky-500 dark:text-sky-400">
+      <div className="shrink-0 flex items-center justify-between px-3.5 py-2.5 bg-slate-50/90 border-b border-slate-200/80 text-xs select-none">
+        <div className="flex items-center gap-2 font-medium text-slate-700">
+          <div className="w-6.5 h-6.5 rounded-lg bg-sky-50 border border-sky-200/70 flex items-center justify-center text-sky-600">
             <FileEdit className="w-3.5 h-3.5" />
           </div>
-          <span className="font-bold text-[var(--text-primary)]">{label || 'Input'}</span>
-          <span className="text-[10px] uppercase font-mono font-bold px-2 py-0.5 rounded bg-sky-500 text-white dark:bg-sky-500/20 dark:text-sky-300 shadow-xs">
+          <span className="font-semibold text-slate-800">{label || 'Input'}</span>
+          <span className="text-[10px] uppercase font-mono font-bold px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200/60 shadow-2xs">
             Input
           </span>
           {language && (
-            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-black/5 dark:bg-black/40 text-[var(--text-secondary)]">
+            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200/80">
               {language}
             </span>
           )}
@@ -122,7 +122,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="p-1.5 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] transition cursor-pointer"
+                className="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-200/60 transition cursor-pointer"
                 title="Upload file"
               >
                 <Upload className="w-3.5 h-3.5" />
@@ -130,7 +130,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
               <button
                 type="button"
                 onClick={() => onChange('')}
-                className="p-1.5 rounded-lg text-[var(--text-secondary)] hover:text-rose-500 hover:bg-[var(--surface-hover)] transition cursor-pointer"
+                className="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
                 title="Clear input"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -143,22 +143,22 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
       </div>
 
       {/* Editor Textarea */}
-      <div className="relative flex flex-1 min-h-0">
+      <div className="relative flex flex-1 min-h-0 bg-white">
         <IdeEditor value={value} onChange={onChange} label={label || 'Input'} placeholder={placeholder} language={language} minHeight={minHeight} maxHeight={maxHeight} singleLine={singleLine} />
       </div>
 
       {/* Editor Footer / Stats */}
       {showStats && (
-        <div className="shrink-0 flex items-center justify-between px-4 py-2 bg-[var(--well-header-bg)] border-t border-[var(--border-color)] text-[11px] text-[var(--text-muted)] font-mono select-none">
-          <div className="flex items-center gap-3">
+        <div className="shrink-0 flex items-center justify-between px-3.5 py-2 bg-slate-50/70 border-t border-slate-200/80 text-[11px] text-slate-500 font-mono select-none">
+          <div className="flex items-center gap-2.5">
             <span>{lineCount} lines</span>
-            <span>•</span>
+            <span className="text-slate-300">•</span>
             <span>{charCount.toLocaleString()} chars</span>
-            <span>•</span>
+            <span className="text-slate-300">•</span>
             <span>{formatBytes(byteCount)}</span>
           </div>
 
-          <span className="text-[10px] text-[var(--text-muted)]">Tab to indent · Ctrl/Cmd+F to search</span>
+          <span className="text-[10px] text-slate-400 font-sans">Tab to indent · ⌘F to search</span>
         </div>
       )}
     </div>

@@ -85,14 +85,14 @@ export const JsonFormatter: React.FC = () => {
 
   return (
     <div className="flex-1 flex flex-col h-full space-y-3 min-h-[540px]">
-      {/* Controls Bar - Streamlined with 3D buttons */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-[var(--border-color)]">
+      {/* Controls Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-white border border-slate-200/90 rounded-xl shadow-2xs">
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setIndent(2)}
-            className={`btn-3d px-3.5 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
-              indent === 2 ? 'btn-3d-active' : 'text-[var(--text-secondary)]'
+            className={`btn-3d px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+              indent === 2 ? 'btn-3d-active' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Prettify (2 Spaces)
@@ -100,8 +100,8 @@ export const JsonFormatter: React.FC = () => {
           <button
             type="button"
             onClick={() => setIndent(4)}
-            className={`btn-3d px-3.5 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
-              indent === 4 ? 'btn-3d-active' : 'text-[var(--text-secondary)]'
+            className={`btn-3d px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+              indent === 4 ? 'btn-3d-active' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Prettify (4 Spaces)
@@ -109,40 +109,40 @@ export const JsonFormatter: React.FC = () => {
           <button
             type="button"
             onClick={handleMinify}
-            className="btn-3d px-3.5 py-1.5 rounded-lg text-xs font-medium text-[var(--text-secondary)] transition cursor-pointer"
+            className="btn-3d px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer"
           >
             Minify (1 Line)
           </button>
         </div>
 
-        <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)]">
-          <label className="flex items-center gap-1.5 cursor-pointer">
+        <div className="flex items-center gap-3 text-xs text-slate-700">
+          <label className="flex items-center gap-1.5 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={sortKeys}
               onChange={(e) => setSortKeys(e.target.checked)}
-              className="rounded bg-[var(--control-input-bg)] border border-[var(--control-input-border)] text-emerald-500"
+              className="rounded border border-slate-300 text-emerald-600 focus:ring-emerald-500"
             />
-            <span>Sort Object Keys (A-Z)</span>
+            <span className="font-medium">Sort Object Keys (A-Z)</span>
           </label>
         </div>
       </div>
 
       {/* JSON Path query filter */}
-      <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[var(--control-panel-bg)] border border-[var(--border-color)]">
-        <Filter className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-        <span className="text-xs text-[var(--text-secondary)] whitespace-nowrap">Filter Path:</span>
+      <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-white border border-slate-200/90 shadow-2xs">
+        <Filter className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+        <span className="text-xs font-medium text-slate-600 whitespace-nowrap">Filter Path:</span>
         <TextInput
           type="text"
           value={queryPath}
           onChange={(e) => setQueryPath(e.target.value)}
           placeholder="e.g. settings.theme or contributors.0.name (leave empty for full document)"
-          className="flex-1 bg-transparent text-xs font-mono text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none"
+          className="flex-1 bg-transparent text-xs font-mono text-slate-800 placeholder:text-slate-400 outline-none"
         />
         {queryPath && (
           <button
             onClick={() => setQueryPath('')}
-            className="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] px-2 cursor-pointer"
+            className="text-xs text-slate-400 hover:text-slate-700 px-2 cursor-pointer"
           >
             Clear
           </button>
@@ -150,8 +150,8 @@ export const JsonFormatter: React.FC = () => {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-400 text-xs font-mono">
-          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+        <div className="flex items-center gap-2 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-mono">
+          <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-600" />
           <span>{error}</span>
         </div>
       )}

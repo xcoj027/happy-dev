@@ -82,7 +82,7 @@ export const JwtDebugger: React.FC = () => {
       />
 
       {error && (
-        <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs text-rose-600 dark:text-rose-400 font-mono">
+        <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 font-mono">
           {error}
         </div>
       )}
@@ -92,8 +92,8 @@ export const JwtDebugger: React.FC = () => {
         <div
           className={`flex items-center justify-between p-3 rounded-xl border text-xs ${
             isExpired
-              ? 'bg-rose-500/10 border-rose-500/30 text-rose-600 dark:text-rose-400'
-              : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400'
+              ? 'bg-rose-50 border-rose-200/80 text-rose-700'
+              : 'bg-emerald-50 border-emerald-200/80 text-emerald-700'
           }`}
         >
           <div className="flex items-center gap-2">
@@ -112,36 +112,36 @@ export const JwtDebugger: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Header */}
         <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs text-[var(--text-secondary)]">
-            <span className="font-semibold text-rose-600 dark:text-rose-400">HEADER: Algorithm & Token Type</span>
+          <div className="flex items-center justify-between text-xs text-slate-600">
+            <span className="font-semibold text-rose-700">HEADER: Algorithm & Token Type</span>
             <CopyButton text={headerJson} />
           </div>
-          <div className="p-3 well-3d rounded-xl font-mono text-xs text-rose-700 dark:text-rose-300 whitespace-pre overflow-auto max-h-[200px]">
+          <div className="p-3.5 bg-white border border-slate-200/90 rounded-xl font-mono text-xs text-rose-800 whitespace-pre overflow-auto max-h-[220px] shadow-2xs">
             {headerJson || '// No header'}
           </div>
         </div>
 
         {/* Payload */}
         <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs text-[var(--text-secondary)]">
-            <span className="font-semibold text-indigo-600 dark:text-indigo-400">PAYLOAD: Data Claims</span>
+          <div className="flex items-center justify-between text-xs text-slate-600">
+            <span className="font-semibold text-indigo-700">PAYLOAD: Data Claims</span>
             <CopyButton text={payloadJson} />
           </div>
-          <div className="p-3 well-3d rounded-xl font-mono text-xs text-indigo-700 dark:text-indigo-300 whitespace-pre overflow-auto max-h-[200px]">
+          <div className="p-3.5 bg-white border border-slate-200/90 rounded-xl font-mono text-xs text-indigo-800 whitespace-pre overflow-auto max-h-[220px] shadow-2xs">
             {payloadJson || '// No payload'}
           </div>
         </div>
       </div>
 
       {/* Signature info */}
-      <div className="p-3 card-3d rounded-xl space-y-1">
-        <div className="flex items-center justify-between text-xs text-[var(--text-secondary)]">
-          <span className="font-semibold text-cyan-600 dark:text-cyan-400 flex items-center gap-1.5">
+      <div className="p-3.5 bg-white border border-slate-200/90 rounded-xl shadow-2xs space-y-1.5">
+        <div className="flex items-center justify-between text-xs text-slate-600">
+          <span className="font-semibold text-cyan-700 flex items-center gap-1.5">
             <KeyRound className="w-3.5 h-3.5" /> SIGNATURE Segment
           </span>
           <CopyButton text={signature} />
         </div>
-        <div className="font-mono text-xs text-cyan-800 dark:text-cyan-300/80 break-all select-all">
+        <div className="font-mono text-xs text-cyan-900 break-all select-all bg-cyan-50/60 border border-cyan-100 rounded-lg p-2.5">
           {signature || '—'}
         </div>
       </div>

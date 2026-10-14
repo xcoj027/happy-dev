@@ -387,14 +387,14 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
       {/* Top Dashboard Controls Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 pb-2.5">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-2xl bg-emerald-500/15 flex items-center justify-center text-emerald-500 shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200/70 flex items-center justify-center text-emerald-600 shrink-0">
             <LayoutDashboard className="w-4.5 h-4.5" />
           </div>
           <div>
-            <h1 className="text-lg font-extrabold text-[var(--text-primary)] tracking-tight">
+            <h1 className="text-lg font-bold text-slate-900 tracking-tight">
               Dashboard Canvas
             </h1>
-            <p className="text-[11px] text-[var(--text-muted)] font-medium">Modular developer utilities workspace</p>
+            <p className="text-[11px] text-slate-500 font-medium">Modular developer utilities workspace</p>
           </div>
         </div>
 
@@ -404,7 +404,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
           <button
             type="button"
             onClick={handleResetDefault}
-            className="btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer"
+            className="btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 cursor-pointer shadow-2xs"
             title="Reset to one full-width Base64 section"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -415,7 +415,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
           <button
             type="button"
             onClick={() => setIsAddModalOpen(true)}
-            className="btn-3d-active flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition hover:scale-105"
+            className="btn-3d-active flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer shadow-xs"
           >
             <Plus className="w-4 h-4" />
             <span>Add Section</span>
@@ -425,14 +425,14 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
 
       {/* Empty State */}
       {widgets.length === 0 ? (
-        <div className="p-12 text-center rounded-3xl glass-panel space-y-3">
-          <div className="w-14 h-14 rounded-3xl bg-emerald-500/15 text-emerald-500 flex items-center justify-center mx-auto">
-            <LayoutDashboard className="w-7 h-7" />
+        <div className="p-12 text-center rounded-2xl bg-white border border-slate-200 shadow-sm space-y-3">
+          <div className="w-13 h-13 rounded-2xl bg-emerald-50 border border-emerald-200/60 text-emerald-600 flex items-center justify-center mx-auto">
+            <LayoutDashboard className="w-6.5 h-6.5" />
           </div>
-          <h3 className="text-base font-bold text-[var(--text-primary)]">
+          <h3 className="text-base font-bold text-slate-900">
             Your Dashboard is empty
           </h3>
-          <p className="text-xs text-[var(--text-muted)] max-w-sm mx-auto">
+          <p className="text-xs text-slate-500 max-w-sm mx-auto">
             Add your utilities as interactive cards to build your customized workspace.
           </p>
           <div className="pt-2">
@@ -484,7 +484,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
                 }`}
               >
                 <div
-                  className={`relative flex flex-col h-full rounded-3xl dashboard-card overflow-hidden ${
+                  className={`relative flex flex-col h-full rounded-2xl dashboard-card overflow-hidden ${
                     resizingState
                       ? 'transition-none'
                       : 'transition-all duration-150'
@@ -507,7 +507,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
 
                   {/* Section Header Bar - Draggable for Dynamic Repositioning */}
                   <div
-                    className="flex items-center justify-between px-4 py-3 bg-transparent border-b border-[var(--border-subtle)] select-none cursor-grab active:cursor-grabbing group/header"
+                    className="flex items-center justify-between px-4 py-2.5 bg-slate-50/80 border-b border-slate-200 select-none cursor-grab active:cursor-grabbing group/header"
                     title="Use the grip to reorder; double-click the title to rename"
                   >
                     {/* Left: Drag Handle, Tool Icon, and Editable Title */}
@@ -530,7 +530,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
                             return next;
                           });
                         }}
-                        className="p-1 cursor-grab active:cursor-grabbing text-[var(--text-muted)] hover:text-emerald-500 shrink-0"
+                        className="p-1 cursor-grab active:cursor-grabbing text-slate-400 hover:text-emerald-600 shrink-0"
                       >
                         <GripVertical className="w-4 h-4" />
                       </button>
@@ -558,12 +558,12 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
                               if (e.key === 'Enter') handleSaveRename(widget.id);
                               if (e.key === 'Escape') setEditingTitleId(null);
                             }}
-                            className="w-full bg-[var(--control-panel-bg)] rounded-xl px-2.5 py-1 text-sm font-bold text-[var(--text-primary)] outline-none focus:ring-1 focus:ring-emerald-500"
+                            className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-sm font-semibold text-slate-800 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                           />
                           <button
                             type="button"
                             onClick={() => handleSaveRename(widget.id)}
-                            className="p-1 rounded-lg text-emerald-500 hover:bg-emerald-500/10 cursor-pointer"
+                            className="p-1 rounded-lg text-emerald-600 hover:bg-emerald-50 cursor-pointer"
                             title="Save title"
                           >
                             <Check className="w-4 h-4" />
@@ -571,7 +571,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
                           <button
                             type="button"
                             onClick={() => setEditingTitleId(null)}
-                            className="p-1 rounded-lg text-[var(--text-muted)] hover:bg-[var(--surface-hover)] cursor-pointer"
+                            className="p-1 rounded-lg text-slate-400 hover:bg-slate-100 cursor-pointer"
                             title="Cancel"
                           >
                             <X className="w-4 h-4" />
@@ -583,7 +583,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
                           onDoubleClick={() => handleStartRename(widget)}
                           title="Double-click to rename section"
                         >
-                          <h3 className="text-sm font-bold text-[var(--text-primary)] truncate tracking-tight">
+                          <h3 className="text-sm font-semibold text-slate-800 truncate tracking-tight">
                             {widget.title}
                           </h3>
                         </div>
@@ -600,13 +600,13 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
                       {hasTwoColumns && <button
                         type="button"
                         onClick={() => setWidgets((previous) => previous.map((item) => item.id === widget.id ? { ...item, colSpan: colSpan === 12 ? 6 : 12 } : item))}
-                        className="p-1.5 rounded-xl text-[var(--text-muted)] hover:text-emerald-500 hover:bg-[var(--surface-hover)] transition cursor-pointer"
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-slate-100 transition cursor-pointer"
                         title={colSpan === 12 ? 'Use half width' : 'Use full width'}
                       ><Columns2 className="w-3.5 h-3.5" /></button>}
                       <button
                         type="button"
                         onClick={() => onSelectTool(tool.id)}
-                        className="p-1.5 rounded-xl text-[var(--text-muted)] hover:text-emerald-500 hover:bg-[var(--surface-hover)] transition cursor-pointer"
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-slate-100 transition cursor-pointer"
                         title="Open full-screen tool"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
@@ -616,7 +616,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
                       <button
                         type="button"
                         onClick={() => handleToggleCollapse(widget.id)}
-                        className="p-1.5 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] transition cursor-pointer"
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer"
                         title={widget.isCollapsed ? 'Expand section' : 'Collapse section'}
                       >
                         {widget.isCollapsed ? (
@@ -630,7 +630,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
                       <button
                         type="button"
                         onClick={() => handleRemoveWidget(widget.id)}
-                        className="p-1.5 rounded-xl text-[var(--text-muted)] hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
                         title="Remove section"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -681,7 +681,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
                     className="absolute top-0 right-0 bottom-4 w-3 cursor-col-resize z-20 flex items-center justify-center group/resizew select-none hover:bg-emerald-500/15 active:bg-emerald-500/30 transition-colors"
                     title="Drag to switch between half and full width"
                   >
-                    <div className="w-0.5 h-8 rounded-full bg-black/15 dark:bg-white/20 group-hover/resizew:bg-emerald-500 transition-colors" />
+                    <div className="w-0.5 h-8 rounded-full bg-slate-300 group-hover/resizew:bg-emerald-500 transition-colors" />
                   </div>}
 
                   {/* DYNAMIC RESIZE HANDLE 2: BOTTOM EDGE (DRAG HEIGHT VERTICALLY) */}
@@ -691,10 +691,10 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onSelectTool }) =>
                         handleResizeStart(e, widget.id, 'height', colSpan, customHeight)
                       }
                       onDoubleClick={() => handleResetSize(widget.id)}
-                      className="relative h-3.5 w-full flex items-center justify-center cursor-row-resize bg-black/[0.02] dark:bg-white/[0.02] hover:bg-emerald-500/15 active:bg-emerald-500/30 transition-colors group/resizeh select-none border-t border-black/[0.04] dark:border-white/[0.04] z-20"
+                      className="relative h-3.5 w-full flex items-center justify-center cursor-row-resize bg-slate-50/70 hover:bg-emerald-500/15 active:bg-emerald-500/30 transition-colors group/resizeh select-none border-t border-slate-200/80 z-20"
                       title="Drag vertically to resize height (Double-click to reset)"
                     >
-                      <div className="w-12 h-1 rounded-full bg-black/15 dark:bg-white/20 group-hover/resizeh:bg-emerald-500 transition-colors" />
+                      <div className="w-12 h-1 rounded-full bg-slate-300 group-hover/resizeh:bg-emerald-500 transition-colors" />
                     </div>
                   )}
 

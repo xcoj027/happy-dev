@@ -310,19 +310,19 @@ export const metadata: Metadata = {
           <div className="flex-1 flex items-center justify-center p-3 rounded-xl well-3d min-h-[220px]">
             {/* Google SERP Preview */}
             {previewTab === 'serp' && (
-              <div data-theme-island className="w-full max-w-lg p-4 rounded-xl bg-white dark:bg-[#1a1e27] space-y-1.5 text-left font-sans">
+              <div data-theme-island className="w-full max-w-lg p-4 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-1.5 text-left font-sans">
                 <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center text-[10px] font-bold">
+                  <div className="w-5 h-5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center text-[10px] font-bold">
                     {parsedHost.charAt(0).toUpperCase()}
                   </div>
-                  <div className="text-[11px] text-gray-500 dark:text-gray-400 truncate">
-                    {parsedHost} <span className="text-gray-400">› {url ? url.replace(/https?:\/\/[^/]+/, '') || 'home' : 'page'}</span>
+                  <div className="text-[11px] text-slate-500 truncate">
+                    {parsedHost} <span className="text-slate-400">› {url ? url.replace(/https?:\/\/[^/]+/, '') || 'home' : 'page'}</span>
                   </div>
                 </div>
-                <div className="text-base font-medium text-blue-600 dark:text-blue-400 hover:underline cursor-pointer truncate">
+                <div className="text-base font-medium text-blue-600 hover:underline cursor-pointer truncate">
                   {title || 'Example Page Title - Comprehensive Guide'}
                 </div>
-                <div className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-2">
+                <div className="text-xs text-slate-600 leading-relaxed line-clamp-2">
                   {description || 'Provide a meta description to see how your snippet appears in Google organic search results.'}
                 </div>
               </div>

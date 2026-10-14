@@ -32,14 +32,14 @@ export const MarkdownEditor: React.FC = () => {
       // Headers
       .replace(/^### (.*$)/gim, '<h3 class="text-base font-bold text-[var(--text-primary)] mt-3 mb-1">$1</h3>')
       .replace(/^## (.*$)/gim, '<h2 class="text-lg font-bold text-[var(--text-primary)] mt-4 mb-2 pb-1 border-b border-[var(--border-default)]">$1</h2>')
-      .replace(/^# (.*$)/gim, '<h1 class="text-xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-2 mb-3 pb-1 border-b border-[var(--border-default)]">$1</h1>')
+      .replace(/^# (.*$)/gim, '<h1 class="text-xl font-extrabold text-emerald-700 mt-2 mb-3 pb-1 border-b border-[var(--border-default)]">$1</h1>')
       // Blockquotes
       .replace(/^\> (.*$)/gim, '<blockquote class="border-l-4 border-emerald-500 pl-3 py-1 my-2 text-[var(--text-secondary)] italic bg-[var(--surface-control)] rounded-r">$1</blockquote>')
       // Bold & Italic
       .replace(/\*\*(.*?)\*\*/gim, '<strong class="font-bold text-[var(--text-primary)]">$1</strong>')
       .replace(/\*(.*?)\*/gim, '<em class="italic text-[var(--text-secondary)]">$1</em>')
       // Inline code
-      .replace(/`([^`]+)`/gim, '<code class="px-1.5 py-0.5 rounded bg-[var(--surface-control)] text-emerald-600 dark:text-emerald-400 font-mono text-xs border border-[var(--border-subtle)]">$1</code>')
+      .replace(/`([^`]+)`/gim, '<code class="px-1.5 py-0.5 rounded bg-[var(--surface-control)] text-emerald-700 font-mono text-xs border border-[var(--border-subtle)]">$1</code>')
       // Lists
       .replace(/^\- (.*$)/gim, '<li class="ml-4 list-disc text-[var(--text-secondary)]">$1</li>')
       // Paragraphs
@@ -53,7 +53,7 @@ export const MarkdownEditor: React.FC = () => {
       {/* View Switcher */}
       <div className="flex items-center justify-between p-3 card-3d rounded-xl">
         <div className="flex items-center gap-2">
-          <FileText className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
+          <FileText className="w-4 h-4 text-emerald-600" />
           <span className="text-xs text-[var(--text-secondary)] font-medium">Markdown Live Preview</span>
         </div>
         <div className="flex items-center gap-1.5">
@@ -101,7 +101,7 @@ export const MarkdownEditor: React.FC = () => {
           <div className="flex flex-col flex-1 h-full min-h-[500px] border border-[var(--border-default)] rounded-xl overflow-hidden bg-[var(--surface-card)]">
             <div className="flex items-center justify-between px-3.5 py-2 bg-[var(--well-header-bg)] border-b border-[var(--border-color)] text-xs">
               <span className="font-medium text-[var(--text-secondary)] flex items-center gap-1.5">
-                <Eye className="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400" />
+                <Eye className="w-3.5 h-3.5 text-cyan-600" />
                 Live HTML Preview
               </span>
               <CopyButton text={renderMarkdown(markdown)} label="Copy HTML" />

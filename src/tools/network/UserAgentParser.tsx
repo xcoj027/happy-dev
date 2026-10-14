@@ -88,19 +88,19 @@ export const UserAgentParser: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         <div className="p-3 card-3d rounded-xl space-y-1">
           <span className="text-[11px] text-[var(--text-secondary)]">Browser Name</span>
-          <div className="text-base font-bold text-emerald-600 dark:text-emerald-400">{info.browser}</div>
+          <div className="text-base font-bold text-emerald-700">{info.browser}</div>
           <div className="text-[11px] text-[var(--text-secondary)] font-mono">v{info.version || 'Unknown'}</div>
         </div>
 
         <div className="p-3 card-3d rounded-xl space-y-1">
           <span className="text-[11px] text-[var(--text-secondary)]">Operating System</span>
-          <div className="text-base font-bold text-cyan-600 dark:text-cyan-400">{info.os}</div>
+          <div className="text-base font-bold text-cyan-700">{info.os}</div>
           <div className="text-[11px] text-[var(--text-secondary)] font-mono">Device: {info.device}</div>
         </div>
 
         <div className="p-3 card-3d rounded-xl space-y-1">
           <span className="text-[11px] text-[var(--text-secondary)]">Rendering Engine</span>
-          <div className="text-base font-bold text-indigo-600 dark:text-indigo-400">{info.engine}</div>
+          <div className="text-base font-bold text-indigo-700">{info.engine}</div>
         </div>
       </div>
     </div>

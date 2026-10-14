@@ -27,7 +27,7 @@ export const TitleBar: React.FC<TitleBarProps> = ({ onOpenCommandPalette, onGoHo
   return (
     <header
       data-tauri-drag-region="deep"
-      className="h-11 w-full bg-[var(--bg-titlebar)] backdrop-blur-xl border-b border-[var(--border-subtle)] flex items-center justify-between px-3.5 select-none text-xs text-[var(--text-secondary)] z-40 transition-colors"
+      className="h-11 w-full bg-white border-b border-slate-200/90 flex items-center justify-between px-3.5 select-none text-xs text-slate-600 z-40"
     >
       {/* Left side: Mac traffic light spacing or App branding */}
       <div className="flex items-center gap-2">
@@ -36,16 +36,16 @@ export const TitleBar: React.FC<TitleBarProps> = ({ onOpenCommandPalette, onGoHo
         <div
           onClick={onGoHome}
           data-tauri-drag-region="false"
-          className="app-no-drag flex items-center gap-2.5 font-semibold text-[var(--text-primary)] cursor-pointer group transition"
+          className="app-no-drag flex items-center gap-2.5 font-semibold text-slate-800 cursor-pointer group transition"
           title="Go to Homepage"
         >
-          <div className="p-1 rounded-xl bg-gradient-to-tr from-emerald-500/20 to-cyan-500/20 group-hover:scale-110 transition-transform">
+          <div className="p-1 rounded-xl bg-gradient-to-tr from-emerald-500/15 to-cyan-500/15 group-hover:scale-105 transition-transform">
             <AppLogo size={18} className="w-4.5 h-4.5" />
           </div>
-          <span className="bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent font-extrabold tracking-tight text-sm">
+          <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent font-extrabold tracking-tight text-sm">
             HappyDev
           </span>
-          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/10">
+          <span className="text-[10px] text-emerald-700 font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/60">
             {__APP_VERSION__}
           </span>
         </div>
@@ -56,13 +56,13 @@ export const TitleBar: React.FC<TitleBarProps> = ({ onOpenCommandPalette, onGoHo
         <button
           type="button"
           onClick={onOpenCommandPalette}
-          className="search-trigger btn-3d w-full flex items-center justify-between px-3.5 py-1.5 rounded-full text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition group cursor-pointer"
+          className="search-trigger btn-3d w-full flex items-center justify-between px-3.5 py-1.5 rounded-full text-slate-500 hover:text-slate-800 transition group cursor-pointer bg-white border border-slate-200/90 shadow-2xs"
         >
           <div className="flex items-center gap-2 text-xs">
-            <Search className="search-icon w-3.5 h-3.5 text-[var(--text-muted)] group-hover:text-emerald-500 transition" />
-            <span className="text-[11px] font-medium">Search developer utilities...</span>
+            <Search className="search-icon w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 transition" />
+            <span className="text-[11px] font-medium text-slate-500">Search utilities...</span>
           </div>
-          <kbd className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[var(--control-input-bg)] text-[var(--text-secondary)]">
+          <kbd className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200/80 text-slate-500">
             {isMac ? '⌘K' : 'Ctrl+K'}
           </kbd>
         </button>
@@ -70,11 +70,11 @@ export const TitleBar: React.FC<TitleBarProps> = ({ onOpenCommandPalette, onGoHo
 
       {/* Right side: Status indicator & Windows controls */}
       <div className="flex items-center gap-3">
-        <span className="text-[11px] font-medium text-[var(--text-muted)] tracking-wide">
-          By <span className="font-bold text-[var(--text-primary)]">TNQ</span>
+        <span className="text-[11px] font-medium text-slate-400 tracking-wide">
+          By <span className="font-semibold text-slate-700">TNQ</span>
         </span>
         <div
-          className="flex items-center gap-1.5 text-[10px] text-emerald-600 dark:text-emerald-400 font-mono font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10"
+          className="flex items-center gap-1.5 text-[10px] text-emerald-700 font-mono font-semibold px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/60"
           title="100% Offline Mode Active"
         >
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />

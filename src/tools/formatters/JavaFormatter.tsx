@@ -68,7 +68,7 @@ export const JavaFormatter: React.FC = () => {
         </div>
       </div>
       <p className="text-xs text-[var(--text-muted)]">Paste a complete Java class, record, or source file. Formatting runs locally.</p>
-      {result.error && <div role="alert" className="p-3 bg-rose-500/10 text-rose-600 dark:text-rose-400 rounded-xl text-xs whitespace-pre-wrap">{result.error}</div>}
+      {result.error && <div role="alert" className="p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs whitespace-pre-wrap font-mono">{result.error}</div>}
       <div role="status" className="text-xs text-[var(--text-muted)]">{result.busy ? 'Formatting…' : ''}</div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1 min-h-[460px]">
         <CodeEditor label="Java Source" language="java" value={input} onChange={setInput} placeholder="Paste Java source here..." />

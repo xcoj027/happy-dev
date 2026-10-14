@@ -378,8 +378,8 @@ export const JsonTsConverter: React.FC = () => {
 
       {/* Error alert */}
       {error && (
-        <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-rose-500/10 text-rose-400 text-xs font-mono">
-          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+        <div className="flex items-center gap-2 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-mono">
+          <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-600" />
           <span>{error}</span>
         </div>
       )}

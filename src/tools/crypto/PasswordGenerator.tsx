@@ -74,10 +74,10 @@ export const PasswordGenerator: React.FC = () => {
   const entropy = Math.round(length * Math.log2(poolSize));
 
   const getStrength = (bits: number) => {
-    if (bits < 40) return { label: 'Weak', color: 'bg-rose-500 text-rose-400' };
-    if (bits < 60) return { label: 'Moderate', color: 'bg-amber-500 text-amber-400' };
-    if (bits < 90) return { label: 'Strong', color: 'bg-emerald-500 text-emerald-400' };
-    return { label: 'Very Strong / Military-Grade', color: 'bg-cyan-500 text-cyan-400' };
+    if (bits < 40) return { label: 'Weak', className: 'bg-rose-50 border border-rose-200 text-rose-700' };
+    if (bits < 60) return { label: 'Moderate', className: 'bg-amber-50 border border-amber-200 text-amber-800' };
+    if (bits < 90) return { label: 'Strong', className: 'bg-emerald-50 border border-emerald-200 text-emerald-800' };
+    return { label: 'Very Strong / Military-Grade', className: 'bg-sky-50 border border-sky-200 text-sky-800' };
   };
 
   const strength = getStrength(entropy);
@@ -89,7 +89,7 @@ export const PasswordGenerator: React.FC = () => {
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold text-[var(--text-primary)]">Primary Generated Secret</span>
           <div className="flex items-center gap-2">
-            <span className={`text-[11px] font-mono font-medium px-2 py-0.5 rounded-full ${strength.color} bg-opacity-10 border border-opacity-20`}>
+            <span className={`text-[11px] font-mono font-medium px-2.5 py-0.5 rounded-full ${strength.className}`}>
               {entropy} bits ({strength.label})
             </span>
             <button
@@ -103,7 +103,7 @@ export const PasswordGenerator: React.FC = () => {
         </div>
 
         <div className="flex items-center justify-between p-3 well-3d rounded-xl">
-          <span className="font-mono text-base text-emerald-600 dark:text-emerald-400 font-bold tracking-wider break-all select-all pr-2">
+          <span className="font-mono text-base text-emerald-700 font-bold tracking-wider break-all select-all pr-2">
             {password || 'Select at least one character set'}
           </span>
           <CopyButton text={password} label="Copy" />
@@ -115,7 +115,7 @@ export const PasswordGenerator: React.FC = () => {
         <div>
           <div className="flex justify-between text-xs text-[var(--text-secondary)] mb-1.5">
             <span>Password Length</span>
-            <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">{length} characters</span>
+            <span className="font-mono font-bold text-emerald-700">{length} characters</span>
           </div>
           <input
             type="range"

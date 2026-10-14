@@ -9,7 +9,6 @@ import { Annotation, Compartment, EditorState, Prec } from '@codemirror/state';
 import { keymap, placeholder as placeholderExtension } from '@codemirror/view';
 import { indentWithTab } from '@codemirror/commands';
 import { StreamLanguage, indentUnit } from '@codemirror/language';
-import { oneDark } from '@codemirror/theme-one-dark';
 
 const detectLanguage = (value: string): string => {
   const text = value.trimStart().slice(0, 4000);
@@ -97,40 +96,33 @@ export const IdeEditor: React.FC<IdeEditorProps> = ({ value, onChange, language,
   useEffect(() => {
     const view = viewRef.current;
     if (!view) return;
-    const configure = () => {
-      const dark = document.documentElement.classList.contains('dark');
-      view.dispatch({ effects: configuration.current.reconfigure([
-        ...(dark ? [oneDark] : []),
-        EditorView.theme({
-          '&': { backgroundColor: readOnly ? 'var(--well-readonly-bg) !important' : 'var(--surface-recessed) !important', color: 'var(--well-text) !important', fontSize: '12px', minHeight, height: '100%' },
-          '&.cm-editor': { backgroundColor: readOnly ? 'var(--well-readonly-bg) !important' : 'var(--surface-recessed) !important' },
-          '&.cm-focused': { outline: 'none' },
-          '.cm-scroller': { fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace', overflow: 'auto', maxHeight, minHeight, backgroundColor: 'transparent !important' },
-          '.cm-content': { padding: '14px 16px', caretColor: 'var(--text-primary)' },
-          '.cm-gutters': { display: 'none !important' },
-          '.cm-activeLine': { backgroundColor: 'transparent !important' },
-          '&.cm-focused .cm-activeLine': { backgroundColor: readOnly ? 'transparent !important' : (dark ? 'rgba(255, 255, 255, 0.05) !important' : 'rgba(0, 0, 0, 0.035) !important') },
-          '.cm-activeLineGutter': { backgroundColor: 'transparent !important' },
-          '.cm-cursor': { display: readOnly ? 'none' : 'block' },
-          '.cm-panels, .cm-tooltip': { backgroundColor: 'var(--surface-panel)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' },
-          '.cm-placeholder': { color: 'var(--text-muted)' },
-        }),
-        EditorState.readOnly.of(readOnly), EditorView.editable.of(!readOnly),
-        EditorView.contentAttributes.of({ 'aria-label': label, role: readOnly ? 'region' : 'textbox', ...(readOnly ? { tabindex: '0' } : { 'aria-multiline': String(!singleLine) }), spellcheck: 'false' }),
-        placeholderExtension(placeholder), ...(wrap ? [EditorView.lineWrapping] : []),
-        ...(singleLine || maxLength !== undefined ? [EditorState.transactionFilter.of(transaction => {
-          if (!transaction.docChanged || transaction.annotation(externalChange)) return transaction;
-          const text = transaction.newDoc.toString();
-          if (singleLine && /[\r\n]/.test(text)) return [];
-          if (maxLength !== undefined && text.length > maxLength) return [];
-          return transaction;
-        })] : []),
-      ]) });
-    };
-    configure();
-    const observer = new MutationObserver(configure);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-    return () => observer.disconnect();
+    view.dispatch({ effects: configuration.current.reconfigure([
+      EditorView.theme({
+        '&': { backgroundColor: readOnly ? 'var(--well-readonly-bg, #f8fafc) !important' : '#ffffff !important', color: 'var(--text-primary, #0f172a) !important', fontSize: '12px', minHeight, height: '100%' },
+        '&.cm-editor': { backgroundColor: readOnly ? 'var(--well-readonly-bg, #f8fafc) !important' : '#ffffff !important' },
+        '&.cm-focused': { outline: 'none' },
+        '.cm-scroller': { fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace', overflow: 'auto', maxHeight, minHeight, backgroundColor: 'transparent !important' },
+        '.cm-content': { padding: '14px 16px', caretColor: 'var(--focus-border, #10b981)' },
+        '.cm-gutters': { display: 'none !important' },
+        '.cm-activeLine': { backgroundColor: 'transparent !important' },
+        '&.cm-focused .cm-activeLine': { backgroundColor: readOnly ? 'transparent !important' : 'rgba(0, 0, 0, 0.035) !important' },
+        '.cm-activeLineGutter': { backgroundColor: 'transparent !important' },
+        '.cm-cursor': { display: readOnly ? 'none' : 'block', borderLeftColor: 'var(--focus-border, #10b981)' },
+        '.cm-selectionBackground, &.cm-focused .cm-selectionBackground, ::selection': { backgroundColor: 'rgba(16, 185, 129, 0.2) !important' },
+        '.cm-panels, .cm-tooltip': { backgroundColor: '#ffffff', color: '#0f172a', borderColor: '#e2e8f0', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)' },
+        '.cm-placeholder': { color: 'var(--placeholder, #94a3b8)' },
+      }),
+      EditorState.readOnly.of(readOnly), EditorView.editable.of(!readOnly),
+      EditorView.contentAttributes.of({ 'aria-label': label, role: readOnly ? 'region' : 'textbox', ...(readOnly ? { tabindex: '0' } : { 'aria-multiline': String(!singleLine) }), spellcheck: 'false' }),
+      placeholderExtension(placeholder), ...(wrap ? [EditorView.lineWrapping] : []),
+      ...(singleLine || maxLength !== undefined ? [EditorState.transactionFilter.of(transaction => {
+        if (!transaction.docChanged || transaction.annotation(externalChange)) return transaction;
+        const text = transaction.newDoc.toString();
+        if (singleLine && /[\r\n]/.test(text)) return [];
+        if (maxLength !== undefined && text.length > maxLength) return [];
+        return transaction;
+      })] : []),
+    ]) });
   }, [minHeight, maxHeight, readOnly, wrap, label, placeholder, singleLine, maxLength]);
 
   useEffect(() => {

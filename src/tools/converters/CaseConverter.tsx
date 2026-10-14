@@ -70,7 +70,7 @@ export const CaseConverter: React.FC = () => {
           >
             <div className="space-y-0.5 overflow-hidden pr-2">
               <div className="text-[11px] font-semibold text-[var(--text-secondary)]">{item.label}</div>
-              <div className="font-mono text-xs text-emerald-600 dark:text-emerald-400 truncate">{item.value || '—'}</div>
+              <div className="font-mono text-xs text-emerald-700 font-medium truncate">{item.value || '—'}</div>
             </div>
             <CopyButton text={item.value} />
           </div>

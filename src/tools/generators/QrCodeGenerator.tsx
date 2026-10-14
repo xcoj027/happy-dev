@@ -222,7 +222,7 @@ export const QrCodeGenerator: React.FC = () => {
 
   return (
     <div className="flex-1 flex flex-col h-full space-y-4">
-      {renderError && <div role="alert" className="rounded-xl p-3 text-xs bg-rose-500/10 text-rose-600 dark:text-rose-400">{renderError}</div>}
+      {renderError && <div role="alert" className="rounded-xl p-3 text-xs bg-rose-50 border border-rose-200 text-rose-700 font-mono">{renderError}</div>}
       {/* Payload Type Selector */}
       <div className="flex flex-wrap items-center gap-2 pb-1">
         <button
@@ -565,7 +565,7 @@ export const QrCodeGenerator: React.FC = () => {
             <label htmlFor="qr-logo-upload" className="block text-xs font-semibold text-[var(--text-primary)]">Center logo</label>
             <input id="qr-logo-upload" type="file" accept="image/png,image/jpeg,image/webp" className="input-3d w-full p-2 rounded-lg text-xs text-[var(--text-secondary)]" onChange={e => { void uploadLogo(e.target.files?.[0]); e.target.value = ''; }} />
             {logoLoading && <p role="status" className="text-xs text-[var(--text-secondary)]">Loading logo…</p>}
-            {logoError && <p role="alert" className="text-xs text-rose-600 dark:text-rose-400">{logoError}</p>}
+            {logoError && <p role="alert" className="text-xs text-rose-700 font-medium">{logoError}</p>}
             {logo && <>
               <div className="flex items-center gap-3">
                 <img src={logo.dataUrl} alt="Uploaded logo" className="w-12 h-12 object-contain rounded bg-white" data-theme-island data-keep-white />

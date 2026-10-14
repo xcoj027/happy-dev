@@ -26,11 +26,15 @@ export const TextInput: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = 
         <Code2 className="w-3.5 h-3.5" />
       </button>
     </span>
-    {createPortal(<dialog aria-label={title} ref={dialog} className="text-input-editor-dialog rounded-xl p-0 border-none shadow-2xl bg-[var(--surface-card)] text-[var(--text-primary)] w-[min(800px,90vw)]" onCancel={close}>
+    {createPortal(<dialog aria-label={title} ref={dialog} className="text-input-editor-dialog rounded-2xl p-0 border border-slate-200 shadow-2xl bg-white text-slate-800 w-[min(800px,90vw)]" onCancel={close}>
       <div className="p-4 space-y-3">
-        <div className="flex items-center justify-between gap-3"><span className="font-medium text-sm truncate">{title}</span><button type="button" className="btn-3d rounded-lg px-3 py-1.5 text-xs" onClick={close}>Close</button></div>
+        <div className="flex items-center justify-between gap-3">
+          <span className="font-semibold text-sm text-slate-800 truncate">{title}</span>
+          <button type="button" className="btn-3d rounded-lg px-3 py-1.5 text-xs" onClick={close}>Close</button>
+        </div>
         {open && <IdeEditor value={draft} onChange={setDraft} label="Expanded text editor" minHeight="240px" maxHeight="50vh" singleLine maxLength={props.maxLength} readOnly={props.readOnly} />}
-        <div className="flex items-center justify-between gap-3 text-xs text-[var(--text-muted)]"><span>Single-line field · Ctrl/Cmd+F to search · Esc to close</span>
+        <div className="flex items-center justify-between gap-3 text-xs text-slate-500">
+          <span>Single-line field · ⌘F to search · Esc to close</span>
           {!props.readOnly && <button type="button" className="btn-3d btn-3d-active rounded-lg px-3 py-1.5 cursor-pointer" onClick={() => {
             const element = input.current;
             if (element && onChange) {
@@ -48,7 +52,7 @@ export const TextInput: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = 
 };
 
 export const TextArea: React.FC<React.TextareaHTMLAttributes<HTMLTextAreaElement>> = ({ value, onChange, placeholder, rows = 4, readOnly, disabled, className = '', 'aria-label': ariaLabel }) => (
-  <div className={`${className} overflow-hidden`}>
+  <div className={`${className} overflow-hidden rounded-xl border border-slate-200 shadow-2xs bg-white`}>
     <IdeEditor value={String(value ?? '')} onChange={next => onChange?.({ target: { value: next }, currentTarget: { value: next } } as React.ChangeEvent<HTMLTextAreaElement>)} label={ariaLabel || placeholder || 'Text input'} placeholder={placeholder} minHeight={`${rows * 22 + 24}px`} maxHeight="360px" readOnly={readOnly || disabled} />
   </div>
 );

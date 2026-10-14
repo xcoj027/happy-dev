@@ -46,12 +46,12 @@ export const ChmodCalculator: React.FC = () => {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="space-y-1">
             <span className="text-xs text-[var(--text-secondary)]">Octal Permission</span>
-            <div className="text-2xl font-mono font-bold text-emerald-600 dark:text-emerald-400">{octal}</div>
+            <div className="text-2xl font-mono font-bold text-emerald-700">{octal}</div>
           </div>
 
           <div className="space-y-1">
             <span className="text-xs text-[var(--text-secondary)]">Symbolic Notation</span>
-            <div className="text-2xl font-mono font-bold text-cyan-600 dark:text-cyan-400">{symbolic}</div>
+            <div className="text-2xl font-mono font-bold text-cyan-700">{symbolic}</div>
           </div>
 
           <div className="space-y-1">
@@ -72,7 +72,7 @@ export const ChmodCalculator: React.FC = () => {
           <div key={role} className="p-4 card-3d rounded-xl space-y-3">
             <div className="flex items-center justify-between border-b border-[var(--control-border)] pb-2">
               <span className="font-semibold text-[var(--text-primary)] text-sm capitalize">{role}</span>
-              <span className="font-mono text-sm text-emerald-600 dark:text-emerald-400 font-bold">{calcVal(perms[role])}</span>
+              <span className="font-mono text-sm text-emerald-700 font-bold">{calcVal(perms[role])}</span>
             </div>
 
             <div className="space-y-2 text-xs text-[var(--text-secondary)]">

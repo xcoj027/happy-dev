@@ -154,8 +154,8 @@ export const UrlEncoder: React.FC = () => {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-600 dark:text-rose-400 text-xs font-mono">
-          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+        <div className="flex items-center gap-2 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-mono">
+          <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-600" />
           <span>{error}</span>
         </div>
       )}
@@ -182,13 +182,13 @@ export const UrlEncoder: React.FC = () => {
       <div className="p-4 card-3d rounded-xl space-y-3">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold text-[var(--text-secondary)] flex items-center gap-1.5">
-            <Globe className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
+            <Globe className="w-3.5 h-3.5 text-cyan-600" />
             Query Parameters Inspector ({queryParams.length})
           </span>
           <button
             type="button"
             onClick={addParam}
-            className="btn-3d inline-flex items-center gap-1 px-2.5 py-1 text-xs rounded text-emerald-600 dark:text-emerald-400 transition cursor-pointer"
+            className="btn-3d inline-flex items-center gap-1 px-2.5 py-1 text-xs rounded text-emerald-700 font-semibold transition cursor-pointer"
           >
             <Plus className="w-3 h-3" /> Add Param
           </button>
@@ -220,7 +220,7 @@ export const UrlEncoder: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => removeParam(idx)}
-                  className="p-1.5 text-[var(--text-secondary)] hover:text-rose-600 dark:hover:text-rose-400 rounded transition cursor-pointer"
+                  className="p-1.5 text-[var(--text-secondary)] hover:text-rose-600 rounded transition cursor-pointer"
                   title="Remove parameter"
                 >
                   <Trash2 className="w-3.5 h-3.5" />

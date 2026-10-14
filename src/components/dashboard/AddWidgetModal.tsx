@@ -59,36 +59,36 @@ export const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-3xl glass-panel rounded-3xl overflow-hidden flex flex-col max-h-[85vh] shadow-2xl"
+        className="w-full max-w-3xl bg-white border border-slate-200 rounded-2xl overflow-hidden flex flex-col max-h-[85vh] shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4.5 border-b border-[var(--border-subtle)]">
+        <div className="flex items-center justify-between px-6 py-4 bg-slate-50/80 border-b border-slate-200">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-2xl bg-emerald-500/15 flex items-center justify-center text-emerald-500">
+            <div className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200/70 flex items-center justify-center text-emerald-600">
               <Plus className="w-4.5 h-4.5" />
             </div>
             <div>
-              <h2 className="text-base font-extrabold text-[var(--text-primary)] tracking-tight">
+              <h2 className="text-base font-bold text-slate-900 tracking-tight">
                 Add Utility Section
               </h2>
-              <p className="text-xs text-[var(--text-muted)] font-medium">
+              <p className="text-xs text-slate-500 font-medium">
                 Select any offline developer utility to add as an interactive widget.
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 text-xs text-[var(--text-secondary)] font-medium">
+            <div className="flex items-center gap-1.5 text-xs text-slate-600 font-medium">
               <span>Width:</span>
               <select
                 value={defaultCols}
                 onChange={(e) => setDefaultCols(Number(e.target.value))}
-                className="bg-[var(--surface-control)] rounded-xl px-2.5 py-1 text-xs text-[var(--text-primary)] outline-none cursor-pointer font-semibold"
+                className="bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs text-slate-700 outline-none cursor-pointer font-medium shadow-2xs"
               >
                 <option value={6}>Half Width (1/2)</option>
                 <option value={12}>Full Width (1/1)</option>
@@ -98,7 +98,7 @@ export const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] transition cursor-pointer"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer"
             >
               <X className="w-4.5 h-4.5" />
             </button>
@@ -106,16 +106,16 @@ export const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
         </div>
 
         {/* Search & Category Filter Bar */}
-        <div className="p-4 border-b border-[var(--border-subtle)] space-y-3 bg-transparent">
+        <div className="p-4 border-b border-slate-200 space-y-3 bg-white">
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3.5 top-3 text-[var(--text-muted)]" />
+            <Search className="w-4 h-4 absolute left-3.5 top-2.5 text-slate-400" />
             <input
               type="text"
               autoFocus
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search 39+ utilities by name, category, or keyword..."
-              className="w-full bg-[var(--surface-control)] rounded-xl pl-10 pr-4 py-2 text-xs text-[var(--text-primary)] outline-none placeholder:text-[var(--text-muted)] focus:ring-1 focus:ring-emerald-500"
+              placeholder="Search utilities by name, category, or keyword..."
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-800 outline-none placeholder:text-slate-400 focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
             />
           </div>
 
@@ -127,7 +127,7 @@ export const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
               className={`px-3 py-1 rounded-full text-[11px] font-semibold transition shrink-0 cursor-pointer ${
                 selectedCat === 'all'
                   ? 'btn-3d-active'
-                  : 'btn-3d text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                  : 'btn-3d text-slate-600 hover:text-slate-900'
               }`}
             >
               All Categories ({toolsRegistry.length})
@@ -142,7 +142,7 @@ export const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
                   className={`px-3 py-1 rounded-full text-[11px] font-semibold transition shrink-0 cursor-pointer shadow-xs ${
                     isSelected
                       ? 'btn-3d-active'
-                      : 'btn-3d text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                      : 'btn-3d text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   {cat.name}
@@ -153,9 +153,9 @@ export const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
         </div>
 
         {/* Tools Grid */}
-        <div className="flex-1 overflow-y-auto p-4 max-h-[50vh]">
+        <div className="flex-1 overflow-y-auto p-4 max-h-[50vh] bg-slate-50/50">
           {filteredTools.length === 0 ? (
-            <div className="py-12 text-center text-xs text-[var(--text-muted)]">
+            <div className="py-12 text-center text-xs text-slate-400">
               No developer utility found matching "{search}"
             </div>
           ) : (
@@ -174,16 +174,16 @@ export const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
                         handleSelectTool(tool);
                       }
                     }}
-                    className="card-3d group flex items-center justify-between p-3 rounded-2xl transition-all duration-200 cursor-pointer select-none text-left hover:-translate-y-0.5 hover:shadow-md hover:bg-[var(--surface-hover)]"
+                    className="group flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200 shadow-2xs transition-all duration-150 cursor-pointer select-none text-left hover:-translate-y-0.5 hover:shadow-sm hover:border-slate-300"
                   >
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                       <div
-                        className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${catColor.bg} ${catColor.text} group-hover:scale-110 transition`}
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${catColor.bg} ${catColor.text} group-hover:scale-105 transition`}
                       >
                         <DynamicIcon name={tool.icon} size={18} />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h4 className="text-xs font-bold text-[var(--text-primary)] group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition truncate">
+                        <h4 className="text-xs font-bold text-slate-800 group-hover:text-emerald-700 transition truncate">
                           {tool.name}
                         </h4>
                         <span className={`text-[10px] font-medium ${catColor.text} block truncate mt-0.5`}>
@@ -193,7 +193,7 @@ export const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
                     </div>
 
                     <div className="shrink-0 ml-2">
-                      <span className="p-1 rounded-lg text-emerald-500 opacity-0 group-hover:opacity-100 transition flex items-center justify-center bg-emerald-500/10">
+                      <span className="p-1 rounded-lg text-emerald-600 opacity-0 group-hover:opacity-100 transition flex items-center justify-center bg-emerald-50 border border-emerald-200">
                         <Plus className="w-4 h-4" />
                       </span>
                     </div>
@@ -205,9 +205,9 @@ export const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
         </div>
 
         {/* Footer info */}
-        <div className="px-6 py-3.5 bg-transparent border-t border-[var(--border-subtle)] flex items-center justify-between text-xs text-[var(--text-muted)]">
+        <div className="px-6 py-3 bg-white border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
           <span>Click any utility card to immediately add it to your dashboard.</span>
-          <span className="font-mono text-emerald-600 dark:text-emerald-400 font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10">{filteredTools.length} utilities available</span>
+          <span className="font-mono text-emerald-700 font-semibold px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/60">{filteredTools.length} utilities available</span>
         </div>
       </div>
     </div>

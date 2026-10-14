@@ -86,12 +86,12 @@ export const HttpStatusLookup: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {filtered.map((item) => {
           const color = item.code < 300
-            ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/30'
+            ? 'text-emerald-800 bg-emerald-50 border-emerald-200'
             : item.code < 400
-            ? 'text-cyan-700 dark:text-cyan-400 bg-cyan-500/10 border-cyan-500/30'
+            ? 'text-cyan-800 bg-cyan-50 border-cyan-200'
             : item.code < 500
-            ? 'text-amber-700 dark:text-amber-400 bg-amber-500/10 border-amber-500/30'
-            : 'text-rose-700 dark:text-rose-400 bg-rose-500/10 border-rose-500/30';
+            ? 'text-amber-800 bg-amber-50 border-amber-200'
+            : 'text-rose-800 bg-rose-50 border-rose-200';
 
           return (
             <div

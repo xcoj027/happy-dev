@@ -114,8 +114,8 @@ export const NumberBaseConverter: React.FC = () => {
         </div>
 
         {error && (
-          <div className="flex items-center gap-2 p-3 bg-rose-500/10 border border-rose-500/30 text-rose-500 dark:text-rose-400 text-xs rounded-xl font-mono">
-            <AlertCircle className="w-4 h-4 shrink-0" />
+          <div className="flex items-center gap-2 p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl font-mono">
+            <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
             <span>{error}</span>
           </div>
         )}
@@ -124,7 +124,7 @@ export const NumberBaseConverter: React.FC = () => {
           {/* Decimal */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs text-[var(--text-secondary)]">
-              <span className="font-semibold text-emerald-600 dark:text-emerald-400">Decimal (Base 10)</span>
+              <span className="font-semibold text-emerald-700">Decimal (Base 10)</span>
               <CopyButton text={dec} />
             </div>
             <TextInput
@@ -139,7 +139,7 @@ export const NumberBaseConverter: React.FC = () => {
           {/* Hexadecimal */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs text-[var(--text-secondary)]">
-              <span className="font-semibold text-cyan-600 dark:text-cyan-400">Hexadecimal (Base 16)</span>
+              <span className="font-semibold text-cyan-700">Hexadecimal (Base 16)</span>
               <CopyButton text={hex ? `0x${hex}` : ''} />
             </div>
             <div className="relative flex items-center">
@@ -157,7 +157,7 @@ export const NumberBaseConverter: React.FC = () => {
           {/* Binary */}
           <div className="space-y-1.5 md:col-span-2">
             <div className="flex items-center justify-between text-xs text-[var(--text-secondary)]">
-              <span className="font-semibold text-indigo-600 dark:text-indigo-400">Binary (Base 2)</span>
+              <span className="font-semibold text-indigo-700">Binary (Base 2)</span>
               <CopyButton text={bin} />
             </div>
             <TextInput
@@ -177,7 +177,7 @@ export const NumberBaseConverter: React.FC = () => {
           {/* Octal */}
           <div className="space-y-1.5 md:col-span-2">
             <div className="flex items-center justify-between text-xs text-[var(--text-secondary)]">
-              <span className="font-semibold text-amber-600 dark:text-amber-400">Octal (Base 8)</span>
+              <span className="font-semibold text-amber-700">Octal (Base 8)</span>
               <CopyButton text={oct ? `0o${oct}` : ''} />
             </div>
             <div className="relative flex items-center">

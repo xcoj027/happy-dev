@@ -279,7 +279,7 @@ export const TaskReminder: React.FC = () => {
               <BellRing className="w-5 h-5 animate-bounce" />
             </div>
             <div>
-              <div className="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+              <div className="text-xs font-bold uppercase tracking-wider text-amber-700">
                 Reminder Due!
               </div>
               <div className="text-sm font-bold text-[var(--text-primary)]">
@@ -317,10 +317,10 @@ export const TaskReminder: React.FC = () => {
       <div className="flex flex-wrap items-center justify-between gap-3 p-3 card-3d rounded-xl">
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold text-[var(--text-primary)] flex items-center gap-1.5">
-            <Clock className="w-4 h-4 text-emerald-500" />
+            <Clock className="w-4 h-4 text-emerald-600" />
             Task Reminders Scheduler
           </span>
-          <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold">
+          <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold">
             {tasks.length}/{MAX_TASKS} tasks
           </span>
         </div>
@@ -331,7 +331,7 @@ export const TaskReminder: React.FC = () => {
             type="button"
             onClick={() => setSoundEnabled(!soundEnabled)}
             className={`btn-3d flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg transition cursor-pointer ${
-              soundEnabled ? 'text-emerald-600 dark:text-emerald-400' : 'text-[var(--text-secondary)]'
+              soundEnabled ? 'text-emerald-700 font-semibold' : 'text-[var(--text-secondary)]'
             }`}
             title={soundEnabled ? 'OS alert sound enabled' : 'OS alert sound muted'}
           >
@@ -354,7 +354,7 @@ export const TaskReminder: React.FC = () => {
             <button
               type="button"
               onClick={requestNotificationPermission}
-              className="btn-3d flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-amber-600 dark:text-amber-400 transition cursor-pointer"
+              className="btn-3d flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-amber-700 font-semibold transition cursor-pointer"
               title="Enable OS Desktop Notifications"
             >
               <Bell className="w-3.5 h-3.5" />
@@ -365,7 +365,7 @@ export const TaskReminder: React.FC = () => {
       </div>
 
       {notificationError && (
-        <p role="alert" className="text-xs text-amber-600 dark:text-amber-400">{notificationError}</p>
+        <p role="alert" className="text-xs text-amber-700 font-medium">{notificationError}</p>
       )}
 
       {/* Task Creation Input Section */}
@@ -533,11 +533,11 @@ export const TaskReminder: React.FC = () => {
                     key={task.id}
                     className={`p-3.5 rounded-xl border transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                       task.isCompleted
-                        ? 'bg-black/[0.02] dark:bg-white/[0.02] border-[var(--border-subtle)] opacity-60'
+                        ? 'bg-slate-50 border-slate-200 opacity-60'
                         : !task.enabled
-                        ? 'bg-black/[0.02] dark:bg-white/[0.02] border-[var(--border-subtle)] opacity-50'
+                        ? 'bg-slate-50 border-slate-200 opacity-50'
                         : isPast
-                        ? 'bg-amber-500/10 border-amber-500/30'
+                        ? 'bg-amber-50 border-amber-200'
                         : 'card-3d'
                     }`}
                   >
@@ -569,7 +569,7 @@ export const TaskReminder: React.FC = () => {
                           </span>
 
                           {/* Repeat Badge */}
-                          <span className="text-[10px] uppercase font-bold font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                          <span className="text-[10px] uppercase font-bold font-mono px-2 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-emerald-800">
                             {repeatLabel}
                           </span>
 
@@ -578,8 +578,8 @@ export const TaskReminder: React.FC = () => {
                             <span
                               className={`text-[10px] font-mono px-2 py-0.5 rounded font-semibold ${
                                 isPast
-                                  ? 'bg-rose-500/15 text-rose-600 dark:text-rose-400'
-                                  : 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400'
+                                  ? 'bg-rose-50 border border-rose-200 text-rose-700'
+                                  : 'bg-cyan-50 border border-cyan-200 text-cyan-800'
                               }`}
                             >
                               {getRelativeTimeDisplay(task.targetTime)}

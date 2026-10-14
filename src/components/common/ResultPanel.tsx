@@ -59,20 +59,20 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
 
   return (
     <div
-      className={`well-3d code-result flex flex-col flex-1 h-full min-h-[460px] rounded-2xl overflow-hidden shadow-sm transition-all select-text ${className}`}
+      className={`flex flex-col flex-1 h-full min-h-[460px] rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden transition-all duration-150 select-text ${className}`}
     >
       {/* Result Panel Header Bar */}
-      <div className="shrink-0 flex items-center justify-between px-4 py-2.5 bg-[var(--well-header-bg)] border-b border-[var(--border-color)] text-xs select-none">
-        <div className="flex items-center gap-2.5 font-medium text-[var(--text-secondary)]">
-          <div className="w-6 h-6 rounded-lg bg-emerald-500/15 flex items-center justify-center text-emerald-500 dark:text-emerald-400">
+      <div className="shrink-0 flex items-center justify-between px-3.5 py-2.5 bg-slate-50/90 border-b border-slate-200/80 text-xs select-none">
+        <div className="flex items-center gap-2 font-medium text-slate-700">
+          <div className="w-6.5 h-6.5 rounded-lg bg-emerald-50 border border-emerald-200/70 flex items-center justify-center text-emerald-600">
             <Terminal className="w-3.5 h-3.5" />
           </div>
-          <span className="font-bold text-[var(--text-primary)]">{label}</span>
-          <span className="text-[10px] uppercase font-mono font-bold px-2 py-0.5 rounded bg-emerald-600 text-white dark:bg-emerald-500/20 dark:text-emerald-300 shadow-xs">
+          <span className="font-semibold text-slate-800">{label}</span>
+          <span className="text-[10px] uppercase font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60 shadow-2xs">
             {badgeText}
           </span>
           {language && (
-            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-black/5 dark:bg-black/40 text-[var(--text-secondary)]">
+            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200/80">
               {language}
             </span>
           )}
@@ -83,10 +83,10 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
           <button
             type="button"
             onClick={() => setWrap(!wrap)}
-            className={`px-3 py-1.5 rounded-lg text-xs transition cursor-pointer flex items-center gap-1.5 ${
+            className={`px-2.5 py-1 rounded-lg text-xs transition cursor-pointer flex items-center gap-1.5 ${
               wrap
-                ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-semibold'
-                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)]'
+                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/70 font-semibold shadow-2xs'
+                : 'text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 border border-transparent'
             }`}
             title={wrap ? 'Line wrapping enabled (click to disable)' : 'Line wrapping disabled (click to enable)'}
           >
@@ -102,22 +102,22 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
 
       {/* Result Panel Content Area */}
       <div
-        className="relative flex flex-1 min-h-0 overflow-auto bg-[var(--well-readonly-bg)]"
+        className="relative flex flex-1 min-h-0 overflow-auto bg-[#f8fafc]"
         style={{ minHeight }}
       >
         {value ? (
           <IdeEditor value={value} label={label} language={language} readOnly wrap={wrap} minHeight={minHeight} maxHeight={maxHeight} />
         ) : (
-          <div className="flex flex-col items-center justify-center flex-1 h-full min-h-[340px] p-8 text-[var(--text-muted)] select-none bg-[var(--well-readonly-bg)]">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center mb-3 text-emerald-500 shadow-xs">
-              <Terminal className="w-6 h-6 opacity-80" />
+          <div className="flex flex-col items-center justify-center flex-1 h-full min-h-[340px] p-8 text-slate-400 select-none bg-[#f8fafc]">
+            <div className="w-11 h-11 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center mb-3 text-emerald-600 shadow-2xs">
+              <Terminal className="w-5 h-5 opacity-90" />
             </div>
-            <p className="text-sm font-bold text-[var(--text-primary)] text-center">
+            <p className="text-sm font-semibold text-slate-700 text-center">
               {placeholder && placeholder !== 'Type or paste content here...'
                 ? placeholder
                 : 'Result will appear here automatically'}
             </p>
-            <span className="text-xs text-[var(--text-muted)] mt-1 text-center">
+            <span className="text-xs text-slate-400 mt-1 text-center">
               Output display · Non-editable
             </span>
           </div>
@@ -126,18 +126,18 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
 
       {/* Result Panel Footer / Stats */}
       {showStats && (
-        <div className="shrink-0 flex items-center justify-between px-4 py-2 bg-[var(--well-header-bg)] border-t border-[var(--border-color)] text-[11px] text-[var(--text-muted)] font-mono select-none">
-          <div className="flex items-center gap-3">
+        <div className="shrink-0 flex items-center justify-between px-3.5 py-2 bg-slate-50/70 border-t border-slate-200/80 text-[11px] text-slate-500 font-mono select-none">
+          <div className="flex items-center gap-2.5">
             <span>{lineCount} lines</span>
-            <span>•</span>
+            <span className="text-slate-300">•</span>
             <span>{charCount.toLocaleString()} chars</span>
-            <span>•</span>
+            <span className="text-slate-300">•</span>
             <span>{formatBytes(byteCount)}</span>
           </div>
 
-          <div className="flex items-center gap-1.5 text-[10px] text-emerald-600 dark:text-emerald-400 font-sans font-medium">
+          <div className="flex items-center gap-1.5 text-[10px] text-emerald-700 font-sans font-medium">
             <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>Read-only code</span>
+            <span>Read-only output</span>
           </div>
         </div>
       )}

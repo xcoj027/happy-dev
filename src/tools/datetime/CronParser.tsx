@@ -45,7 +45,7 @@ const FieldControl: React.FC<{ index: number; value: string; onChange: (value: s
         <input aria-label={`${field.name} range end`} type="number" min={field.min} max={field.max} className={`${control} w-full min-w-0`} value={range[1]} onChange={e => update(`${range[0]}-${e.target.value}`)} />
       </div>}
       {mode === 'custom' && <TextInput aria-label={`${field.name} values`} className={`${control} w-full font-mono`} value={value} onChange={e => update(e.target.value || '*')} placeholder="e.g. 1,5,10" />}
-      <div className="font-mono text-xs text-emerald-600 dark:text-emerald-400">{value}</div>
+      <div className="font-mono text-xs text-emerald-700 font-semibold">{value}</div>
     </div>
   );
 };
@@ -140,8 +140,8 @@ export const CronParser: React.FC = () => {
         <label htmlFor="cron-expression" className="block text-xs font-medium text-[var(--text-secondary)]">Cron expression · 5 fields (Unix) or 6 fields (with seconds)</label>
         <div className="flex items-center gap-2"><TextInput id="cron-expression" value={cronExpr} maxLength={200} onChange={e => { setExpression(e.target.value); setMode('expression'); }} className={`${control} flex-1 min-w-0 font-mono text-base`} /><CopyButton text={cronExpr} /></div>
         {isFields && <div className="flex flex-wrap gap-2">{parts.map((value, index) => <div key={index} className="well-3d rounded-lg px-3 py-2 text-xs"><span className="text-[var(--text-muted)]">{cronFields[index + offset].name}</span><div className="font-mono text-[var(--text-primary)]">{value}</div></div>)}</div>}
-        {(builderError || preview.error) ? <div role="alert" className="rounded-lg p-3 bg-rose-500/10 text-rose-600 dark:text-rose-400 text-xs">{builderError || preview.error}</div> : <div className="rounded-lg p-3 bg-emerald-500/10 text-[var(--text-primary)]">{preview.description}<span className="block mt-1 text-xs text-[var(--text-secondary)]">In {timezone}</span></div>}
-        {preview.bothDays && <p className="text-xs text-amber-600 dark:text-amber-400">Both day of month and day of week are restricted. This preview uses Unix OR behavior: either day rule can trigger a run.</p>}
+        {(builderError || preview.error) ? <div role="alert" className="rounded-lg p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs font-mono">{builderError || preview.error}</div> : <div className="rounded-lg p-3 bg-emerald-50 border border-emerald-200 text-emerald-900">{preview.description}<span className="block mt-1 text-xs text-emerald-700">In {timezone}</span></div>}
+        {preview.bothDays && <p className="text-xs text-amber-800">Both day of month and day of week are restricted. This preview uses Unix OR behavior: either day rule can trigger a run.</p>}
       </div>
 
       <div className="card-3d rounded-xl p-4 space-y-3">

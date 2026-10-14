@@ -130,13 +130,13 @@ export const WorldClockConverter: React.FC = () => {
       {/* Top Controls Bar */}
       <div className="card-3d p-4 rounded-xl flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-orange-500/15 flex items-center justify-center text-orange-400">
+          <div className="w-10 h-10 rounded-xl bg-orange-50 border border-orange-200 flex items-center justify-center text-orange-600">
             <Globe className="w-5 h-5" />
           </div>
           <div>
             <div className="text-xs text-[var(--text-secondary)]">Timezone Converter & Global Team Planner</div>
             <div className="text-sm font-semibold text-[var(--text-primary)]">
-              Reference Time: <span className="text-orange-400 font-mono">{selectedDate.toLocaleTimeString()}</span> ({Intl.DateTimeFormat().resolvedOptions().timeZone})
+              Reference Time: <span className="text-orange-700 font-mono">{selectedDate.toLocaleTimeString()}</span> ({Intl.DateTimeFormat().resolvedOptions().timeZone})
             </div>
           </div>
         </div>
@@ -159,7 +159,7 @@ export const WorldClockConverter: React.FC = () => {
               showAddModal ? 'btn-3d-active' : 'text-[var(--text-secondary)]'
             }`}
           >
-            <Plus className="w-3.5 h-3.5 text-orange-400" />
+            <Plus className="w-3.5 h-3.5 text-orange-600" />
             <span>Add City</span>
           </button>
         </div>
@@ -206,7 +206,7 @@ export const WorldClockConverter: React.FC = () => {
       <div className="card-3d p-4 rounded-xl space-y-2">
         <div className="flex items-center justify-between text-xs text-[var(--text-secondary)]">
           <span>Time Slider (Drag to test overlap hours)</span>
-          <span className="font-mono text-orange-400 font-semibold">{String(sourceHour).padStart(2, '0')}:00 Local</span>
+          <span className="font-mono text-orange-700 font-semibold">{String(sourceHour).padStart(2, '0')}:00 Local</span>
         </div>
         <input
           type="range"
@@ -214,7 +214,7 @@ export const WorldClockConverter: React.FC = () => {
           max={23}
           value={sourceHour}
           onChange={(e) => handleHourChange(Number(e.target.value))}
-          className="w-full accent-orange-500 cursor-pointer"
+          className="w-full accent-orange-600 cursor-pointer"
         />
         <div className="flex justify-between text-[10px] text-[var(--text-muted)] font-mono">
           <span>00:00 (Midnight)</span>
@@ -247,15 +247,15 @@ export const WorldClockConverter: React.FC = () => {
                   <div className="text-[11px] text-[var(--text-muted)]">{item.country}</div>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${
-                    isWorkHour ? 'bg-emerald-500/15 text-emerald-400' : 'bg-[var(--control-panel-bg)] text-[var(--text-muted)]'
+                  <span className={`text-[10px] px-2 py-0.5 rounded font-mono font-medium ${
+                    isWorkHour ? 'bg-emerald-50 border border-emerald-200 text-emerald-800' : 'bg-slate-100 text-slate-500'
                   }`}>
                     {isWorkHour ? 'Working' : 'Off-hours'}
                   </span>
                   <button
                     type="button"
                     onClick={() => togglePin(item.id)}
-                    className="opacity-0 group-hover:opacity-100 text-[var(--text-muted)] hover:text-rose-400 p-1 transition cursor-pointer"
+                    className="opacity-0 group-hover:opacity-100 text-[var(--text-muted)] hover:text-rose-600 p-1 transition cursor-pointer"
                     title="Remove from list"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -264,7 +264,7 @@ export const WorldClockConverter: React.FC = () => {
               </div>
 
               <div className="my-1">
-                <div className="text-2xl font-mono font-bold text-orange-400 tracking-wider">
+                <div className="text-2xl font-mono font-bold text-orange-700 tracking-wider">
                   {timeStr}
                 </div>
                 <div className="text-xs text-[var(--text-secondary)] font-mono">

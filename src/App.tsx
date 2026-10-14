@@ -28,14 +28,6 @@ export const App: React.FC = () => {
   const [showSplash, setShowSplash] = useState(true);
   const [activeToolId, setActiveToolId] = useState<string>('dashboard');
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
-  const [isDark, setIsDark] = useState(() => {
-    try {
-      const saved = localStorage.getItem('happydev_theme');
-      return saved ? saved === 'dark' : false;
-    } catch {
-      return false;
-    }
-  });
   const [favorites, setFavorites] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem('happydev_favorites');
@@ -45,18 +37,14 @@ export const App: React.FC = () => {
     }
   });
 
+  // Ensure root HTML document is strictly light-themed
   useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-      document.documentElement.classList.remove('light');
-    } else {
-      document.documentElement.classList.remove('dark');
-      document.documentElement.classList.add('light');
-    }
+    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
     try {
-      localStorage.setItem('happydev_theme', isDark ? 'dark' : 'light');
+      localStorage.removeItem('happydev_theme');
     } catch {}
-  }, [isDark]);
+  }, []);
 
   // Global keyboard shortcuts (Cmd+K / Ctrl+K)
   useEffect(() => {
@@ -83,10 +71,6 @@ export const App: React.FC = () => {
     );
   };
 
-  const toggleTheme = () => {
-    setIsDark((prev) => !prev);
-  };
-
   const isDashboard = activeToolId === 'dashboard';
 
   const dashboardTool = {
@@ -106,9 +90,9 @@ export const App: React.FC = () => {
   const ActiveComponent = activeTool.component;
 
   return (
-    <div className={`relative h-screen w-screen flex flex-col bg-transparent overflow-hidden font-sans select-none ${isDark ? 'dark text-gray-100' : 'light text-gray-800'}`}>
-      {/* Dynamic Ambient Background & Developer Artwork Layer */}
-      <BackgroundArtwork isDark={isDark} />
+    <div className="relative h-screen w-screen flex flex-col bg-transparent overflow-hidden font-sans select-none light text-slate-800">
+      {/* Dynamic Ambient Background Layer */}
+      <BackgroundArtwork />
 
       {/* Splash Screen */}
       {showSplash && <Splash onFinish={() => setShowSplash(false)} />}
@@ -119,25 +103,23 @@ export const App: React.FC = () => {
         onGoHome={() => setActiveToolId('dashboard')}
       />
 
-      {/* Main Workspace with Glassmorphic Floating Panes */}
+      {/* Main Workspace with Clean Panes */}
       <div className="relative z-10 app-no-drag flex-1 flex overflow-hidden min-h-0">
         {/* Left Sidebar */}
         <Sidebar
           activeToolId={activeToolId}
           onSelectTool={(id) => setActiveToolId(id)}
-          isDark={isDark}
-          onToggleTheme={toggleTheme}
         />
 
         {/* Center Content Stage */}
-        <main className="flex-1 h-full min-h-0 min-w-0 overflow-hidden p-4 sm:p-5 bg-transparent flex flex-col">
+        <main className="flex-1 h-full min-h-0 min-w-0 overflow-hidden p-3.5 sm:p-4 bg-transparent flex flex-col">
           {isDashboard ? (
             /* Dashboard: Pure borderless canvas without enclosing background box */
             <div className="flex-1 flex flex-col min-h-0 overflow-y-auto px-1 py-0.5 bg-transparent">
               <DashboardPage onSelectTool={(id) => setActiveToolId(id)} />
             </div>
           ) : (
-            <div className="flex-1 flex flex-col overflow-hidden min-h-0 glass-panel rounded-3xl">
+            <div className="flex-1 flex flex-col overflow-hidden min-h-0 glass-panel rounded-2xl border border-slate-200/90 shadow-sm">
               <Header
                 tool={activeTool}
                 isFavorite={favorites.includes(activeTool.id)}
@@ -145,7 +127,7 @@ export const App: React.FC = () => {
               />
 
               {/* Active Tool View */}
-              <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-5 sm:p-6 bg-transparent">
+              <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 sm:p-5 bg-[#fafbfd]">
                 <ErrorBoundary key={activeToolId} fallbackToolName={activeTool.name}>
                   <ActiveComponent />
                 </ErrorBoundary>

@@ -277,7 +277,7 @@ export const PropertiesYamlConverter: React.FC<PropertiesYamlConverterProps> = (
                 <select
                   value={indent}
                   onChange={(e) => setIndent(Number(e.target.value))}
-                  className="bg-[var(--control-input-bg)] border border-black/5 dark:border-white/10 rounded-md px-2 py-1 text-xs text-[var(--text-primary)] outline-none cursor-pointer"
+                  className="bg-white border border-slate-300 rounded-md px-2 py-1 text-xs text-slate-800 outline-none cursor-pointer focus:border-emerald-500"
                 >
                   <option value={2}>2 spaces</option>
                   <option value={4}>4 spaces</option>
@@ -290,7 +290,7 @@ export const PropertiesYamlConverter: React.FC<PropertiesYamlConverterProps> = (
                   type="checkbox"
                   checked={inferTypes}
                   onChange={(e) => setInferTypes(e.target.checked)}
-                  className="rounded text-emerald-500 cursor-pointer accent-emerald-500"
+                  className="rounded text-emerald-600 cursor-pointer accent-emerald-600 border-slate-300"
                 />
                 <span>Infer numbers/booleans</span>
               </label>
@@ -303,7 +303,7 @@ export const PropertiesYamlConverter: React.FC<PropertiesYamlConverterProps> = (
                 <select
                   value={arrayFormat}
                   onChange={(e) => setArrayFormat(e.target.value as any)}
-                  className="bg-[var(--control-input-bg)] border border-black/5 dark:border-white/10 rounded-md px-2 py-1 text-xs text-[var(--text-primary)] outline-none cursor-pointer"
+                  className="bg-white border border-slate-300 rounded-md px-2 py-1 text-xs text-slate-800 outline-none cursor-pointer focus:border-emerald-500"
                 >
                   <option value="bracket">items[0]</option>
                   <option value="dot">items.0</option>
@@ -316,7 +316,7 @@ export const PropertiesYamlConverter: React.FC<PropertiesYamlConverterProps> = (
                 <select
                   value={delimiter}
                   onChange={(e) => setDelimiter(e.target.value)}
-                  className="bg-[var(--control-input-bg)] border border-black/5 dark:border-white/10 rounded-md px-2 py-1 text-xs text-[var(--text-primary)] outline-none cursor-pointer"
+                  className="bg-white border border-slate-300 rounded-md px-2 py-1 text-xs text-slate-800 outline-none cursor-pointer focus:border-emerald-500"
                 >
                   <option value="=">=</option>
                   <option value=" = "> = </option>
@@ -333,7 +333,7 @@ export const PropertiesYamlConverter: React.FC<PropertiesYamlConverterProps> = (
               type="checkbox"
               checked={sortKeys}
               onChange={(e) => setSortKeys(e.target.checked)}
-              className="rounded text-emerald-500 cursor-pointer accent-emerald-500"
+              className="rounded text-emerald-600 cursor-pointer accent-emerald-600 border-slate-300"
             />
             <span>Sort A-Z</span>
           </label>
@@ -342,8 +342,8 @@ export const PropertiesYamlConverter: React.FC<PropertiesYamlConverterProps> = (
 
       {/* Error notification banner */}
       {error && (
-        <div className="flex items-center gap-2 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-500 dark:text-rose-400 text-xs">
-          <AlertCircle className="w-4 h-4 shrink-0" />
+        <div className="flex items-center gap-2 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs">
+          <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
           <span className="font-mono">{error}</span>
         </div>
       )}

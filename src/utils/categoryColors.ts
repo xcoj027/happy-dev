@@ -23,62 +23,62 @@ export interface CategoryColorTheme {
 
 export const categoryColors: Record<ToolCategory, CategoryColorTheme> = {
   converters: {
-    text: 'text-emerald-500 dark:text-emerald-400',
-    bg: 'bg-emerald-500/15',
-    colorHex: '#10b981',
-    gradient: 'from-emerald-500/20 to-teal-500/20',
+    text: 'text-emerald-700',
+    bg: 'bg-emerald-50 border border-emerald-200/60',
+    colorHex: '#059669',
+    gradient: 'from-emerald-500/15 to-teal-500/15',
   },
   encoders: {
-    text: 'text-cyan-500 dark:text-cyan-400',
-    bg: 'bg-cyan-500/15',
-    colorHex: '#06b6d4',
-    gradient: 'from-cyan-500/20 to-sky-500/20',
+    text: 'text-cyan-700',
+    bg: 'bg-cyan-50 border border-cyan-200/60',
+    colorHex: '#0891b2',
+    gradient: 'from-cyan-500/15 to-sky-500/15',
   },
   crypto: {
-    text: 'text-amber-500 dark:text-amber-400',
-    bg: 'bg-amber-500/15',
-    colorHex: '#f59e0b',
-    gradient: 'from-amber-500/20 to-yellow-500/20',
+    text: 'text-amber-800',
+    bg: 'bg-amber-50 border border-amber-200/60',
+    colorHex: '#d97706',
+    gradient: 'from-amber-500/15 to-yellow-500/15',
   },
   formatters: {
-    text: 'text-indigo-500 dark:text-indigo-400',
-    bg: 'bg-indigo-500/15',
-    colorHex: '#6366f1',
-    gradient: 'from-indigo-500/20 to-violet-500/20',
+    text: 'text-indigo-700',
+    bg: 'bg-indigo-50 border border-indigo-200/60',
+    colorHex: '#4f46e5',
+    gradient: 'from-indigo-500/15 to-violet-500/15',
   },
   datetime: {
-    text: 'text-orange-500 dark:text-orange-400',
-    bg: 'bg-orange-500/15',
-    colorHex: '#f97316',
-    gradient: 'from-orange-500/20 to-amber-500/20',
+    text: 'text-orange-800',
+    bg: 'bg-orange-50 border border-orange-200/60',
+    colorHex: '#ea580c',
+    gradient: 'from-orange-500/15 to-amber-500/15',
   },
   text: {
-    text: 'text-purple-500 dark:text-purple-400',
-    bg: 'bg-purple-500/15',
-    colorHex: '#a855f7',
-    gradient: 'from-purple-500/20 to-fuchsia-500/20',
+    text: 'text-purple-700',
+    bg: 'bg-purple-50 border border-purple-200/60',
+    colorHex: '#9333ea',
+    gradient: 'from-purple-500/15 to-fuchsia-500/15',
   },
   generators: {
-    text: 'text-pink-500 dark:text-pink-400',
-    bg: 'bg-pink-500/15',
-    colorHex: '#ec4899',
-    gradient: 'from-pink-500/20 to-rose-500/20',
+    text: 'text-pink-700',
+    bg: 'bg-pink-50 border border-pink-200/60',
+    colorHex: '#db2777',
+    gradient: 'from-pink-500/15 to-rose-500/15',
   },
   network: {
-    text: 'text-sky-500 dark:text-sky-400',
-    bg: 'bg-sky-500/15',
-    colorHex: '#0ea5e9',
-    gradient: 'from-sky-500/20 to-blue-500/20',
+    text: 'text-sky-700',
+    bg: 'bg-sky-50 border border-sky-200/60',
+    colorHex: '#0284c7',
+    gradient: 'from-sky-500/15 to-blue-500/15',
   },
 };
 
 export const getCategoryColor = (category: ToolCategory): CategoryColorTheme => {
   return (
     categoryColors[category] || {
-      text: 'text-emerald-500 dark:text-emerald-400',
-      bg: 'bg-emerald-500/15',
-      colorHex: '#10b981',
-      gradient: 'from-emerald-500/20 to-teal-500/20',
+      text: 'text-emerald-700',
+      bg: 'bg-emerald-50 border border-emerald-200/60',
+      colorHex: '#059669',
+      gradient: 'from-emerald-500/15 to-teal-500/15',
     }
   );
 };

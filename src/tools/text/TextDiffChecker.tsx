@@ -33,7 +33,7 @@ export const TextDiffChecker: React.FC = () => {
     <div className="flex-1 flex flex-col h-full space-y-3 min-h-[540px]">
       <div className="flex items-center justify-between p-3 card-3d rounded-xl">
         <div className="flex items-center gap-2">
-          <GitCompare className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
+          <GitCompare className="w-4 h-4 text-emerald-600" />
           <span className="text-xs text-[var(--text-secondary)] font-medium">Text & Code Diff Comparison</span>
         </div>
         <div className="flex items-center gap-1.5">
@@ -59,7 +59,7 @@ export const TextDiffChecker: React.FC = () => {
       </div>
 
       {isTooLarge && (
-        <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs text-amber-600 dark:text-amber-400">
+        <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800">
           Note: Input exceeds 100,000 characters. To prevent browser freezing, diff is computed on the first 100,000 characters.
         </div>
       )}
@@ -83,9 +83,9 @@ export const TextDiffChecker: React.FC = () => {
         <div className="p-3 well-3d rounded-lg font-mono text-xs overflow-auto max-h-[350px] leading-relaxed select-text">
           {diffResult.map((part, index) => {
             const color = part.added
-              ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-l-2 border-emerald-500 pl-1'
+              ? 'bg-emerald-100 text-emerald-900 border-l-2 border-emerald-500 pl-1 font-semibold'
               : part.removed
-              ? 'bg-rose-500/20 text-rose-700 dark:text-rose-300 border-l-2 border-rose-500 pl-1 line-through'
+              ? 'bg-rose-100 text-rose-900 border-l-2 border-rose-500 pl-1 line-through'
               : 'text-[var(--text-primary)]';
             return (
               <span key={index} className={`${color} whitespace-pre-wrap`}>

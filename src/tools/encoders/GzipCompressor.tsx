@@ -120,9 +120,9 @@ export const GzipCompressor: React.FC = () => {
       </div>
 
       {stats && mode === 'compress' && (
-        <div className="flex items-center justify-between p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-600 dark:text-emerald-400">
+        <div className="flex items-center justify-between p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800">
           <div className="flex items-center gap-2">
-            <Gauge className="w-4 h-4" />
+            <Gauge className="w-4 h-4 text-emerald-600" />
             <span>
               Original: <strong className="font-mono">{stats.orig.toLocaleString()} B</strong> → Compressed:{' '}
               <strong className="font-mono">{stats.comp.toLocaleString()} B</strong>
@@ -135,8 +135,8 @@ export const GzipCompressor: React.FC = () => {
       )}
 
       {error && (
-        <div className="flex items-center gap-2 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-600 dark:text-rose-400 text-xs font-mono">
-          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+        <div className="flex items-center gap-2 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-mono">
+          <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-600" />
           <span>{error}</span>
         </div>
       )}

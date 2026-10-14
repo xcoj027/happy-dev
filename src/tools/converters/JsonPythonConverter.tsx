@@ -58,7 +58,7 @@ export const JsonPythonConverter: React.FC = () => {
           <span className="text-[11px] text-[var(--text-muted)]">{direction === 'json' ? 'Python 3.9+ type hints & nested DTOs.' : 'Sample JSON from annotated classes.'}</span>
         </div>
       </div>
-      {error && <div role="alert" className="px-4 py-3 rounded-xl bg-rose-500/10 text-rose-500 text-xs font-mono">{error}</div>}
+      {error && <div role="alert" className="px-4 py-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-mono">{error}</div>}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-[460px]">
         <CodeEditor label={direction === 'json' ? 'JSON Input' : 'Python DTO Input'} language={direction === 'json' ? 'json' : 'python'} value={input} onChange={setInput} placeholder={direction === 'json' ? 'Paste a JSON object...' : 'Paste Python classes or records...'} />
         <CodeEditor label={direction === 'json' ? 'Generated Python DTO' : 'Generated Sample JSON'} language={direction === 'json' ? 'python' : 'json'} value={output} readOnly placeholder="Converted output appears automatically..." />

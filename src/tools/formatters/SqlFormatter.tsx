@@ -54,7 +54,7 @@ export const SqlFormatter: React.FC = () => {
       {/* Settings Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 p-3 card-3d rounded-xl">
         <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)]">
-          <Database className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
+          <Database className="w-4 h-4 text-emerald-600" />
           <label className="flex items-center gap-1.5">
             <span>Dialect:</span>
             <select
@@ -100,8 +100,8 @@ export const SqlFormatter: React.FC = () => {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-600 dark:text-rose-400 text-xs font-mono">
-          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+        <div className="flex items-center gap-2 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-mono">
+          <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-600" />
           <span>{error}</span>
         </div>
       )}

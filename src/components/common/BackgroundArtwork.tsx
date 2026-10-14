@@ -14,29 +14,18 @@
 
 import React from 'react';
 
-interface BackgroundArtworkProps {
-  isDark: boolean;
-}
-
-export const BackgroundArtwork: React.FC<BackgroundArtworkProps> = ({ isDark }) => {
+export const BackgroundArtwork: React.FC = () => {
   return (
     <div
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 z-0 overflow-hidden select-none"
     >
-      {/* Cohesive, seamless solid canvas base */}
-      <div
-        className={`absolute inset-0 transition-colors duration-500 ${
-          isDark ? 'bg-[#080b11]' : 'bg-[#f1f5f9]'
-        }`}
-      />
+      {/* Crisp, clean slate-50 light canvas base */}
+      <div className="absolute inset-0 bg-[#f8fafc]" />
 
-      {/* Gentle, unified ambient emerald glow at top for depth without chaotic colors */}
-      <div
-        className={`absolute -top-32 left-1/2 -translate-x-1/2 w-[70vw] h-[360px] rounded-full blur-[120px] pointer-events-none transition-opacity duration-700 ${
-          isDark ? 'bg-emerald-500/[0.04]' : 'bg-emerald-500/[0.03]'
-        }`}
-      />
+      {/* Very soft ambient emerald & slate gradient mesh for subtle depth */}
+      <div className="absolute -top-36 left-1/2 -translate-x-1/2 w-[75vw] h-[380px] rounded-full blur-[130px] pointer-events-none bg-emerald-500/[0.04]" />
+      <div className="absolute -bottom-36 -right-20 w-[40vw] h-[360px] rounded-full blur-[140px] pointer-events-none bg-sky-500/[0.03]" />
     </div>
   );
 };

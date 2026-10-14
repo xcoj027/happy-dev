@@ -114,12 +114,12 @@ export const UnixTimestampConverter: React.FC = () => {
       {/* Live Current Epoch Banner */}
       <div className="card-3d p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-orange-500/15 flex items-center justify-center text-orange-400">
+          <div className="w-10 h-10 rounded-xl bg-orange-50 border border-orange-200 flex items-center justify-center text-orange-600">
             <Clock className="w-5 h-5" />
           </div>
           <div>
             <div className="text-xs text-[var(--text-secondary)]">Current Unix Epoch Timestamp (Seconds)</div>
-            <div className="text-xl font-mono font-bold text-orange-400 tracking-wider">
+            <div className="text-xl font-mono font-bold text-orange-600 tracking-wider">
               {currentEpoch}
             </div>
           </div>
@@ -143,7 +143,7 @@ export const UnixTimestampConverter: React.FC = () => {
             className="btn-3d p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition cursor-pointer"
             title={isLive ? 'Pause live clock' : 'Resume live clock'}
           >
-            {isLive ? <Pause className="w-4 h-4 text-amber-400" /> : <Play className="w-4 h-4 text-emerald-400" />}
+            {isLive ? <Pause className="w-4 h-4 text-amber-600" /> : <Play className="w-4 h-4 text-emerald-600" />}
           </button>
         </div>
       </div>
@@ -157,7 +157,7 @@ export const UnixTimestampConverter: React.FC = () => {
             activeTab === 'single' ? 'btn-3d-active' : 'text-[var(--text-secondary)]'
           }`}
         >
-          <Clock className="w-3.5 h-3.5 text-orange-400" />
+          <Clock className="w-3.5 h-3.5 text-orange-600" />
           <span>Timestamp → Human Date</span>
         </button>
         <button
@@ -167,7 +167,7 @@ export const UnixTimestampConverter: React.FC = () => {
             activeTab === 'datetoepoch' ? 'btn-3d-active' : 'text-[var(--text-secondary)]'
           }`}
         >
-          <Calendar className="w-3.5 h-3.5 text-emerald-400" />
+          <Calendar className="w-3.5 h-3.5 text-emerald-600" />
           <span>Date & Time → Epoch</span>
         </button>
       </div>
@@ -237,7 +237,7 @@ export const UnixTimestampConverter: React.FC = () => {
                 <span>Local Timezone ({Intl.DateTimeFormat().resolvedOptions().timeZone})</span>
                 {isValidDate && <CopyButton text={parsedDate!.toLocaleString()} label="Copy" />}
               </div>
-              <div className="text-sm font-mono text-emerald-400 truncate select-all">
+              <div className="text-sm font-mono text-emerald-700 font-semibold truncate select-all">
                 {hasSingleInput ? (isValidDate ? parsedDate!.toLocaleString() : 'Invalid Timestamp') : '—'}
               </div>
             </div>
@@ -246,7 +246,7 @@ export const UnixTimestampConverter: React.FC = () => {
               <div className="flex items-center justify-between text-[11px] text-[var(--text-secondary)]">
                 <span>Relative Time</span>
               </div>
-              <div className="text-sm font-medium text-orange-400 truncate">
+              <div className="text-sm font-semibold text-orange-700 truncate">
                 {hasSingleInput ? (isValidDate ? getRelativeTime(parsedDate!) : '—') : '—'}
               </div>
             </div>
@@ -266,7 +266,7 @@ export const UnixTimestampConverter: React.FC = () => {
                 <span>Epoch Milliseconds (13 digits)</span>
                 {isValidDate && <CopyButton text={parsedDate!.getTime().toString()} label="Copy" />}
               </div>
-              <div className="text-sm font-mono text-cyan-400 truncate select-all">
+              <div className="text-sm font-mono text-cyan-700 font-semibold truncate select-all">
                 {hasSingleInput && isValidDate ? parsedDate!.getTime() : '—'}
               </div>
             </div>
@@ -276,7 +276,7 @@ export const UnixTimestampConverter: React.FC = () => {
                 <span>Unix Hexadecimal</span>
                 {isValidDate && <CopyButton text={`0x${Math.floor(parsedDate!.getTime() / 1000).toString(16)}`} label="Copy" />}
               </div>
-              <div className="text-sm font-mono text-purple-400 truncate select-all">
+              <div className="text-sm font-mono text-purple-700 font-semibold truncate select-all">
                 {hasSingleInput && isValidDate ? `0x${Math.floor(parsedDate!.getTime() / 1000).toString(16)}` : '—'}
               </div>
             </div>
@@ -320,7 +320,7 @@ export const UnixTimestampConverter: React.FC = () => {
                 <span>Seconds (10 digits)</span>
                 <CopyButton text={Math.floor(calculatedEpochMs / 1000).toString()} label="Copy" />
               </div>
-              <div className="text-base font-mono font-semibold text-orange-400 truncate">
+              <div className="text-base font-mono font-bold text-orange-700 truncate">
                 {Math.floor(calculatedEpochMs / 1000)}
               </div>
             </div>
@@ -330,7 +330,7 @@ export const UnixTimestampConverter: React.FC = () => {
                 <span>Milliseconds (13 digits)</span>
                 <CopyButton text={calculatedEpochMs.toString()} label="Copy" />
               </div>
-              <div className="text-base font-mono font-semibold text-cyan-400 truncate">
+              <div className="text-base font-mono font-bold text-cyan-700 truncate">
                 {calculatedEpochMs}
               </div>
             </div>
@@ -340,7 +340,7 @@ export const UnixTimestampConverter: React.FC = () => {
                 <span>Microseconds (16 digits)</span>
                 <CopyButton text={`${calculatedEpochMs}000`} label="Copy" />
               </div>
-              <div className="text-base font-mono font-semibold text-emerald-400 truncate">
+              <div className="text-base font-mono font-bold text-emerald-700 truncate">
                 {calculatedEpochMs}000
               </div>
             </div>
@@ -350,7 +350,7 @@ export const UnixTimestampConverter: React.FC = () => {
                 <span>Nanoseconds (19 digits)</span>
                 <CopyButton text={`${calculatedEpochMs}000000`} label="Copy" />
               </div>
-              <div className="text-base font-mono font-semibold text-purple-400 truncate">
+              <div className="text-base font-mono font-bold text-purple-700 truncate">
                 {calculatedEpochMs}000000
               </div>
             </div>

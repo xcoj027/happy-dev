@@ -19,27 +19,22 @@ import { DynamicIcon } from '../common/DynamicIcon';
 import { getCategoryColor } from '../../utils/categoryColors';
 import {
   Search,
-  Moon,
-  Sun,
   LayoutDashboard,
   PanelLeftClose,
   PanelLeftOpen,
   X,
   ChevronDown,
+  ShieldCheck,
 } from 'lucide-react';
 
 interface SidebarProps {
   activeToolId: string;
   onSelectTool: (id: string) => void;
-  isDark: boolean;
-  onToggleTheme: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
   activeToolId,
   onSelectTool,
-  isDark,
-  onToggleTheme,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedCategory, setExpandedCategory] = useState<string | null>(() =>
@@ -102,14 +97,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
         ) : (
           <>
             <div className="flex items-center justify-between px-1">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                 Utilities
               </span>
               <button
                 type="button"
                 onClick={() => setIsCollapsed(true)}
-                className="p-1.5 rounded-xl text-[var(--text-muted)] hover:text-emerald-500 hover:bg-[var(--surface-hover)] transition cursor-pointer"
+                className="p-1.5 rounded-xl text-[var(--text-muted)] hover:text-emerald-600 hover:bg-[var(--surface-hover)] transition cursor-pointer"
                 title="Collapse sidebar"
               >
                 <PanelLeftClose className="w-4 h-4" />
@@ -159,14 +154,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
             isCollapsed ? 'justify-center p-2.5' : 'justify-between px-3 py-2'
           } rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer select-none ${
             activeToolId === 'dashboard'
-              ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-bold'
+              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/70 font-bold'
               : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] hover:translate-x-1 hover:text-[var(--text-primary)]'
           }`}
         >
           <div className="flex items-center gap-2.5 pointer-events-none">
             <LayoutDashboard
               className={`w-4 h-4 shrink-0 transition-transform group-hover:scale-110 ${
-                activeToolId === 'dashboard' ? 'text-emerald-500' : 'text-emerald-500/80 group-hover:text-emerald-500'
+                activeToolId === 'dashboard' ? 'text-emerald-600' : 'text-emerald-600/70 group-hover:text-emerald-600'
               }`}
             />
             {!isCollapsed && <span>Dashboard</span>}
@@ -217,7 +212,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         onClick={() => onSelectTool(tool.id)}
                         aria-current={activeToolId === tool.id ? 'page' : undefined}
                         className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-xs text-left transition-all duration-150 cursor-pointer ${activeToolId === tool.id
-                          ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-semibold translate-x-0.5'
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/70 font-semibold translate-x-0.5'
                           : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] hover:translate-x-1 hover:text-[var(--text-primary)]'}`}
                       >
                         <DynamicIcon name={tool.icon} size={14} className={`${catColor.text} shrink-0`} />
@@ -232,36 +227,29 @@ export const Sidebar: React.FC<SidebarProps> = ({
         })}
       </div>
 
-      {/* Bottom Footer: Theme & App Details */}
+      {/* Bottom Footer: App Status & Count */}
       <div
-        className={`p-3 border-t border-[var(--border-subtle)] flex items-center ${
+        className={`p-3 border-t border-[var(--border-subtle)] bg-[var(--surface-card)] flex items-center ${
           isCollapsed ? 'justify-center' : 'justify-between'
         } text-xs text-[var(--text-secondary)]`}
       >
-        <button
-          type="button"
-          onClick={onToggleTheme}
-          className={`btn-3d flex items-center ${
-            isCollapsed ? 'p-2 justify-center' : 'gap-1.5 px-3 py-1.5'
-          } rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition cursor-pointer`}
-          title={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
-        >
-          {isDark ? (
-            <Sun className="w-3.5 h-3.5 text-amber-400" />
-          ) : (
-            <Moon className="w-3.5 h-3.5 text-indigo-500" />
-          )}
-          {!isCollapsed && (
-            <span className="text-[11px] font-medium">
-              {isDark ? 'Light' : 'Dark'}
+        {isCollapsed ? (
+          <div
+            className="w-8 h-8 rounded-xl flex items-center justify-center text-emerald-600 bg-emerald-50 border border-emerald-200/60"
+            title={`${toolsRegistry.length} Offline Tools Available`}
+          >
+            <ShieldCheck className="w-4 h-4" />
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center gap-1.5 text-[11px] text-[var(--text-muted)]">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Offline Suite</span>
+            </div>
+            <span className="text-[10px] font-mono text-emerald-700 font-semibold px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/60">
+              {toolsRegistry.length} Tools
             </span>
-          )}
-        </button>
-
-        {!isCollapsed && (
-          <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10">
-            {toolsRegistry.length} Tools
-          </span>
+          </>
         )}
       </div>
     </aside>

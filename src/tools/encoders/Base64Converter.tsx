@@ -66,15 +66,15 @@ export const Base64Converter: React.FC<Base64ConverterProps> = ({ initialMode = 
   return (
     <div className="base64-layout space-y-4 min-w-0">
       {/* Mode Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-4 sm:p-4.5 card-3d rounded-2xl">
-        <div className="flex items-center gap-2.5">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-white border border-slate-200/90 rounded-xl shadow-2xs">
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setMode('encode')}
-            className={`btn-3d px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer transition ${
+            className={`btn-3d px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition ${
               mode === 'encode'
                 ? 'btn-3d-active'
-                : 'text-[var(--text-secondary)]'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Text → Base64 (Encode)
@@ -82,36 +82,36 @@ export const Base64Converter: React.FC<Base64ConverterProps> = ({ initialMode = 
           <button
             type="button"
             onClick={() => setMode('decode')}
-            className={`btn-3d px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer transition ${
+            className={`btn-3d px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition ${
               mode === 'decode'
                 ? 'btn-3d-active'
-                : 'text-[var(--text-secondary)]'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Base64 → Text (Decode)
           </button>
         </div>
 
-        <label className="flex items-center gap-1.5 text-xs text-[var(--text-secondary)] cursor-pointer">
+        <label className="flex items-center gap-2 text-xs text-slate-600 cursor-pointer select-none">
           <input
             type="checkbox"
             checked={urlSafe}
             onChange={(e) => setUrlSafe(e.target.checked)}
-            className="rounded text-emerald-500 focus:ring-0 cursor-pointer"
+            className="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
           />
           <span>URL-Safe Base64 (- and _ instead of + and /)</span>
         </label>
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 p-3 bg-rose-500/10 rounded-xl text-rose-500 dark:text-rose-400 text-xs font-mono">
-          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+        <div className="flex items-center gap-2 p-3 bg-rose-50 border border-rose-200/80 rounded-xl text-rose-700 text-xs font-mono">
+          <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-600" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Editor Grid */}
-      <div className="base64-editors grid grid-cols-1 gap-4">
+      <div className="base64-editors grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1">
         <CodeEditor
           label={mode === 'encode' ? 'Plain Text String' : 'Base64 Encoded String'}
           value={input}

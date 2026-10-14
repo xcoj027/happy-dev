@@ -1347,9 +1347,9 @@ export const ScreenCapture: React.FC = () => {
     >
       {/* Error alert */}
       {errorMessage && (
-        <div role="alert" className="rounded-xl p-3 text-xs bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-between">
+        <div role="alert" className="rounded-xl p-3 text-xs bg-rose-50 border border-rose-200 text-rose-700 flex items-center justify-between font-mono">
           <div className="flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0" />
+            <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
             <span>{errorMessage}</span>
           </div>
           <button
@@ -1523,7 +1523,7 @@ export const ScreenCapture: React.FC = () => {
                 type="button"
                 onClick={() => startCapture('area')}
                 disabled={isCapturing}
-                className="btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 dark:bg-emerald-600 dark:hover:bg-emerald-500 transition cursor-pointer shadow-sm disabled:opacity-50"
+                className="btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 transition cursor-pointer shadow-sm disabled:opacity-50"
                 title="Chụp 1 vùng nhỏ màn hình (Kéo chuột chọn vùng)"
               >
                 <Crosshair className="w-3.5 h-3.5" />
@@ -1535,7 +1535,7 @@ export const ScreenCapture: React.FC = () => {
                 type="button"
                 onClick={() => startCapture('full')}
                 disabled={isCapturing}
-                className="btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 transition cursor-pointer disabled:opacity-50"
+                className="btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-emerald-700 hover:bg-emerald-50 transition cursor-pointer disabled:opacity-50"
                 title="Chụp toàn bộ cửa sổ hoặc màn hình"
               >
                 <Monitor className="w-3.5 h-3.5" />
@@ -1557,7 +1557,7 @@ export const ScreenCapture: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowUnsupportedModal(true)}
-                className="btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-sky-600 dark:text-sky-400 hover:bg-sky-500/10 transition cursor-pointer"
+                className="btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-sky-700 hover:bg-sky-50 transition cursor-pointer"
                 title="Xem phím tắt chụp màn hình trên máy"
               >
                 <Camera className="w-3.5 h-3.5" />
@@ -1567,7 +1567,7 @@ export const ScreenCapture: React.FC = () => {
           )}
 
           {/* Countdown Selector */}
-          <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--surface-recessed)] text-[11px] text-[var(--text-secondary)] border border-black/5 dark:border-white/5">
+          <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--surface-recessed)] text-[11px] text-[var(--text-secondary)] border border-slate-200">
             <Clock className="w-3 h-3 text-emerald-500" />
             <span className="text-[10px] uppercase font-bold text-[var(--text-muted)]">Hẹn giờ:</span>
             <select
@@ -1643,7 +1643,7 @@ export const ScreenCapture: React.FC = () => {
               <Trash2 className="w-3.5 h-3.5" />
             </button>
 
-            <div className="h-4 w-px bg-black/10 dark:bg-white/10 mx-0.5" />
+            <div className="h-4 w-px bg-slate-200 mx-0.5" />
 
             <button
               type="button"
@@ -1667,7 +1667,7 @@ export const ScreenCapture: React.FC = () => {
             <button
               type="button"
               onClick={() => handleDownload('png')}
-              className="btn-3d flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer text-emerald-600 dark:text-emerald-400"
+              className="btn-3d flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer text-emerald-700"
               title="Lưu ảnh định dạng PNG gốc"
             >
               <Download className="w-3.5 h-3.5" />
@@ -1783,7 +1783,7 @@ export const ScreenCapture: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleApplyCrop}
-                  className="btn-3d flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 cursor-pointer"
+                  className="btn-3d flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 cursor-pointer"
                 >
                   <Check className="w-3.5 h-3.5" />
                   <span>Áp dụng cắt</span>
@@ -1807,7 +1807,7 @@ export const ScreenCapture: React.FC = () => {
                         type="button"
                         onClick={() => setColor(p.hex)}
                         className={`w-5 h-5 rounded-full transition-transform cursor-pointer border ${
-                          color === p.hex ? 'scale-125 border-emerald-500 ring-2 ring-emerald-500/30' : 'border-black/20 dark:border-white/20'
+                          color === p.hex ? 'scale-125 border-emerald-500 ring-2 ring-emerald-500/30' : 'border-slate-300'
                         }`}
                         style={{ backgroundColor: p.hex }}
                         title={p.label}
@@ -1868,7 +1868,7 @@ export const ScreenCapture: React.FC = () => {
                 ) : null}
 
                 {/* Zoom controls */}
-                <div className="flex items-center gap-1 pl-1 border-l border-black/10 dark:border-white/10">
+                <div className="flex items-center gap-1 pl-1 border-l border-slate-200">
                   <button
                     type="button"
                     onClick={() => handleZoom(0.8)}
@@ -1908,7 +1908,7 @@ export const ScreenCapture: React.FC = () => {
         {baseImage ? (
           <div className="flex-1 w-full h-full overflow-auto flex items-center justify-center p-4 bg-[var(--surface-recessed)]/50 relative">
             <div
-              className="relative shadow-2xl rounded border border-black/10 dark:border-white/10 overflow-hidden"
+              className="relative shadow-2xl rounded border border-slate-200 overflow-hidden"
               style={{
                 width: zoomMode === 'fit' ? 'auto' : `${baseImage.naturalWidth * zoomLevel}px`,
                 height: zoomMode === 'fit' ? 'auto' : `${baseImage.naturalHeight * zoomLevel}px`,
@@ -2000,7 +2000,7 @@ export const ScreenCapture: React.FC = () => {
             </div>
 
             {!isDisplayMediaSupported && (
-              <div className="px-4 py-2.5 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 text-xs flex items-center gap-2 max-w-md border-b border-sky-500/20 text-left">
+              <div className="px-4 py-2.5 rounded-xl bg-sky-50 border border-sky-200 text-sky-800 text-xs flex items-center gap-2 max-w-md text-left">
                 <span className="font-bold shrink-0">💡 Phím tắt chụp nhanh:</span>
                 <span>Nhấn <strong className="font-mono font-bold text-[var(--text-primary)]">{isMac ? 'Cmd + Ctrl + Shift + 4' : 'Win + Shift + S'}</strong> để chụp vào Clipboard, rồi nhấn <strong className="font-mono font-bold text-[var(--text-primary)]">{isMac ? 'Cmd + V' : 'Ctrl + V'}</strong> để dán ảnh vào chỉnh sửa ngay lập tức!</span>
               </div>
@@ -2021,7 +2021,7 @@ export const ScreenCapture: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => startCapture('full')}
-                    className="btn-3d flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold cursor-pointer text-emerald-600 dark:text-emerald-400"
+                    className="btn-3d flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold cursor-pointer text-emerald-700"
                   >
                     <Monitor className="w-4 h-4" />
                     <span>Toàn màn hình</span>
@@ -2045,7 +2045,7 @@ export const ScreenCapture: React.FC = () => {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="btn-3d flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold cursor-pointer text-purple-600 dark:text-purple-400"
+                className="btn-3d flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold cursor-pointer text-purple-700"
               >
                 <Upload className="w-4 h-4" />
                 <span>Mở tệp ảnh</span>
@@ -2055,7 +2055,7 @@ export const ScreenCapture: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowUnsupportedModal(true)}
-                  className="btn-3d flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-sky-600 dark:text-sky-400 hover:bg-sky-500/10 cursor-pointer"
+                  className="btn-3d flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-sky-700 hover:bg-sky-50 cursor-pointer"
                 >
                   <Camera className="w-4 h-4" />
                   <span>Hướng dẫn phím tắt</span>
@@ -2077,7 +2077,7 @@ export const ScreenCapture: React.FC = () => {
 
         {/* Bottom Status & Info Bar */}
         {baseImage && (
-          <div className="px-3 py-1.5 border-t border-black/5 dark:border-white/5 bg-[var(--surface-elevated)] flex items-center justify-between text-[11px] text-[var(--text-muted)] font-mono">
+          <div className="px-3 py-1.5 border-t border-slate-200 bg-[var(--surface-elevated)] flex items-center justify-between text-[11px] text-[var(--text-muted)] font-mono">
             <div className="flex items-center gap-3">
               <span>
                 {baseImage.naturalWidth} × {baseImage.naturalHeight} px

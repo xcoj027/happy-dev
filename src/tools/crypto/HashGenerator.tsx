@@ -71,38 +71,38 @@ export const HashGenerator: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3 card-3d rounded-xl">
-        <label className="flex items-center gap-2 text-xs text-[var(--text-secondary)] cursor-pointer">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-white border border-slate-200/90 rounded-xl shadow-2xs">
+        <label className="flex items-center gap-2 text-xs text-slate-700 cursor-pointer select-none">
           <input
             type="checkbox"
             checked={useHmac}
             onChange={(e) => setUseHmac(e.target.checked)}
-            className="rounded text-emerald-500 focus:ring-0"
+            className="rounded text-emerald-600 focus:ring-emerald-500"
           />
-          <Key className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
-          <span>Enable HMAC Key</span>
+          <Key className="w-3.5 h-3.5 text-amber-600" />
+          <span className="font-medium">Enable HMAC Key</span>
         </label>
 
-        <label className="flex items-center gap-2 text-xs text-[var(--text-secondary)] cursor-pointer">
+        <label className="flex items-center gap-2 text-xs text-slate-700 cursor-pointer select-none">
           <input
             type="checkbox"
             checked={uppercase}
             onChange={(e) => setUppercase(e.target.checked)}
-            className="rounded text-emerald-500 focus:ring-0"
+            className="rounded text-emerald-600 focus:ring-emerald-500"
           />
-          <span>Uppercase Hex</span>
+          <span className="font-medium">Uppercase Hex</span>
         </label>
       </div>
 
       {useHmac && (
-        <div className="p-3 card-3d rounded-xl">
-          <label className="text-xs text-[var(--text-secondary)] block mb-1">HMAC Secret Key</label>
+        <div className="p-3.5 bg-white border border-slate-200/90 rounded-xl shadow-2xs space-y-1.5">
+          <label className="text-xs font-medium text-slate-700 block">HMAC Secret Key</label>
           <TextInput
             type="text"
             value={hmacKey}
             onChange={(e) => setHmacKey(e.target.value)}
             placeholder="Enter secret HMAC key..."
-            className="w-full input-3d rounded-lg px-3 py-1.5 text-xs font-mono text-[var(--text-primary)] outline-none"
+            className="w-full input-3d rounded-lg px-3 py-1.5 text-xs font-mono text-slate-800 outline-none"
           />
         </div>
       )}
@@ -111,28 +111,28 @@ export const HashGenerator: React.FC = () => {
         label="Input Plaintext to Hash"
         value={text}
         onChange={setText}
-        minHeight="100px"
+        minHeight="110px"
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
         {algos.map((algo) => {
           const val = calculateHash(algo.key);
           return (
             <div
               key={algo.name}
-              className="p-3 card-3d rounded-xl space-y-1 transition"
+              className="p-3.5 bg-white border border-slate-200/90 rounded-xl shadow-2xs space-y-1.5 transition hover:border-slate-300 hover:shadow-xs"
             >
               <div className="flex items-center justify-between text-xs">
-                <span className="font-semibold text-[var(--text-primary)] flex items-center gap-1.5">
-                  <Shield className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
+                <span className="font-semibold text-slate-800 flex items-center gap-1.5">
+                  <Shield className="w-3.5 h-3.5 text-emerald-600" />
                   {algo.name}
                 </span>
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] text-[var(--text-secondary)] font-mono">{algo.bits}</span>
+                  <span className="text-[10px] text-slate-500 font-mono px-1.5 py-0.5 rounded bg-slate-100">{algo.bits}</span>
                   <CopyButton text={val} />
                 </div>
               </div>
-              <div className="font-mono text-xs text-emerald-600 dark:text-emerald-400 break-all select-all pt-1">
+              <div className="font-mono text-xs text-emerald-700 break-all select-all pt-1 bg-slate-50 border border-slate-100 rounded-lg p-2">
                 {val || '—'}
               </div>
             </div>

@@ -169,7 +169,7 @@ export const UuidGenerator: React.FC = () => {
           <CopyButton text={generatedId} />
         </div>
         <div className="flex items-center justify-between p-3.5 well-3d rounded-xl">
-          <span className="text-sm sm:text-base font-mono font-bold text-emerald-600 dark:text-emerald-400 select-all break-all pr-2">
+          <span className="text-sm sm:text-base font-mono font-bold text-emerald-700 select-all break-all pr-2">
             {generatedId}
           </span>
         </div>
@@ -184,17 +184,17 @@ export const UuidGenerator: React.FC = () => {
             value={validateInput}
             onChange={(e) => setValidateInput(e.target.value)}
             placeholder="Paste UUID to validate (e.g. 123e4567-e89b-12d3-a456-426614174000)..."
-            className="flex-1 bg-[var(--control-input-bg)] border border-black/10 dark:border-white/10 rounded-lg px-3 py-1.5 text-xs font-mono text-[var(--text-primary)] outline-none focus:border-emerald-500"
+            className="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-mono text-slate-800 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
           />
           {validateInput.trim() && (
             <div className="flex items-center gap-1.5 text-xs font-mono">
               {isValidUuid ? (
-                <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-semibold">
-                  <CheckCircle2 className="w-4 h-4" /> Valid UUID
+                <span className="text-emerald-700 flex items-center gap-1 font-semibold">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Valid UUID
                 </span>
               ) : (
-                <span className="text-rose-600 dark:text-rose-400 flex items-center gap-1 font-semibold">
-                  <XCircle className="w-4 h-4" /> Invalid UUID
+                <span className="text-rose-700 flex items-center gap-1 font-semibold">
+                  <XCircle className="w-4 h-4 text-rose-600" /> Invalid UUID
                 </span>
               )}
             </div>

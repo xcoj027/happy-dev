@@ -80,10 +80,10 @@ export const RegexTester: React.FC = () => {
             type="text"
             value={pattern}
             onChange={(e) => setPattern(e.target.value)}
-            className="input-3d flex-1 px-3 py-2 text-sm font-mono text-emerald-600 dark:text-emerald-400 outline-none rounded-lg font-medium"
+            className="input-3d flex-1 px-3 py-2 text-sm font-mono text-emerald-700 outline-none rounded-lg font-medium"
             placeholder="Type regex pattern..."
           />
-          <span className="text-emerald-500 font-mono text-base font-bold">/{flagStr}</span>
+          <span className="text-emerald-600 font-mono text-base font-bold">/{flagStr}</span>
         </div>
 
         {/* Flag toggles */}
@@ -95,9 +95,9 @@ export const RegexTester: React.FC = () => {
                 type="checkbox"
                 checked={flags[flag]}
                 onChange={(e) => setFlags({ ...flags, [flag]: e.target.checked })}
-                className="rounded accent-emerald-500"
+                className="rounded accent-emerald-600 border-slate-300"
               />
-              <span className="font-mono uppercase font-bold text-emerald-600 dark:text-emerald-400">{flag}</span>
+              <span className="font-mono uppercase font-bold text-emerald-700">{flag}</span>
               <span className="text-[var(--text-muted)]">
                 {flag === 'g' ? '(global)' : flag === 'i' ? '(ignore case)' : flag === 'm' ? '(multiline)' : '(dotAll)'}
               </span>
@@ -107,12 +107,12 @@ export const RegexTester: React.FC = () => {
       </div>
 
       {error ? (
-        <div className="flex items-center gap-2 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-500 dark:text-rose-400 text-xs font-mono">
-          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+        <div className="flex items-center gap-2 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-mono">
+          <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-600" />
           <span>{error}</span>
         </div>
       ) : (
-        <div className="flex items-center justify-between p-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-600 dark:text-emerald-400 text-xs font-mono font-medium">
+        <div className="flex items-center justify-between p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs font-mono font-medium">
           <span>Found {matches.length} match{matches.length === 1 ? '' : 'es'}{hitLimit ? ' (Capped at 500 for safety)' : ''}</span>
         </div>
       )}
@@ -136,7 +136,7 @@ export const RegexTester: React.FC = () => {
                 className="p-3 well-3d rounded-lg text-xs font-mono space-y-1.5"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                  <span className="text-emerald-700 font-bold">
                     Match #{idx + 1} (Index: {m.index})
                   </span>
                   <CopyButton text={m.full} />
@@ -146,7 +146,7 @@ export const RegexTester: React.FC = () => {
                   <div className="text-[var(--text-secondary)] pl-2 space-y-0.5 border-l-2 border-emerald-500/30">
                     {m.groups.map((g: string, gIdx: number) => (
                       <div key={gIdx} className="text-[11px]">
-                        <span className="text-cyan-600 dark:text-cyan-400 font-semibold">Group ${gIdx + 1}:</span> {g}
+                        <span className="text-cyan-700 font-semibold">Group ${gIdx + 1}:</span> {g}
                       </div>
                     ))}
                   </div>

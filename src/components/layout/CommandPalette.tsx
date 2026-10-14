@@ -97,14 +97,14 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="search-backdrop fixed inset-0 z-50 flex items-start justify-center pt-20 bg-black/60 backdrop-blur-md p-4">
+    <div className="search-backdrop fixed inset-0 z-50 flex items-start justify-center pt-20 bg-slate-900/40 backdrop-blur-sm p-4">
       <div
-        className="search-palette w-full max-w-xl glass-panel rounded-3xl overflow-hidden flex flex-col shadow-2xl"
+        className="search-palette w-full max-w-xl bg-white border border-slate-200 rounded-2xl overflow-hidden flex flex-col shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input Bar */}
-        <div className="search-field flex items-center px-4.5 py-3.5 bg-transparent border-b border-[var(--border-subtle)]">
-          <Search className="search-icon w-5 h-5 text-emerald-500 dark:text-emerald-400 mr-3 shrink-0" />
+        <div className="search-field flex items-center px-4.5 py-3.5 bg-slate-50/80 border-b border-slate-200">
+          <Search className="search-icon w-5 h-5 text-emerald-600 mr-3 shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -114,17 +114,17 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               setSelectedIndex(0);
             }}
             placeholder="Type a tool name or category (e.g. jwt, hash, diff, json)..."
-            className="w-full bg-transparent text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none font-medium"
+            className="w-full bg-transparent text-sm text-slate-800 placeholder:text-slate-400 outline-none font-medium"
           />
           {query && (
             <button
               onClick={() => setQuery('')}
-              className="text-[var(--text-muted)] hover:text-[var(--text-primary)] p-1 mr-2 transition cursor-pointer"
+              className="text-slate-400 hover:text-slate-700 p-1 mr-2 transition cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
           )}
-          <kbd className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[var(--surface-control)] text-[var(--text-secondary)]">
+          <kbd className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-slate-200/80 text-slate-600">
             ESC
           </kbd>
         </div>
@@ -132,7 +132,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         {/* Results List */}
         <div className="max-h-[380px] overflow-y-auto p-2.5 space-y-1.5">
           {filtered.length === 0 ? (
-            <div className="py-8 text-center text-xs text-[var(--text-muted)]">
+            <div className="py-8 text-center text-xs text-slate-400">
               No developer utility matching "{query}"
             </div>
           ) : (
@@ -148,10 +148,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                     onClose();
                   }}
                   onMouseEnter={() => setSelectedIndex(idx)}
-                  className={`w-full flex items-center justify-between p-2.5 rounded-2xl text-left transition-all duration-150 cursor-pointer ${
+                  className={`w-full flex items-center justify-between p-2.5 rounded-xl text-left transition-all duration-150 cursor-pointer ${
                     isSelected
-                      ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 font-semibold translate-x-1'
-                      : 'hover:bg-[var(--surface-hover)] text-[var(--text-secondary)]'
+                      ? 'bg-emerald-50 text-emerald-800 border border-emerald-200/70 font-semibold translate-x-0.5'
+                      : 'hover:bg-slate-50 text-slate-700'
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
@@ -161,20 +161,20 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                       <DynamicIcon name={tool.icon} size={16} />
                     </div>
                     <div className="truncate">
-                      <div className="text-xs font-semibold text-[var(--text-primary)] truncate flex items-center gap-2">
+                      <div className="text-xs font-semibold text-slate-900 truncate flex items-center gap-2">
                         <span>{tool.name}</span>
                         <span className={`text-[10px] font-medium capitalize ${catColor.text}`}>
                           • {tool.category}
                         </span>
                       </div>
-                      <div className="text-[11px] text-[var(--text-muted)] truncate mt-0.5 font-normal">
+                      <div className="text-[11px] text-slate-500 truncate mt-0.5 font-normal">
                         {tool.description}
                       </div>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 shrink-0 ml-3">
-                    {isSelected && <CornerDownLeft className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />}
+                    {isSelected && <CornerDownLeft className="w-3.5 h-3.5 text-emerald-600" />}
                   </div>
                 </button>
               );
@@ -183,17 +183,17 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         </div>
 
         {/* Footer shortcuts */}
-        <div className="px-4.5 py-3 bg-transparent border-t border-[var(--border-subtle)] flex items-center justify-between text-[11px] text-[var(--text-muted)]">
+        <div className="px-4.5 py-3 bg-slate-50/60 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
           <div className="flex items-center gap-3">
             <span>
-              <kbd className="px-1.5 py-0.5 rounded-md bg-[var(--surface-control)] text-[var(--text-secondary)] font-mono text-[10px]">↑</kbd>{' '}
-              <kbd className="px-1.5 py-0.5 rounded-md bg-[var(--surface-control)] text-[var(--text-secondary)] font-mono text-[10px]">↓</kbd> to navigate
+              <kbd className="px-1.5 py-0.5 rounded-md bg-white border border-slate-200 text-slate-600 font-mono text-[10px]">↑</kbd>{' '}
+              <kbd className="px-1.5 py-0.5 rounded-md bg-white border border-slate-200 text-slate-600 font-mono text-[10px]">↓</kbd> to navigate
             </span>
             <span>
-              <kbd className="px-1.5 py-0.5 rounded-md bg-[var(--surface-control)] text-[var(--text-secondary)] font-mono text-[10px]">↵</kbd> to open
+              <kbd className="px-1.5 py-0.5 rounded-md bg-white border border-slate-200 text-slate-600 font-mono text-[10px]">↵</kbd> to open
             </span>
           </div>
-          <span className="font-mono text-emerald-600 dark:text-emerald-400 font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10">{toolsRegistry.length} Offline Tools</span>
+          <span className="font-mono text-emerald-700 font-semibold px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/60">{toolsRegistry.length} Offline Tools</span>
         </div>
       </div>
     </div>
