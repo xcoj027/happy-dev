@@ -20,7 +20,7 @@ HappyDev is a comprehensive developer toolbox created as a modern, lightweight, 
 
 You can download the latest pre-compiled installers directly from the official GitHub Releases page:
 
-👉 **[Download Latest Version from GitHub Releases](https://github.com/xcoj027/happy-dev-releases/releases/latest)**
+👉 **[Download Latest Version from GitHub Releases](https://github.com/xcoj027/happy-dev/releases/latest)**
 
 ### Automated Builds on Release Branch
 The repository is configured with an automated continuous deployment pipeline powered by GitHub Actions. Every push to the `release` branch automatically triggers a multi-platform compilation matrix that builds and publishes updated installers for all supported operating systems:
@@ -201,16 +201,9 @@ The repository includes an automated GitHub Actions workflow defined in [`.githu
 - The workflow automatically runs on every push to the `release` branch and on manual workflow dispatch triggers.
 - It builds binaries concurrently across three operating system runners: `macos-latest`, `windows-latest`, and `ubuntu-22.04`. Linux uses a fixed runner version for a stable dependency and glibc baseline.
 - Each release contains one universal macOS `.dmg` (Intel and Apple Silicon), one Windows x64 setup `.exe`, and one Linux x64 `.AppImage`, plus a checksum file. ZIP archives, portable Windows builds, and Debian packages are not generated.
-- Every release publishes the next `v.N` tag to the public [`happy-dev-releases`](https://github.com/xcoj027/happy-dev-releases/releases/latest) repository and marks it as latest, including releases triggered by source tags or manual dispatch.
-- Release runs are serialized. The next number is one greater than the highest existing `v.N` tag (starting at `v.1`). Old releases are removed, but their tags are retained as the counter history; do not delete those tags. Failed builds do not consume a number unless a release tag was already created. Pull request builds use `local`.
-
-Release builds use ThinLTO and parallel code generation, with Rust pinned to `1.98.1` for stable dependency-cache reuse. Dependency caches are saved even if a later step fails. Artifact cleanup runs alongside builds, and Tauri's frontend build performs the TypeScript check once. The first build after changing Rust or compiler settings repopulates the cache; subsequent builds can reuse it. Installer size checks remain enforced.
-
-### Release Repository Configuration
-
-The private source repository requires a `RELEASE_TOKEN` Actions secret containing a fine-grained GitHub personal access token. Grant that token **Contents: read and write** access to `xcoj027/happy-dev-releases`.
-
-The workflow uses `xcoj027/happy-dev-releases` by default. To publish elsewhere, set the `RELEASE_REPOSITORY` Actions variable to the target repository in `owner/name` format.
+- Every release publishes the next `v.N` tag directly to the repository releases and marks it as latest, including releases triggered by source tags or manual dispatch.
+- Release runs are serialized. The next number is one greater than the highest existing `v.N` tag (starting at `v.1`).
+- Artifacts are published directly to the repository releases via standard GitHub Actions token (`GITHUB_TOKEN`).
 
 ### macOS Signing and Notarization
 

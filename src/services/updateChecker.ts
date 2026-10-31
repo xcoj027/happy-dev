@@ -12,8 +12,8 @@
  * must retain the original "TNQ" trademark, author credits, and notices of TNQSW.
  */
 
-export const GITHUB_RELEASES_URL = 'https://github.com/xcoj027/happy-dev-releases/releases';
-export const GITHUB_LATEST_API_URL = 'https://api.github.com/repos/xcoj027/happy-dev-releases/releases/latest';
+export const GITHUB_RELEASES_URL = 'https://github.com/xcoj027/happy-dev/releases';
+export const GITHUB_LATEST_API_URL = 'https://api.github.com/repos/xcoj027/happy-dev/releases/latest';
 
 export const STORAGE_AUTO_CHECK = 'happydev_auto_check_updates';
 export const STORAGE_DISMISSED_VERSION = 'happydev_dismissed_update';

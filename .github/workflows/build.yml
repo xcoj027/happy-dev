@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   actions: write
 
 concurrency:
@@ -29,18 +29,14 @@ jobs:
         id: version
         shell: bash
         env:
-          TARGET_REPOSITORY: ${{ vars.RELEASE_REPOSITORY || 'xcoj027/happy-dev-releases' }}
-          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          if [[ -z "$GH_TOKEN" ]]; then
-            echo "::error::RELEASE_TOKEN is required to determine the next release version."
-            exit 1
-          fi
-          numbers=$(gh api --paginate "repos/$TARGET_REPOSITORY/tags?per_page=100" \
-            --jq '.[] | .name | select(test("^v\\.[1-9][0-9]*$")) | ltrimstr("v.")')
+          numbers=$(gh api --paginate "repos/${GITHUB_REPOSITORY}/tags?per_page=100" \
+            --jq '.[] | .name | select(test("^v\\.[1-9][0-9]*$")) | ltrimstr("v.")' 2>/dev/null || true)
           last=$(printf '%s\n' "$numbers" | sort -n | tail -n 1)
           next=$(( ${last:-0} + 1 ))
           echo "version=v.$next" >> "$GITHUB_OUTPUT"
+          echo "Determined next release version: v.$next"
 
   cleanup-artifacts:
     name: Clean old artifacts in parallel
@@ -221,52 +217,11 @@ jobs:
           echo "title=HappyDev ${APP_VERSION}" >> "$GITHUB_OUTPUT"
           echo "tag=${APP_VERSION}" >> "$GITHUB_OUTPUT"
 
-      - name: Validate release token for public repository
-        id: release_target
-        shell: bash
-        env:
-          TARGET_REPOSITORY: ${{ vars.RELEASE_REPOSITORY || 'xcoj027/happy-dev-releases' }}
-          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-        run: |
-          if [[ -z "$GH_TOKEN" ]]; then
-            echo "::error::Add a fine-grained PAT as the RELEASE_TOKEN secret. Grant Contents read/write access to $TARGET_REPOSITORY."
-            exit 1
-          fi
-
-          if ! default_branch=$(gh api "repos/$TARGET_REPOSITORY" --jq '.default_branch'); then
-            echo "::error::RELEASE_TOKEN cannot access $TARGET_REPOSITORY."
-            exit 1
-          fi
-
-          # Resolve a commit in the public repository, which may use a different branch.
-          target_commit=$(gh api --method GET "repos/$TARGET_REPOSITORY/commits" \
-            -f sha="$default_branch" -f per_page=1 --jq '.[0].sha')
-          if [[ ! "$target_commit" =~ ^[0-9a-f]{40}$ ]]; then
-            echo "::error::Cannot resolve a release target commit in $TARGET_REPOSITORY. Ensure its default branch has a commit."
-            exit 1
-          fi
-          echo "commit=$target_commit" >> "$GITHUB_OUTPUT"
-
-      - name: Remove previous public releases
-        shell: bash
-        env:
-          TARGET_REPOSITORY: ${{ vars.RELEASE_REPOSITORY || 'xcoj027/happy-dev-releases' }}
-          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-        run: |
-          gh api --paginate "repos/$TARGET_REPOSITORY/releases?per_page=100" --jq '.[].id' |
-          while read -r release_id; do
-            if [[ "$release_id" =~ ^[0-9]+$ ]]; then
-              gh api --method DELETE "repos/$TARGET_REPOSITORY/releases/$release_id"
-            fi
-          done
-
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          repository: ${{ vars.RELEASE_REPOSITORY || 'xcoj027/happy-dev-releases' }}
-          token: ${{ secrets.RELEASE_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: ${{ steps.release_info.outputs.tag }}
-          target_commitish: ${{ steps.release_target.outputs.commit }}
           name: ${{ steps.release_info.outputs.title }}
           body: Automated HappyDev packages for ${{ steps.release_info.outputs.title }}. Source commit ${{ github.sha }}.
           prerelease: false

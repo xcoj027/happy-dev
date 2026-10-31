@@ -289,7 +289,7 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
             <div className="py-12 flex flex-col items-center justify-center text-center space-y-3">
               <RefreshCw className="w-8 h-8 text-emerald-600 animate-spin" />
               <p className="text-sm font-semibold text-slate-700">Checking GitHub for releases…</p>
-              <p className="text-xs text-slate-400">Comparing version against github.com/xcoj027/happy-dev-releases</p>
+              <p className="text-xs text-slate-400">Comparing version against github.com/xcoj027/happy-dev</p>
             </div>
           )}
 
