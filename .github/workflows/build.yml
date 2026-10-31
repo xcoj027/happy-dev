@@ -36,9 +36,8 @@ jobs:
         run: |
           MAJOR=$(node -p "try { require('./package.json').version.split('.')[0] } catch(e) { '1' }")
           echo "Major version configured: $MAJOR"
-          minors=$(gh api --paginate "repos/${GITHUB_REPOSITORY}/tags?per_page=100" \
-            --jq ".[] | .name | select(test(\"^v${MAJOR}\\\\.[0-9]+$\")) | ltrimstr(\"v${MAJOR}.\")" 2>/dev/null || true)
-          last_minor=$(printf '%s\n' "$minors" | grep -E '^[0-9]+$' | sort -n | tail -n 1)
+          tags=$(gh api --paginate "repos/${GITHUB_REPOSITORY}/tags?per_page=100" --jq ".[].name" 2>/dev/null || true)
+          last_minor=$(printf '%s\n' "$tags" | sed -nE "s/^v${MAJOR}\.([0-9]+)$/\1/p" | sort -n | tail -n 1)
           if [[ -z "$last_minor" ]]; then
             next_minor=0
           else
