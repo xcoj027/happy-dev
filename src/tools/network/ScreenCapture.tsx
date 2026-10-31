@@ -40,8 +40,7 @@ import {
   Crosshair,
   Camera,
 } from 'lucide-react';
-import { listen } from '@tauri-apps/api/event';
-import { isDesktopApp, triggerScreenCapture } from '../../lib/desktop';
+import { isDesktopApp, captureScreen, copyImageToClipboard, saveScreenshotToFile } from '../../lib/desktop';
 
 type ToolMode = 'draw' | 'highlighter' | 'arrow' | 'rect' | 'blur' | 'text' | 'crop';
 
@@ -268,23 +267,18 @@ export const ScreenCapture: React.FC = () => {
     };
   }, []);
 
-  // Listen for screenshots sent from the native overlay window
+  // Listen for custom screenshot load events (e.g. from header button)
   useEffect(() => {
-    if (!isDesktopApp()) return;
-    let unlisten: (() => void) | undefined;
-    listen<string>('load-screenshot-to-editor', (event) => {
-      if (event.payload) {
-        loadImageFromDataUrl(event.payload, false);
+    const handleCustomLoad = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      if (customEvent.detail) {
+        loadImageFromDataUrl(customEvent.detail, false);
         setUndoStack([]);
         setRedoStack([]);
       }
-    }).then((fn) => {
-      unlisten = fn;
-    });
-
-    return () => {
-      if (unlisten) unlisten();
     };
+    window.addEventListener('load-screenshot-data', handleCustomLoad);
+    return () => window.removeEventListener('load-screenshot-data', handleCustomLoad);
   }, [loadImageFromDataUrl]);
 
   // Cancel countdown
@@ -302,10 +296,20 @@ export const ScreenCapture: React.FC = () => {
   const startCapture = async (mode: 'area' | 'full') => {
     if (isDesktopApp()) {
       try {
+        setIsCapturing(true);
         setErrorMessage(null);
-        await triggerScreenCapture();
+        const data = await captureScreen(mode);
+        if (data?.data_url) {
+          loadImageFromDataUrl(data.data_url, false);
+          setUndoStack([]);
+          setRedoStack([]);
+        }
       } catch (err: any) {
-        setErrorMessage(err?.message || 'Không thể chụp màn hình.');
+        if (!String(err).includes('cancelled')) {
+          setErrorMessage(err?.message || String(err));
+        }
+      } finally {
+        setIsCapturing(false);
       }
       return;
     }
@@ -1326,20 +1330,10 @@ export const ScreenCapture: React.FC = () => {
     if (!canvas) return;
 
     try {
-      canvas.toBlob(async (blob) => {
-        if (!blob) return;
-        if (navigator.clipboard && navigator.clipboard.write) {
-          await navigator.clipboard.write([
-            new ClipboardItem({
-              'image/png': blob,
-            }),
-          ]);
-          setCopiedNotice(true);
-          setTimeout(() => setCopiedNotice(false), 2000);
-        } else {
-          setErrorMessage('Trình duyệt không hỗ trợ sao chép hình ảnh vào bộ nhớ tạm.');
-        }
-      }, 'image/png');
+      const dataUrl = canvas.toDataURL('image/png');
+      await copyImageToClipboard(dataUrl);
+      setCopiedNotice(true);
+      setTimeout(() => setCopiedNotice(false), 2000);
     } catch (err: any) {
       setErrorMessage(err.message || 'Không thể sao chép ảnh vào clipboard.');
     }

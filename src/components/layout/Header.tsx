@@ -17,7 +17,7 @@ import { ToolDefinition } from '../../types';
 import { DynamicIcon } from '../common/DynamicIcon';
 import { Star, HelpCircle, Crosshair } from 'lucide-react';
 import { getCategoryColor } from '../../utils/categoryColors';
-import { isDesktopApp, triggerScreenCapture } from '../../lib/desktop';
+import { isDesktopApp, captureScreen } from '../../lib/desktop';
 
 interface HeaderProps {
   tool: ToolDefinition;
@@ -88,9 +88,20 @@ export const Header: React.FC<HeaderProps> = ({ tool, isFavorite, onToggleFavori
           {tool.id === 'screen-capture' && isDesktopApp() && (
             <button
               type="button"
-              onClick={() => triggerScreenCapture()}
+              onClick={async () => {
+                try {
+                  const data = await captureScreen('area');
+                  if (data?.data_url) {
+                    window.dispatchEvent(new CustomEvent('load-screenshot-data', { detail: data.data_url }));
+                  }
+                } catch (err: any) {
+                  if (!String(err).includes('cancelled')) {
+                    console.error(err);
+                  }
+                }
+              }}
               className="btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 transition cursor-pointer shadow-sm"
-              title="Kích hoạt chụp màn hình độc lập"
+              title="Kích hoạt chụp màn hình"
             >
               <Crosshair className="w-3.5 h-3.5" />
               <span>Chụp màn hình ngay</span>

@@ -32,27 +32,11 @@ export interface CapturedScreenData {
   height: number;
 }
 
-export async function triggerScreenCapture(): Promise<void> {
+export async function captureScreen(mode: 'area' | 'full' = 'area'): Promise<CapturedScreenData> {
   if (isTauri()) {
-    await invoke('trigger_screen_capture');
-  } else {
-    throw new Error('Chụp màn hình native chỉ khả dụng trên ứng dụng Desktop HappyDev.');
+    return await invoke<CapturedScreenData>('capture_screen', { mode });
   }
-}
-
-export async function getLatestScreenshot(): Promise<CapturedScreenData> {
-  if (isTauri()) {
-    return await invoke<CapturedScreenData>('get_latest_screenshot');
-  }
-  throw new Error('Chỉ hỗ trợ trên Desktop');
-}
-
-export async function closeScreenshotOverlay(restoreMain = true): Promise<void> {
-  if (isTauri()) {
-    await invoke('close_screenshot_overlay', { restoreMain });
-  } else {
-    window.close();
-  }
+  throw new Error('Chụp màn hình native chỉ khả dụng trên ứng dụng Desktop HappyDev.');
 }
 
 export async function copyImageToClipboard(base64Data: string): Promise<void> {
@@ -78,10 +62,4 @@ export async function saveScreenshotToFile(base64Data: string, filename?: string
   link.download = filename || `screenshot_${Date.now()}.png`;
   link.click();
   return link.download;
-}
-
-export async function sendScreenshotToMainEditor(dataUrl: string): Promise<void> {
-  if (isTauri()) {
-    await invoke('send_screenshot_to_main_editor', { dataUrl });
-  }
 }
