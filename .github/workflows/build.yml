@@ -75,7 +75,7 @@ jobs:
             package_script: dist:win
             rust_targets: x86_64-pc-windows-msvc
             installer_suffix: windows-x64-setup.exe
-          - os: ubuntu-22.04
+          - os: ubuntu-24.04
             platform: linux
             package_script: dist:linux
             rust_targets: x86_64-unknown-linux-gnu
