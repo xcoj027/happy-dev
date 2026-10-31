@@ -25,18 +25,28 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Determine next release version
         id: version
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          numbers=$(gh api --paginate "repos/${GITHUB_REPOSITORY}/tags?per_page=100" \
-            --jq '.[] | .name | select(test("^v\\.[1-9][0-9]*$")) | ltrimstr("v.")' 2>/dev/null || true)
-          last=$(printf '%s\n' "$numbers" | sort -n | tail -n 1)
-          next=$(( ${last:-0} + 1 ))
-          echo "version=v.$next" >> "$GITHUB_OUTPUT"
-          echo "Determined next release version: v.$next"
+          MAJOR=$(node -p "try { require('./package.json').version.split('.')[0] } catch(e) { '1' }")
+          echo "Major version configured: $MAJOR"
+          minors=$(gh api --paginate "repos/${GITHUB_REPOSITORY}/tags?per_page=100" \
+            --jq ".[] | .name | select(test(\"^v${MAJOR}\\\\.[0-9]+$\")) | ltrimstr(\"v${MAJOR}.\")" 2>/dev/null || true)
+          last_minor=$(printf '%s\n' "$minors" | grep -E '^[0-9]+$' | sort -n | tail -n 1)
+          if [[ -z "$last_minor" ]]; then
+            next_minor=0
+          else
+            next_minor=$(( last_minor + 1 ))
+          fi
+          version="v${MAJOR}.${next_minor}"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Determined next release version: $version (Major: $MAJOR, Minor: $next_minor)"
 
   cleanup-artifacts:
     name: Clean old artifacts in parallel

@@ -25,9 +25,16 @@ if (!local) args.push('--target', settings.target);
 const overrides = {};
 // Keep native numeric metadata valid while advancing release upgrade versions.
 if (version !== 'local') {
-  const number = Number(version.slice(2));
-  if (!Number.isSafeInteger(number) || number > 65535) throw new Error('Release number exceeds native installer limits.');
-  overrides.version = `1.0.${number}`;
+  const match = version.match(/^v([1-9]\d*)\.(\d+)$/);
+  if (match) {
+    const major = Number(match[1]);
+    const minor = Number(match[2]);
+    overrides.version = `${major}.${minor}.0`;
+  } else {
+    const number = Number(version.replace(/^v\.?/, ''));
+    if (!Number.isSafeInteger(number) || number > 65535) throw new Error('Release number exceeds native installer limits.');
+    overrides.version = `1.0.${number}`;
+  }
 }
 if (platform === 'macos') {
   if (process.env.APPLE_SIGNING_IDENTITY) {
@@ -70,7 +77,7 @@ const destination = path.join(output, `HappyDev-${version}-${settings.suffix}${s
 fs.copyFileSync(source, destination);
 // Keep one output version instead of accumulating old release installers.
 for (const entry of fs.readdirSync(path.dirname(output), { withFileTypes: true })) {
-  if (entry.isDirectory() && entry.name !== version && /^(local|v\.[1-9]\d*)$/.test(entry.name)) {
+  if (entry.isDirectory() && entry.name !== version && /^(local|v[1-9]\d*\.\d+|v\.[1-9]\d*)$/.test(entry.name)) {
     fs.rmSync(path.join(path.dirname(output), entry.name), { recursive: true, force: true });
   }
 }
