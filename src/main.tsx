@@ -15,10 +15,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import { ScreenshotOverlay } from './components/screenshot/ScreenshotOverlay';
 import './index.css';
+
+const isScreenshotWindow =
+  typeof window !== 'undefined' &&
+  (window.location.search.includes('window=screenshot-overlay') ||
+    window.location.hash.includes('screenshot-overlay'));
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <App />
+    {isScreenshotWindow ? <ScreenshotOverlay /> : <App />}
   </React.StrictMode>
 );

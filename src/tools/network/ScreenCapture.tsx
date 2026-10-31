@@ -40,6 +40,8 @@ import {
   Crosshair,
   Camera,
 } from 'lucide-react';
+import { listen } from '@tauri-apps/api/event';
+import { isDesktopApp, triggerScreenCapture } from '../../lib/desktop';
 
 type ToolMode = 'draw' | 'highlighter' | 'arrow' | 'rect' | 'blur' | 'text' | 'crop';
 
@@ -199,6 +201,7 @@ export const ScreenCapture: React.FC = () => {
   const [copiedNotice, setCopiedNotice] = useState<boolean>(false);
 
   const isDisplayMediaSupported = typeof navigator !== 'undefined' && Boolean(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia);
+  const canCaptureScreen = isDesktopApp() || isDisplayMediaSupported;
   const isMac = typeof navigator !== 'undefined' && navigator.userAgent.includes('Mac');
 
   // Drawing in progress
@@ -265,6 +268,25 @@ export const ScreenCapture: React.FC = () => {
     };
   }, []);
 
+  // Listen for screenshots sent from the native overlay window
+  useEffect(() => {
+    if (!isDesktopApp()) return;
+    let unlisten: (() => void) | undefined;
+    listen<string>('load-screenshot-to-editor', (event) => {
+      if (event.payload) {
+        loadImageFromDataUrl(event.payload, false);
+        setUndoStack([]);
+        setRedoStack([]);
+      }
+    }).then((fn) => {
+      unlisten = fn;
+    });
+
+    return () => {
+      if (unlisten) unlisten();
+    };
+  }, [loadImageFromDataUrl]);
+
   // Cancel countdown
   const handleCancelCountdown = () => {
     if (countdownIntervalRef.current) {
@@ -277,7 +299,17 @@ export const ScreenCapture: React.FC = () => {
   };
 
   // Start capture with optional countdown
-  const startCapture = (mode: 'area' | 'full') => {
+  const startCapture = async (mode: 'area' | 'full') => {
+    if (isDesktopApp()) {
+      try {
+        setErrorMessage(null);
+        await triggerScreenCapture();
+      } catch (err: any) {
+        setErrorMessage(err?.message || 'Không thể chụp màn hình.');
+      }
+      return;
+    }
+
     if (!isDisplayMediaSupported) {
       setShowUnsupportedModal(true);
       return;
@@ -1516,7 +1548,7 @@ export const ScreenCapture: React.FC = () => {
       <div className="card-3d p-2.5 rounded-xl flex flex-wrap items-center justify-between gap-2.5">
         {/* Left: Capture Action Triggers */}
         <div className="flex items-center gap-1.5 flex-wrap">
-          {isDisplayMediaSupported ? (
+          {canCaptureScreen ? (
             <>
               {/* Primary Action 1: Capture Area (Chụp 1 vùng nhỏ) */}
               <button
@@ -1524,10 +1556,10 @@ export const ScreenCapture: React.FC = () => {
                 onClick={() => startCapture('area')}
                 disabled={isCapturing}
                 className="btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 transition cursor-pointer shadow-sm disabled:opacity-50"
-                title="Chụp 1 vùng nhỏ màn hình (Kéo chuột chọn vùng)"
+                title="Chụp màn hình và kéo chọn vùng (Native Overlay)"
               >
                 <Crosshair className="w-3.5 h-3.5" />
-                <span>Chụp vùng (Area)</span>
+                <span>Chụp màn hình (Snip)</span>
               </button>
 
               {/* Primary Action 2: Capture Full Screen */}
@@ -1999,7 +2031,7 @@ export const ScreenCapture: React.FC = () => {
               </p>
             </div>
 
-            {!isDisplayMediaSupported && (
+            {!canCaptureScreen && (
               <div className="px-4 py-2.5 rounded-xl bg-sky-50 border border-sky-200 text-sky-800 text-xs flex items-center gap-2 max-w-md text-left">
                 <span className="font-bold shrink-0">💡 Phím tắt chụp nhanh:</span>
                 <span>Nhấn <strong className="font-mono font-bold text-[var(--text-primary)]">{isMac ? 'Cmd + Ctrl + Shift + 4' : 'Win + Shift + S'}</strong> để chụp vào Clipboard, rồi nhấn <strong className="font-mono font-bold text-[var(--text-primary)]">{isMac ? 'Cmd + V' : 'Ctrl + V'}</strong> để dán ảnh vào chỉnh sửa ngay lập tức!</span>
@@ -2007,7 +2039,7 @@ export const ScreenCapture: React.FC = () => {
             )}
 
             <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-              {isDisplayMediaSupported ? (
+              {canCaptureScreen ? (
                 <>
                   <button
                     type="button"
@@ -2015,7 +2047,7 @@ export const ScreenCapture: React.FC = () => {
                     className="btn-3d flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 transition shadow-md cursor-pointer"
                   >
                     <Crosshair className="w-4 h-4" />
-                    <span>Chụp 1 vùng nhỏ (Capture Area)</span>
+                    <span>Chụp màn hình (Snip Screen)</span>
                   </button>
 
                   <button
@@ -2033,7 +2065,7 @@ export const ScreenCapture: React.FC = () => {
                 type="button"
                 onClick={handlePasteFromClipboard}
                 className={`btn-3d flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold cursor-pointer transition shadow-md ${
-                  !isDisplayMediaSupported
+                  !canCaptureScreen
                     ? 'text-white bg-emerald-600 hover:bg-emerald-500'
                     : ''
                 }`}

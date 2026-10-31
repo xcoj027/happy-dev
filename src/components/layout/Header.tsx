@@ -15,8 +15,9 @@
 import React from 'react';
 import { ToolDefinition } from '../../types';
 import { DynamicIcon } from '../common/DynamicIcon';
-import { Star, HelpCircle } from 'lucide-react';
+import { Star, HelpCircle, Crosshair } from 'lucide-react';
 import { getCategoryColor } from '../../utils/categoryColors';
+import { isDesktopApp, triggerScreenCapture } from '../../lib/desktop';
 
 interface HeaderProps {
   tool: ToolDefinition;
@@ -84,6 +85,18 @@ export const Header: React.FC<HeaderProps> = ({ tool, isFavorite, onToggleFavori
 
       {tool.id !== 'home' && (
         <div className="flex items-center gap-2">
+          {tool.id === 'screen-capture' && isDesktopApp() && (
+            <button
+              type="button"
+              onClick={() => triggerScreenCapture()}
+              className="btn-3d flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 transition cursor-pointer shadow-sm"
+              title="Kích hoạt chụp màn hình độc lập"
+            >
+              <Crosshair className="w-3.5 h-3.5" />
+              <span>Chụp màn hình ngay</span>
+            </button>
+          )}
+
           <button
             type="button"
             onClick={() => onToggleFavorite(tool.id)}
